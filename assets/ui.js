@@ -37,7 +37,11 @@ const translations = {
         legendReconstructed:
           "Reconstructed chest leads (V2–V6) are derived from the 7-lead input and included in the Digital Heart Profile only when confidence is sufficiently high.",
         legendHigh: "High-confidence leads used in profile",
-        legendLow: "Low-confidence leads (visualised but excluded from profile)"
+        legendLow: "Low-confidence leads (visualised but excluded from profile)",
+        howComputedToggleOn: "Hide how it’s computed",
+        howComputedToggleOff: "Show how it’s computed",
+        howComputedHint:
+          "Hover V2–V6 to see which recorded leads contribute to each reconstructed lead."
       },
       profile: {
         title: "Digital Heart Profile – aggregated metrics",
@@ -164,7 +168,11 @@ const translations = {
         legendReconstructed:
           "Грудные отведения V2–V6 восстанавливаются по данным 7 каналов и используются в Цифровом профиле сердца только при достаточно высокой уверенности.",
         legendHigh: "Отведения с высокой уверенностью участвуют в профиле",
-        legendLow: "Отведения с низкой уверенностью отображаются, но исключены из профиля"
+        legendLow: "Отведения с низкой уверенностью отображаются, но исключены из профиля",
+        howComputedToggleOn: "Скрыть, как вычислено",
+        howComputedToggleOff: "Показать, как вычислено",
+        howComputedHint:
+          "Наведите на V2–V6, чтобы увидеть вклад записанных отведений."
       },
       profile: {
         title: "Цифровой профиль сердца – агрегированные параметры",
@@ -291,7 +299,10 @@ const translations = {
         legendReconstructed:
           "Gereconstrueerde borstafleidingen (V2–V6) zijn afgeleid van de 7-kanaals invoer en worden alleen in het Digitale Hartprofiel opgenomen wanneer de betrouwbaarheid voldoende hoog is.",
         legendHigh: "Afleidingen met hoge betrouwbaarheid die in het profiel gaan",
-        legendLow: "Afleidingen met lage betrouwbaarheid worden getoond, maar niet meegenomen"
+        legendLow: "Afleidingen met lage betrouwbaarheid worden getoond, maar niet meegenomen",
+        howComputedToggleOn: "Weergave verbergen",
+        howComputedToggleOff: "Weergave tonen",
+        howComputedHint: "Beweeg over V2–V6 om te zien welke gemeten leads bijdragen."
       },
       profile: {
         title: "Digitaal Hartprofiel – geaggregeerde parameters",
@@ -385,6 +396,7 @@ const translations = {
 let liveSegmentationEnabled = false;
 let isQualityDrawerOpen = false;
 let scrollToExamplesAfterOpen = false;
+let howComputedEnabled = false;
 
 function getSignalQualityStrings(lang) {
   const base = translations.en.signalQuality;
@@ -907,12 +919,14 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  function renderLeadsView(container, lang) {
+  async function renderLeadsView(container, lang) {
     const t = translations[lang].tabs.leads;
     const leads = ecgDemoData.leads12 || [];
 
     const recordedLeads = leads.filter((lead) => lead.isRecorded);
     const reconstructedLeads = leads.filter((lead) => !lead.isRecorded);
+
+    howComputedEnabled = false;
 
     const renderCards = (leadArray) =>
       leadArray
@@ -921,8 +935,9 @@ document.addEventListener("DOMContentLoaded", () => {
           const svg = createLeadSvg(lead.values);
           const typeText = lead.isRecorded ? t.badgeRecorded : t.badgeReconstructed;
           const typeClass = lead.isRecorded ? "recorded" : "reconstructed";
+          const focusAttr = lead.isRecorded ? "" : " tabindex=\"0\"";
           return `
-        <div class="lead-card">
+        <div class="lead-card" data-id="${lead.id}" data-is-recorded="${lead.isRecorded}"${focusAttr}>
           <div class="lead-header">
             <span class="lead-label">
               ${lead.label}
@@ -950,15 +965,140 @@ document.addEventListener("DOMContentLoaded", () => {
       <p class="tab-description">${t.description}</p>
       <div class="leads-layout">
         <h3>${t.gridTitle}</h3>
-        <h3 class="leads-group-title">${t.recordedGroupTitle}</h3>
-        <div class="leads-grid">${renderCards(recordedLeads)}</div>
-        <h3 class="leads-group-title">${t.reconstructedGroupTitle}</h3>
-        <div class="leads-grid">${renderCards(reconstructedLeads)}</div>
+        <div class="leads-toolbar">
+          <button id="how-computed-toggle" class="btn-toggle"></button>
+          <span class="leads-hint">${t.howComputedHint}</span>
+        </div>
+        <div id="leads-grid-wrapper" class="leads-grid-wrapper">
+          <svg id="how-computed-overlay" class="how-computed-overlay" aria-hidden="true"></svg>
+
+          <h3 class="leads-group-title">${t.recordedGroupTitle}</h3>
+          <div class="leads-grid">${renderCards(recordedLeads)}</div>
+          <h3 class="leads-group-title">${t.reconstructedGroupTitle}</h3>
+          <div class="leads-grid">${renderCards(reconstructedLeads)}</div>
+        </div>
         <div class="leads-legend">
           ${legendLines || t.lowConfidenceHint || ""}
         </div>
       </div>
     `;
+
+    const toggleBtn = document.getElementById("how-computed-toggle");
+
+    if (
+      typeof loadReconstructionWeights !== "function" ||
+      typeof getTopContributions !== "function" ||
+      !toggleBtn
+    ) {
+      if (toggleBtn) toggleBtn.style.display = "none";
+      return;
+    }
+
+    const weights = await loadReconstructionWeights();
+    if (!weights || !weights.W) {
+      toggleBtn.style.display = "none";
+      return;
+    }
+
+    toggleBtn.style.display = "";
+    setupHowComputedToggle(lang);
+    attachHowComputedHover();
+  }
+
+  function setupHowComputedToggle(lang) {
+    const btn = document.getElementById("how-computed-toggle");
+    if (!btn) return;
+    const t = translations[lang].tabs.leads;
+    const setUi = () => {
+      btn.textContent = howComputedEnabled ? t.howComputedToggleOn : t.howComputedToggleOff;
+      btn.classList.toggle("active", howComputedEnabled);
+    };
+    setUi();
+    btn.onclick = () => {
+      howComputedEnabled = !howComputedEnabled;
+      setUi();
+      clearOverlay();
+      if (howComputedEnabled) {
+        attachHowComputedHover();
+      }
+    };
+  }
+
+  function attachHowComputedHover() {
+    const wrapper = document.getElementById("leads-grid-wrapper");
+    const svg = document.getElementById("how-computed-overlay");
+    if (!wrapper || !svg || !howComputedEnabled) return;
+
+    const targets = wrapper.querySelectorAll('.lead-card[data-is-recorded="false"]');
+    targets.forEach((card) => {
+      const handler = () => drawOverlayFor(card, wrapper, svg);
+      card.addEventListener("mouseenter", handler);
+      card.addEventListener("mouseleave", clearOverlay);
+      card.addEventListener("click", handler);
+      card.addEventListener("focus", handler);
+      card.addEventListener("blur", clearOverlay);
+    });
+
+    window.addEventListener("resize", clearOverlay, { once: true });
+  }
+
+  function drawOverlayFor(card, wrapper, svg) {
+    if (!howComputedEnabled) return;
+    if (typeof getTopContributions !== "function") return;
+
+    clearOverlay();
+
+    const leadId = card.getAttribute("data-id");
+    const top = getTopContributions(leadId, 3);
+    if (!top || !top.length) return;
+
+    const wb = wrapper.getBoundingClientRect();
+    const tb = card.getBoundingClientRect();
+    const tx = tb.left - wb.left + tb.width * 0.5;
+    const ty = tb.top - wb.top + 10;
+
+    const chipOffsetX = Math.min(tx + 8, wb.width - 120);
+
+    top.forEach((c, i) => {
+      const srcEl = wrapper.querySelector(`.lead-card[data-id="${c.src}"]`);
+      if (!srcEl) return;
+      const sb = srcEl.getBoundingClientRect();
+      const sx = sb.left - wb.left + sb.width * 0.5;
+      const sy = sb.top - wb.top + sb.height - 10;
+
+      const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+      line.setAttribute("x1", sx);
+      line.setAttribute("y1", sy);
+      line.setAttribute("x2", tx);
+      line.setAttribute("y2", ty);
+      line.setAttribute("class", "hc-line");
+      svg.appendChild(line);
+
+      const mkDot = (x, y) => {
+        const dot = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+        dot.setAttribute("cx", x);
+        dot.setAttribute("cy", y);
+        dot.setAttribute("r", 3);
+        dot.setAttribute("class", "hc-dot");
+        svg.appendChild(dot);
+      };
+      mkDot(sx, sy);
+      mkDot(tx, ty);
+
+      const chip = document.createElement("div");
+      chip.className = "hc-chip";
+      chip.style.left = `${chipOffsetX + i * 70}px`;
+      chip.style.top = `${ty - 16}px`;
+      chip.textContent = `${c.src} ${c.pct}%`;
+      wrapper.appendChild(chip);
+    });
+  }
+
+  function clearOverlay() {
+    const svg = document.getElementById("how-computed-overlay");
+    const wrapper = document.getElementById("leads-grid-wrapper");
+    if (svg) svg.innerHTML = "";
+    if (wrapper) wrapper.querySelectorAll(".hc-chip").forEach((n) => n.remove());
   }
 
   function renderProfileView(container, lang) {
