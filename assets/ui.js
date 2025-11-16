@@ -794,7 +794,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function renderLiveEcgView(container, lang) {
     const t = translations[lang];
-    const channels = ecgDemoData.channels.slice(0, 3);
+    const channels = ecgDemoData.channels;
     const windows = ecgDemoData.windows;
 
     const title = t.tabs.live.title;
