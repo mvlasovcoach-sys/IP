@@ -1153,6 +1153,70 @@ body {
   color: #b91c1c;
 }
 
+.deviation-scale {
+  margin-top: 24px;
+  margin-bottom: 16px;
+}
+
+.deviation-title {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.deviation-bar {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+  gap: 12px;
+}
+
+.deviation-label {
+  width: 60px;
+  font-size: 12px;
+  color: #374151;
+}
+
+.deviation-track {
+  flex: 1;
+  height: 12px;
+  border-radius: 6px;
+  overflow: hidden;
+  background: linear-gradient(
+    to right,
+    #10b981 0%,
+    #10b981 40%,
+    #fbbf24 40%,
+    #fbbf24 70%,
+    #ef4444 70%,
+    #ef4444 100%
+  );
+  position: relative;
+}
+
+.deviation-fill {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 0%;
+  border-radius: 6px;
+  background: rgba(31, 41, 55, 0.55);
+  transition: width 0.4s ease;
+}
+
+.deviation-fill:hover::after {
+  content: attr(data-tip);
+  position: absolute;
+  bottom: 18px;
+  left: 0;
+  background: #1f2937;
+  color: white;
+  padding: 3px 6px;
+  font-size: 10px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
 .compare-secondary {
   display: flex;
   flex-wrap: wrap;

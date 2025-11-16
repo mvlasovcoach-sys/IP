@@ -1,3 +1,5 @@
+import { computeDeviationScore } from "./compare-utils.js";
+
 const translations = {
   en: {
     tabs: {
@@ -108,6 +110,14 @@ const translations = {
         deltaQtc: "QTc interval",
         deltaSdnn: "HRV SDNN",
         deltaRmssd: "HRV RMSSD",
+        deviationScaleTitle: "Deviation scale",
+        deviationGreen: "Green zone – normal physiological variability",
+        deviationYellow: "Yellow zone – noticeable deviation",
+        deviationRed: "Red zone – significant deviation",
+        deviationLabelHR: "Heart rate",
+        deviationLabelQTc: "QTc interval",
+        deviationLabelAxis: "Electrical axis",
+        deviationLabelHRV: "HRV (SDNN/RMSSD)",
         morphTitle: "Morphology difference",
         morphHigh: "High similarity",
         morphModerate: "Moderate change",
@@ -277,6 +287,14 @@ const translations = {
         deltaQtc: "Интервал QTc",
         deltaSdnn: "HRV SDNN",
         deltaRmssd: "HRV RMSSD",
+        deviationScaleTitle: "Шкала отклонений",
+        deviationGreen: "Зелёная зона – физиологическая вариабельность",
+        deviationYellow: "Жёлтая зона – заметное отклонение",
+        deviationRed: "Красная зона – значимое отклонение",
+        deviationLabelHR: "ЧСС",
+        deviationLabelQTc: "Интервал QTc",
+        deviationLabelAxis: "Электрическая ось",
+        deviationLabelHRV: "ВСР (SDNN/RMSSD)",
         morphTitle: "Изменение формы комплекса",
         morphHigh: "Высокое сходство",
         morphModerate: "Умеренное изменение",
@@ -445,6 +463,14 @@ const translations = {
         deltaQtc: "QTc-interval",
         deltaSdnn: "HRV SDNN",
         deltaRmssd: "HRV RMSSD",
+        deviationScaleTitle: "Afwijkingsschaal",
+        deviationGreen: "Groene zone – normale fysiologische variatie",
+        deviationYellow: "Gele zone – merkbare afwijking",
+        deviationRed: "Rode zone – significante afwijking",
+        deviationLabelHR: "Hartslag",
+        deviationLabelQTc: "QTc-interval",
+        deviationLabelAxis: "Elektrische as",
+        deviationLabelHRV: "HRV (SDNN/RMSSD)",
         morphTitle: "Verschil in morfologie",
         morphHigh: "Hoge gelijkenis",
         morphModerate: "Gematigde verandering",
@@ -1576,6 +1602,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const deltaSdnn = formatDelta(dSdnn, " ms", true);
     const deltaRmssd = formatDelta(dRmssd, " ms", true);
 
+    const devHR = computeDeviationScore("HR", dHr, evidenceRest.score, abrupt.level, morph.r);
+    const devQTc = computeDeviationScore("QTc", dQtc, evidenceRest.score, abrupt.level, morph.r);
+    const devAxis = computeDeviationScore("Axis", dAxis, evidenceRest.score, abrupt.level, morph.r);
+    const devHRV = computeDeviationScore("HRV", dSdnn, evidenceRest.score, abrupt.level, morph.r);
+
     const evidenceHtml = `
       <div class="compare-evidence">
         <h3>${t.evidenceTitle}</h3>
@@ -1701,6 +1732,40 @@ document.addEventListener("DOMContentLoaded", () => {
       </div>
     `;
 
+    const deviationHtml = `
+      <div class="deviation-scale">
+        <div class="deviation-title">${t.deviationScaleTitle}</div>
+
+        <div class="deviation-bar" data-param="HR">
+          <div class="deviation-label">${t.deviationLabelHR}</div>
+          <div class="deviation-track">
+            <div class="deviation-fill" id="dev-HR"></div>
+          </div>
+        </div>
+
+        <div class="deviation-bar" data-param="QTc">
+          <div class="deviation-label">${t.deviationLabelQTc}</div>
+          <div class="deviation-track">
+            <div class="deviation-fill" id="dev-QTc"></div>
+          </div>
+        </div>
+
+        <div class="deviation-bar" data-param="Axis">
+          <div class="deviation-label">${t.deviationLabelAxis}</div>
+          <div class="deviation-track">
+            <div class="deviation-fill" id="dev-Axis"></div>
+          </div>
+        </div>
+
+        <div class="deviation-bar" data-param="HRV">
+          <div class="deviation-label">${t.deviationLabelHRV}</div>
+          <div class="deviation-track">
+            <div class="deviation-fill" id="dev-HRV"></div>
+          </div>
+        </div>
+      </div>
+    `;
+
     const morphText =
       morph.label === "high"
         ? t.morphHigh
@@ -1745,12 +1810,25 @@ document.addEventListener("DOMContentLoaded", () => {
         </div>
         ${evidenceHtml}
         ${deltaHtml}
+        ${deviationHtml}
         ${secondaryHtml}
         <p style="font-size:12px; color: var(--text-muted); margin-top:4px;">
           ${t.hint}
         </p>
       </div>
     `;
+
+    const setDeviationFill = (id, value) => {
+      const el = container.querySelector(`#${id}`);
+      if (!el) return;
+      el.style.width = `${value}%`;
+      el.setAttribute("data-tip", `${value}/100`);
+    };
+
+    setDeviationFill("dev-HR", devHR);
+    setDeviationFill("dev-QTc", devQTc);
+    setDeviationFill("dev-Axis", devAxis);
+    setDeviationFill("dev-HRV", devHRV);
   }
 
   function renderLiveEcgView(container, lang) {
