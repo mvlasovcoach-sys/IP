@@ -72,23 +72,26 @@ function generateTemplateBeat(numSamples, noiseLevel = 0.006) {
 }
 
 const numSamples = 250 * 22; // 22 seconds @ 250 Hz
-const baseChannel = generateSyntheticEcg(numSamples, 0.02);
+const lead2 = generateSyntheticEcg(numSamples, 0.02);
+const lead1 = lead2.map((v, i) => v * 0.95 + 0.01 * Math.sin(i / 60));
+const lead3 = lead2.map((v, i) => v - lead1[i]);
+const aVR = lead1.map((v, i) => -0.5 * (v + lead2[i]));
+const aVL = lead1.map((v, i) => v - 0.5 * lead2[i]);
+const aVF = lead2.map((v, i) => v - 0.5 * lead1[i]);
+const v1 = lead2.map((v, i) => v * 1.1 - 0.02 * Math.cos(i / 45));
+const baseChannel = lead2;
 
 // eslint-disable-next-line no-undef
 ecgDemoData = {
   sampleRateHz: 250,
   channels: [
-    { id: "ch1", label: "Lead I", values: baseChannel },
-    {
-      id: "ch2",
-      label: "Lead II",
-      values: baseChannel.map((v, i) => v * 1.05 + 0.02 * Math.sin(i / 48))
-    },
-    {
-      id: "ch3",
-      label: "Lead V1",
-      values: baseChannel.map((v, i) => v * 0.92 - 0.015 * Math.cos(i / 72))
-    }
+    { id: "I", label: "Lead I", values: lead1 },
+    { id: "II", label: "Lead II", values: lead2 },
+    { id: "III", label: "Lead III", values: lead3 },
+    { id: "aVR", label: "aVR", values: aVR },
+    { id: "aVL", label: "aVL", values: aVL },
+    { id: "aVF", label: "aVF", values: aVF },
+    { id: "V1", label: "V1", values: v1 }
   ],
   leads12: [
     { id: "I", label: "Lead I", values: baseChannel, confidence: 0.94 },
