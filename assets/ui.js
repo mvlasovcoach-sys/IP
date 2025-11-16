@@ -164,6 +164,42 @@ const translations = {
       title: "Why the Digital Heart Profile is useful",
       subtitle:
         "This section shows which practical problems the Digital Heart Profile solves and how it improves the use of ECG data.",
+      prereqButton: "Why we built the Digital Heart Profile",
+      prereqPanelTitle: "Prerequisites",
+      prereqIntro:
+        "This section explains why building a Digital Heart Profile required changing the device architecture, increasing the number of electrodes, and moving beyond classical ECG norms.",
+      prereqBlocks: [
+        {
+          title: "Single ECG ≠ personal norm",
+          text:
+            "A short ECG snapshot only compares a person to population norms. It cannot show what is normal for this specific individual."
+        },
+        {
+          title: "Comparison with textbook norms produces false conclusions",
+          text:
+            "Intervals, morphology, axis and HRV vary strongly between individuals. Many 'abnormalities' are simply personal physiology. A personal baseline is required."
+        },
+        {
+          title: "Previous hardware had only 3 channels",
+          text:
+            "Earlier device versions included only 3 ECG channels, which was not enough to analyse morphology, axis or build a stable P–QRS–T median beat."
+        },
+        {
+          title: "Old electrode layout did not follow NEHB / Mason–Likar geometry",
+          text:
+            "With limited electrode placement, spatial information was insufficient for reconstructing chest leads V2–V6 or performing morphological analysis."
+        },
+        {
+          title: "We increased the number of electrodes and channels",
+          text:
+            "We moved to a 5-electrode → 7-lead configuration, enabling accurate frontal leads, a real V1 and reconstruction of V2–V6."
+        },
+        {
+          title: "Digital Profile became feasible",
+          text:
+            "With more channels, correct geometry and quality-gating of windows, the system can now build a stable personal Digital Heart Profile."
+        }
+      ],
       tableHeaders: {
         problem: "Problem in classical ECG / monitoring",
         solution: "How the Digital Heart Profile solves it",
@@ -410,6 +446,42 @@ const translations = {
       title: "Почему цифровой профиль сердца важен",
       subtitle:
         "Этот раздел показывает, какие практические задачи решает цифровой профиль и чем он улучшает использование данных ЭКГ.",
+      prereqButton: "Зачем мы создали цифровой профиль сердца",
+      prereqPanelTitle: "Предпосылки",
+      prereqIntro:
+        "Этот раздел показывает, почему для создания цифрового профиля сердца потребовалось изменить архитектуру устройства, увеличить число электродов и выйти за рамки сравнения только с эталоном.",
+      prereqBlocks: [
+        {
+          title: "Разовая ЭКГ ≠ персональная норма",
+          text:
+            "Короткая ЭКГ сравнивает человека только с учебной нормой. Она не показывает, что является нормой именно для этого человека."
+        },
+        {
+          title: "Сравнение с эталоном даёт много ложных выводов",
+          text:
+            "Интервалы, морфология, ось и ВСР сильно различаются у разных людей. Многие 'отклонения' — это личная физиология. Нужна персональная база."
+        },
+        {
+          title: "Старое устройство имело только 3 канала",
+          text:
+            "На 3 каналах невозможно анализировать морфологию, ось и построить стабильный медианный комплекс P–QRS–T."
+        },
+        {
+          title: "Прежнее расположение электродов не соответствовало NEHB / Mason–Likar",
+          text:
+            "С таким расположением недостаточно пространственной информации для восстановления V2–V6 и анализа формы сигнала."
+        },
+        {
+          title: "Мы увеличили количество электродов и каналов",
+          text:
+            "Переход на конфигурацию 5 электродов → 7 каналов дал возможность снимать фронтальные отведения, реальное V1 и восстанавливать V2–V6."
+        },
+        {
+          title: "Цифровой профиль стал возможен",
+          text:
+            "Благодаря расширенной геометрии и отбору качественных окон стало возможно строить устойчивый персональный цифровой профиль."
+        }
+      ],
       tableHeaders: {
         problem: "Проблема традиционной ЭКГ / мониторинга",
         solution: "Как это решает цифровой профиль",
@@ -655,6 +727,42 @@ const translations = {
       title: "Waarom het Digital Heart Profile nuttig is",
       subtitle:
         "In dit gedeelte zie je welke praktische problemen het profiel oplost en hoe het het gebruik van ECG-data verbetert.",
+      prereqButton: "Waarom we het Digital Heart Profile hebben gebouwd",
+      prereqPanelTitle: "Randvoorwaarden",
+      prereqIntro:
+        "Dit onderdeel legt uit waarom het bouwen van een Digital Heart Profile vroeg om een aangepaste apparaatarchitectuur, meer elektroden en het loslaten van klassieke ECG-normen.",
+      prereqBlocks: [
+        {
+          title: "Eén ECG ≠ persoonlijke norm",
+          text:
+            "Een kort ECG-moment vergelijkt iemand alleen met populatienormen. Het laat niet zien wat normaal is voor deze persoon."
+        },
+        {
+          title: "Vergelijking met boeknormen geeft valse conclusies",
+          text:
+            "Intervallen, morfologie, as en HRV verschillen sterk per individu. Veel 'afwijkingen' zijn gewoon persoonlijke fysiologie. Er is een persoonlijke basislijn nodig."
+        },
+        {
+          title: "Vorige hardware had maar 3 kanalen",
+          text:
+            "Eerdere apparaatversies hadden slechts 3 ECG-kanalen, onvoldoende voor analyse van morfologie, as of het bouwen van een stabiele P–QRS–T-median beat."
+        },
+        {
+          title: "Oude elektrodenlayout volgde NEHB / Mason–Likar niet",
+          text:
+            "Met de beperkte plaatsing was er te weinig ruimtelijke informatie om de borstafleidingen V2–V6 te reconstrueren of morfologie te analyseren."
+        },
+        {
+          title: "We verhoogden het aantal elektroden en kanalen",
+          text:
+            "We stapten over op een configuratie met 5 elektroden → 7 kanalen, waardoor nauwkeurige frontale afleidingen, een echte V1 en reconstructie van V2–V6 mogelijk werden."
+        },
+        {
+          title: "Digitaal profiel werd haalbaar",
+          text:
+            "Met meer kanalen, de juiste geometrie en kwaliteitsselectie kan het systeem nu een stabiel persoonlijk Digital Heart Profile opbouwen."
+        }
+      ],
       tableHeaders: {
         problem: "Probleem in klassieke ECG / monitoring",
         solution: "Hoe het profiel dit oplost",
@@ -852,37 +960,41 @@ function computeParamConfidence(evidenceRest, evidenceLoad, morphSim) {
   return "medium";
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  let currentLang = "en";
-  let currentTab = "live";
-  let liveActiveWindowIndex = 0;
-  let liveWindowTimer = null;
+  document.addEventListener("DOMContentLoaded", () => {
+    let currentLang = "en";
+    let currentTab = "live";
+    let liveActiveWindowIndex = 0;
+    let liveWindowTimer = null;
 
-  const tabButtons = document.querySelectorAll(".tab-btn");
-  const langButtons = document.querySelectorAll(".lang-btn");
-  const tabContent = document.getElementById("tab-content");
-  const footerDisclaimer = document.getElementById("footer-disclaimer");
+    const tabButtons = document.querySelectorAll(".tab-btn");
+    const langButtons = document.querySelectorAll(".lang-btn");
+    const tabContent = document.getElementById("tab-content");
+    const footerDisclaimer = document.getElementById("footer-disclaimer");
+    const prereqOverlay = document.getElementById("prereq-panel-overlay");
+    const prereqCloseButton = document.getElementById("prereq-panel-close");
 
-  function setActiveTab(tab) {
-    currentTab = tab;
-    tabButtons.forEach((btn) => {
-      btn.classList.toggle("active", btn.dataset.tab === tab);
-    });
-    if (tab !== "quality") {
-      closeQualityDrawer();
+    function setActiveTab(tab) {
+      currentTab = tab;
+      tabButtons.forEach((btn) => {
+        btn.classList.toggle("active", btn.dataset.tab === tab);
+      });
+      if (tab !== "quality") {
+        closeQualityDrawer();
+      }
+      closePrereqPanel();
+      renderTabContent();
     }
-    renderTabContent();
-  }
 
-  function setActiveLanguage(lang) {
-    currentLang = lang;
-    langButtons.forEach((btn) => {
-      btn.classList.toggle("active", btn.dataset.lang === lang);
-    });
-    updateTabLabels();
-    renderTabContent();
-    renderFooter();
-  }
+    function setActiveLanguage(lang) {
+      currentLang = lang;
+      langButtons.forEach((btn) => {
+        btn.classList.toggle("active", btn.dataset.lang === lang);
+      });
+      closePrereqPanel();
+      updateTabLabels();
+      renderTabContent();
+      renderFooter();
+    }
 
   function getTabLabel(tabId) {
     const langTabs = translations[currentLang]?.tabs || {};
@@ -1240,6 +1352,55 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!btn) return;
     btn.classList.toggle("demo-button-pulse", !isQualityDrawerOpen);
     btn.classList.toggle("is-active", isQualityDrawerOpen);
+  }
+
+  function openPrereqPanel(lang) {
+    const overlay = document.getElementById("prereq-panel-overlay");
+    const panel = document.getElementById("prereq-panel");
+    const titleEl = document.getElementById("prereq-panel-title");
+    const contentEl = document.getElementById("prereq-panel-content");
+    if (!overlay || !panel || !titleEl || !contentEl) {
+      return;
+    }
+
+    const t = translations[lang]?.benefits || translations.en?.benefits || {};
+    const blocks = (t.prereqBlocks || [])
+      .map(
+        (b) => `
+        <div class="slide-block">
+          <div class="slide-block-title">${b.title}</div>
+          <div class="slide-block-text">${b.text}</div>
+        </div>
+      `
+      )
+      .join("");
+
+    titleEl.textContent = t.prereqPanelTitle || "";
+    const introHtml = t.prereqIntro
+      ? `<div class="slide-block-intro">${t.prereqIntro}</div>`
+      : "";
+    contentEl.innerHTML = `${introHtml}${blocks}`;
+
+    panel.classList.remove("open");
+    overlay.classList.remove("hidden");
+    panel.classList.remove("hidden");
+    requestAnimationFrame(() => {
+      panel.classList.add("open");
+    });
+  }
+
+  function closePrereqPanel() {
+    const overlay = document.getElementById("prereq-panel-overlay");
+    const panel = document.getElementById("prereq-panel");
+    if (!overlay || !panel || panel.classList.contains("hidden")) {
+      return;
+    }
+
+    panel.classList.remove("open");
+    setTimeout(() => {
+      panel.classList.add("hidden");
+      overlay.classList.add("hidden");
+    }, 250);
   }
 
   function buildWindowsStrip(windows) {
@@ -2157,9 +2318,18 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
+    const prereqButtonHtml = t.prereqButton
+      ? `
+    <button id="prereq-button" class="demo-button demo-button-primary demo-button-pulse">
+      ${t.prereqButton}
+    </button>
+  `
+      : "";
+
     const headerHtml = `
       <h1 class="tab-title">${t.title}</h1>
       <p class="tab-description">${t.subtitle}</p>
+      ${prereqButtonHtml}
     `;
 
     const rowsHtml = (t.rows || [])
@@ -2192,6 +2362,11 @@ document.addEventListener("DOMContentLoaded", () => {
     `;
 
     container.innerHTML = headerHtml + tableHtml;
+
+    const prereqButton = document.getElementById("prereq-button");
+    if (prereqButton) {
+      prereqButton.addEventListener("click", () => openPrereqPanel(lang));
+    }
   }
 
   function renderLiveEcgView(container, lang) {
@@ -2300,6 +2475,14 @@ document.addEventListener("DOMContentLoaded", () => {
       setActiveLanguage(btn.dataset.lang);
     });
   });
+
+  if (prereqCloseButton) {
+    prereqCloseButton.addEventListener("click", () => closePrereqPanel());
+  }
+
+  if (prereqOverlay) {
+    prereqOverlay.addEventListener("click", () => closePrereqPanel());
+  }
 
   updateTabLabels();
   renderTabContent();
