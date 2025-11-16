@@ -31,7 +31,27 @@ const translations = {
       profile: {
         title: "Digital Heart Profile – aggregated metrics",
         description:
-          "This view will visualise the Digital Heart Profile: median P–QRS–T complexes, intervals (PR, QRS, QT, QTc), electrical axis and HRV metrics."
+          "This view visualises the Digital Heart Profile: median P–QRS–T complexes, intervals (PR, QRS, QT, QTc), electrical axis and HRV metrics.",
+
+        metricsTitle: "Key cardiac metrics",
+        metricHr: "Heart rate",
+        metricPr: "PR interval",
+        metricQrs: "QRS duration",
+        metricQt: "QT interval",
+        metricQtc: "QTc (corrected QT)",
+        metricAxis: "Electrical axis (frontal plane)",
+        metricSdnn: "HRV SDNN",
+        metricRmssd: "HRV RMSSD",
+
+        qualityTitle: "Profile quality map",
+        qualityHint:
+          "Only high-quality (green) windows are used to build the profile. Yellow and red windows are excluded or down-weighted.",
+
+        metaTitle: "Recording summary",
+        metaDuration: "Duration",
+        metaWindowsUsed: "Windows used",
+        metaGeometry: "Geometry ID",
+        metaVersion: "Profile version"
       },
       compare: {
         title: "Compare Profiles – rest vs after load",
@@ -79,7 +99,27 @@ const translations = {
       profile: {
         title: "Цифровой профиль сердца – агрегированные параметры",
         description:
-          "Здесь будет визуализирован Цифровой Профиль Сердца: медианные комплексы P–QRS–T, интервалы (PR, QRS, QT, QTc), электрическая ось и показатели вариабельности ритма."
+          "Здесь визуализируется Цифровой Профиль Сердца: медианные комплексы P–QRS–T, интервалы (PR, QRS, QT, QTc), электрическая ось и показатели вариабельности ритма.",
+
+        metricsTitle: "Ключевые кардиопараметры",
+        metricHr: "Частота сердечных сокращений",
+        metricPr: "Интервал PR",
+        metricQrs: "Длительность QRS",
+        metricQt: "Интервал QT",
+        metricQtc: "QTc (корректированный QT)",
+        metricAxis: "Электрическая ось (фронтальная плоскость)",
+        metricSdnn: "HRV SDNN",
+        metricRmssd: "HRV RMSSD",
+
+        qualityTitle: "Карта качества профиля",
+        qualityHint:
+          "В профиль входят только окна высокого качества (зелёные). Жёлтые и красные окна исключены или имеют меньший вес.",
+
+        metaTitle: "Сводка записи",
+        metaDuration: "Длительность",
+        metaWindowsUsed: "Использованные окна",
+        metaGeometry: "ID геометрии",
+        metaVersion: "Версия профиля"
       },
       compare: {
         title: "Сравнение профилей – покой и нагрузка",
@@ -127,7 +167,27 @@ const translations = {
       profile: {
         title: "Digitaal Hartprofiel – geaggregeerde parameters",
         description:
-          "Deze weergave visualiseert het Digitale Hartprofiel: mediane P–QRS–T-complexen, intervallen (PR, QRS, QT, QTc), elektrische as en HRV-metingen."
+          "Deze weergave visualiseert het Digitale Hartprofiel: mediane P–QRS–T-complexen, intervallen (PR, QRS, QT, QTc), elektrische as en HRV-metingen.",
+
+        metricsTitle: "Belangrijkste cardiale metrics",
+        metricHr: "Hartritme",
+        metricPr: "PR-interval",
+        metricQrs: "QRS-duur",
+        metricQt: "QT-interval",
+        metricQtc: "QTc (gecorrigeerde QT)",
+        metricAxis: "Elektrische as (frontaal vlak)",
+        metricSdnn: "HRV SDNN",
+        metricRmssd: "HRV RMSSD",
+
+        qualityTitle: "Kwaliteitskaart van profiel",
+        qualityHint:
+          "Alleen ramen met hoge kwaliteit (groen) worden gebruikt om het profiel op te bouwen. Gele en rode ramen worden uitgesloten of lager gewogen.",
+
+        metaTitle: "Samenvatting van de opname",
+        metaDuration: "Duur",
+        metaWindowsUsed: "Gebruikte ramen",
+        metaGeometry: "Geometry-ID",
+        metaVersion: "Profielversie"
       },
       compare: {
         title: "Profielen vergelijken – rust versus belasting",
@@ -196,12 +256,14 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
+    if (currentTab === "profile") {
+      renderProfileView(tabContent, currentLang);
+      return;
+    }
+
     let title = "";
     let description = "";
-    if (currentTab === "profile") {
-      title = t.tabs.profile.title;
-      description = t.tabs.profile.description;
-    } else if (currentTab === "compare") {
+    if (currentTab === "compare") {
       title = t.tabs.compare.title;
       description = t.tabs.compare.description;
     }
@@ -277,6 +339,36 @@ document.addEventListener("DOMContentLoaded", () => {
           fill="none"
           stroke="#22c55e"
           stroke-width="1.2"
+          stroke-linejoin="round"
+          stroke-linecap="round"
+        />
+      </svg>
+    `;
+  }
+
+  function createTemplateBeatSvg(values) {
+    const width = 500;
+    const height = 120;
+
+    const min = Math.min(...values);
+    const max = Math.max(...values);
+    const range = max - min || 1;
+
+    const points = values
+      .map((v, i) => {
+        const x = (i / (values.length - 1 || 1)) * width;
+        const y = height - ((v - min) / range) * (height - 8) - 4;
+        return `${x.toFixed(1)},${y.toFixed(1)}`;
+      })
+      .join(" ");
+
+    return `
+      <svg viewBox="0 0 ${width} ${height}" preserveAspectRatio="none">
+        <polyline
+          points="${points}"
+          fill="none"
+          stroke="#22c55e"
+          stroke-width="2"
           stroke-linejoin="round"
           stroke-linecap="round"
         />
@@ -405,6 +497,123 @@ document.addEventListener("DOMContentLoaded", () => {
         </div>
         <div class="leads-legend">
           ${legendLines || t.lowConfidenceHint || ""}
+        </div>
+      </div>
+    `;
+  }
+
+  function renderProfileView(container, lang) {
+    const t = translations[lang].tabs.profile;
+    const profile = ecgDemoData.profiles?.rest;
+
+    if (!profile) {
+      container.innerHTML = `<p>No profile data available.</p>`;
+      return;
+    }
+
+    const beatSvg = createTemplateBeatSvg(profile.templateBeat.values || []);
+    const m = profile.intervals || {};
+    const hrv = profile.hrv || {};
+    const axis = profile.axis || {};
+    const q = profile.qualityMap || {};
+    const meta = profile.meta || {};
+
+    const durationMinutes = Math.round((meta.durationSeconds || 0) / 60);
+
+    const metricsHtml = `
+      <div class="profile-metric-grid">
+        <div class="profile-metric-card">
+          <div class="profile-metric-label">${t.metricHr}</div>
+          <div class="profile-metric-value">${m.hrBpm} bpm</div>
+        </div>
+        <div class="profile-metric-card">
+          <div class="profile-metric-label">${t.metricPr}</div>
+          <div class="profile-metric-value">${m.prMs} ms</div>
+        </div>
+        <div class="profile-metric-card">
+          <div class="profile-metric-label">${t.metricQrs}</div>
+          <div class="profile-metric-value">${m.qrsMs} ms</div>
+        </div>
+        <div class="profile-metric-card">
+          <div class="profile-metric-label">${t.metricQt}</div>
+          <div class="profile-metric-value">${m.qtMs} ms</div>
+        </div>
+        <div class="profile-metric-card">
+          <div class="profile-metric-label">${t.metricQtc}</div>
+          <div class="profile-metric-value">${m.qtcMs} ms</div>
+        </div>
+        <div class="profile-metric-card">
+          <div class="profile-metric-label">${t.metricAxis}</div>
+          <div class="profile-metric-value">${axis.frontalPlaneDeg}°</div>
+        </div>
+        <div class="profile-metric-card">
+          <div class="profile-metric-label">${t.metricSdnn}</div>
+          <div class="profile-metric-value">${hrv.sdnnMs} ms</div>
+        </div>
+        <div class="profile-metric-card">
+          <div class="profile-metric-label">${t.metricRmssd}</div>
+          <div class="profile-metric-value">${hrv.rmssdMs} ms</div>
+        </div>
+      </div>
+    `;
+
+    const qualityStripHtml = `
+      <div class="profile-quality-strip">
+        <div class="profile-quality-segment green" style="flex-basis: ${q.greenPct}%;"></div>
+        <div class="profile-quality-segment yellow" style="flex-basis: ${q.yellowPct}%;"></div>
+        <div class="profile-quality-segment red" style="flex-basis: ${q.redPct}%;"></div>
+      </div>
+    `;
+
+    const metaHtml = `
+      <div class="profile-meta">
+        <div class="profile-meta-row">
+          <span class="profile-meta-label">${t.metaDuration}:</span>
+          <span>${durationMinutes} min</span>
+        </div>
+        <div class="profile-meta-row">
+          <span class="profile-meta-label">${t.metaWindowsUsed}:</span>
+          <span>${meta.windowsUsed}</span>
+        </div>
+        <div class="profile-meta-row">
+          <span class="profile-meta-label">${t.metaGeometry}:</span>
+          <span>${meta.geometryId}</span>
+        </div>
+        <div class="profile-meta-row">
+          <span class="profile-meta-label">${t.metaVersion}:</span>
+          <span>${meta.version}</span>
+        </div>
+      </div>
+    `;
+
+    container.innerHTML = `
+      <h1 class="tab-title">${t.title}</h1>
+      <p class="tab-description">${t.description}</p>
+
+      <div class="profile-layout">
+        <div class="profile-main">
+          <div class="profile-left">
+            <div class="profile-template-card">
+              <h3 class="profile-template-title">${profile.label}</h3>
+              <div class="profile-template-plot">
+                ${beatSvg}
+              </div>
+            </div>
+          </div>
+          <div class="profile-right">
+            <h3>${t.metricsTitle}</h3>
+            ${metricsHtml}
+            <h4 style="margin-top:16px;">${t.metaTitle}</h4>
+            ${metaHtml}
+          </div>
+        </div>
+
+        <div class="profile-quality">
+          <div style="font-size:13px; margin-bottom:4px;">${t.qualityTitle}</div>
+          ${qualityStripHtml}
+          <div style="font-size:12px; margin-top:6px; color: var(--text-muted);">
+            ${t.qualityHint}
+          </div>
         </div>
       </div>
     `;
