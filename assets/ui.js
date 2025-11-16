@@ -4,7 +4,11 @@ const translations = {
       live: {
         title: "Live ECG – multi-channel stream",
         description:
-          "This view simulates a live multi-channel ECG feed. The signal is segmented into 2-second windows and will later be color-coded by quality (green/yellow/red)."
+          "This view simulates a live multi-channel ECG feed. The signal is segmented into 2-second windows and will later be color-coded by quality (green/yellow/red).",
+        segmentationToggleOn: "Hide 2-second windows",
+        segmentationToggleOff: "Show 2-second windows",
+        segmentationHint:
+          "Vertical lines and colored bands show how the ECG is segmented into 2-second windows for quality analysis."
       },
       quality: {
         title: "Signal Quality – green / yellow / red windows",
@@ -83,7 +87,11 @@ const translations = {
       live: {
         title: "Онлайн ЭКГ – многоканальный поток",
         description:
-          "Здесь имитируется поток многоканального ЭКГ. Сигнал разбивается на 2-секундные окна, которые в дальнейшем будут подсвечиваться по качеству (зелёный/жёлтый/красный)."
+          "Здесь имитируется поток многоканального ЭКГ. Сигнал разбивается на 2-секундные окна, которые в дальнейшем будут подсвечиваться по качеству (зелёный/жёлтый/красный).",
+        segmentationToggleOn: "Скрыть 2-секундные окна",
+        segmentationToggleOff: "Показать 2-секундные окна",
+        segmentationHint:
+          "Вертикальные линии и цветные полосы показывают, как ЭКГ делится на 2-секундные окна для анализа качества."
       },
       quality: {
         title: "Качество сигнала – зелёные / жёлтые / красные окна",
@@ -162,7 +170,11 @@ const translations = {
       live: {
         title: "Live ECG – meerkanaals signaal",
         description:
-          "Deze weergave simuleert een live meerkanaals ECG-signaal. Het signaal wordt opgesplitst in vensters van 2 seconden, die later op kwaliteit worden ingekleurd (groen/geel/rood)."
+          "Deze weergave simuleert een live meerkanaals ECG-signaal. Het signaal wordt opgesplitst in vensters van 2 seconden, die later op kwaliteit worden ingekleurd (groen/geel/rood).",
+        segmentationToggleOn: "2-seconden vensters verbergen",
+        segmentationToggleOff: "2-seconden vensters tonen",
+        segmentationHint:
+          "Verticale lijnen en gekleurde banden tonen hoe het ECG in 2-seconden vensters wordt opgedeeld voor kwaliteitsanalyse."
       },
       quality: {
         title: "Signaalkwaliteit – groene / gele / rode vensters",
@@ -237,6 +249,8 @@ const translations = {
     }
   }
 };
+
+let liveSegmentationEnabled = false;
 
 document.addEventListener("DOMContentLoaded", () => {
   let currentLang = "en";
@@ -425,6 +439,66 @@ document.addEventListener("DOMContentLoaded", () => {
     const items = strip.querySelectorAll(".live-ecg-window");
     items.forEach((el, idx) => {
       el.classList.toggle("active", idx === liveActiveWindowIndex);
+    });
+  }
+
+  function setupSegmentationToggle() {
+    const btn = document.getElementById("segmentation-toggle");
+    if (!btn) return;
+    btn.addEventListener("click", () => {
+      liveSegmentationEnabled = !liveSegmentationEnabled;
+      renderTabContent();
+    });
+  }
+
+  function renderSegmentationOverlay() {
+    const overlays = document.querySelectorAll(".live-ecg-overlay");
+    if (!overlays.length) return;
+
+    if (!liveSegmentationEnabled) {
+      overlays.forEach((ov) => (ov.innerHTML = ""));
+      return;
+    }
+
+    const sampleRate = ecgDemoData.sampleRateHz || 250;
+    const durationSeconds = 4;
+    const sliceLength = sampleRate * durationSeconds;
+    const totalSamples = ecgDemoData.channels[0].values.length;
+    const sliceStart = Math.max(0, totalSamples - sliceLength);
+    const sliceEnd = totalSamples;
+
+    const bands = [];
+
+    ecgDemoData.windows.forEach((w) => {
+      const wStart = w.startIndex;
+      const wEnd = w.endIndex;
+      if (wEnd <= sliceStart || wStart >= sliceEnd) return;
+
+      const visibleStart = Math.max(wStart, sliceStart);
+      const visibleEnd = Math.min(wEnd, sliceEnd);
+
+      const startPct = ((visibleStart - sliceStart) / sliceLength) * 100;
+      const endPct = ((visibleEnd - sliceStart) / sliceLength) * 100;
+
+      bands.push({
+        quality: w.quality,
+        startPct,
+        endPct
+      });
+    });
+
+    const overlayHtml = bands
+      .map((b) => {
+        return `
+        <div class="live-ecg-seg-band ${b.quality}"
+             style="left: ${b.startPct}%; width: ${b.endPct - b.startPct}%;"></div>
+        <div class="live-ecg-seg-line" style="left: ${b.startPct}%;"></div>
+      `;
+      })
+      .join("");
+
+    overlays.forEach((ov) => {
+      ov.innerHTML = overlayHtml;
     });
   }
 
@@ -794,11 +868,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function renderLiveEcgView(container, lang) {
     const t = translations[lang];
+    const liveT = t.tabs.live;
     const channels = ecgDemoData.channels;
     const windows = ecgDemoData.windows;
 
-    const title = t.tabs.live.title;
-    const description = t.tabs.live.description;
+    const toggleLabel = liveSegmentationEnabled
+      ? liveT.segmentationToggleOn
+      : liveT.segmentationToggleOff;
 
     const windowStripHtml = buildWindowsStrip(windows);
     const channelsHtml = channels
@@ -810,15 +886,29 @@ document.addEventListener("DOMContentLoaded", () => {
         return `
           <div class="live-ecg-channel">
             <div class="live-ecg-channel-label">${ch.label}</div>
-            <div class="live-ecg-channel-plot">${svg}</div>
+            <div class="live-ecg-channel-plot">
+              <div class="live-ecg-channel-plot-inner" data-channel-id="${ch.id}">
+                ${svg}
+                <div class="live-ecg-overlay"></div>
+              </div>
+            </div>
           </div>
         `;
       })
       .join("");
 
     container.innerHTML = `
-      <h1 class="tab-title">${title}</h1>
-      <p class="tab-description">${description}</p>
+      <h1 class="tab-title">${liveT.title}</h1>
+      <p class="tab-description">${liveT.description}</p>
+
+      <div class="live-ecg-toolbar">
+        <button id="segmentation-toggle" class="segmentation-toggle-btn ${
+          liveSegmentationEnabled ? "active" : ""
+        }">
+          ${toggleLabel}
+        </button>
+        <span>${liveT.segmentationHint}</span>
+      </div>
 
       <div class="live-ecg-layout">
         <div class="live-ecg-top">
@@ -856,6 +946,9 @@ document.addEventListener("DOMContentLoaded", () => {
       liveActiveWindowIndex = (liveActiveWindowIndex + 1) % (windows.length || 1);
       highlightActiveWindow();
     }, 900);
+
+    setupSegmentationToggle();
+    renderSegmentationOverlay();
   }
 
   function renderFooter() {
