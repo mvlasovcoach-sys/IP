@@ -1252,6 +1252,43 @@ body {
   margin-bottom: 4px;
 }
 
+.benefits-table-wrapper {
+  margin-top: 16px;
+  overflow-x: auto;
+}
+
+.benefits-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  background-color: #fff;
+}
+
+.benefits-table thead th {
+  text-align: left;
+  padding: 10px;
+  border-bottom: 1px solid var(--border-soft);
+  background-color: #f9fafb;
+  font-weight: 600;
+}
+
+.benefits-table tbody tr:nth-child(odd) {
+  background-color: #fcfdff;
+}
+
+.benefits-cell {
+  vertical-align: top;
+  padding: 10px;
+  border-bottom: 1px solid var(--border-soft);
+  line-height: 1.5;
+}
+
+.benefits-problem,
+.benefits-solution,
+.benefits-value {
+  width: 33%;
+}
+
 @media (max-width: 768px) {
   .app-header {
     flex-direction: column;

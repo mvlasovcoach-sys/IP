@@ -4,6 +4,7 @@ const translations = {
   en: {
     tabs: {
       live: {
+        label: "Live ECG",
         title: "Live ECG – multi-channel stream",
         description:
           "This view simulates a live multi-channel ECG feed. The signal is segmented into 2-second windows and will later be color-coded by quality (green/yellow/red).",
@@ -13,6 +14,7 @@ const translations = {
           "Vertical lines and colored bands show how the ECG is segmented into 2-second windows for quality analysis."
       },
       quality: {
+        label: "Signal Quality",
         title: "Signal Quality – green / yellow / red windows",
         description:
           "This view will show how each 2-second window is classified by quality based on noise, drift, motion artefacts and other metrics.",
@@ -24,6 +26,7 @@ const translations = {
         distributionTitle: "Window-by-window quality distribution"
       },
       leads: {
+        label: "12-Lead View",
         title: "12-Lead View – reconstructed ECG layout",
         description:
           "This view presents a reconstructed 12-lead ECG using the fixed geometry of the textile electrodes and per-lead confidence scores.",
@@ -46,6 +49,7 @@ const translations = {
           "Hover V2–V6 to see which recorded leads contribute to each reconstructed lead."
       },
       profile: {
+        label: "Digital Heart Profile",
         title: "Digital Heart Profile – aggregated metrics",
         description:
           "This view visualises the Digital Heart Profile: median P–QRS–T complexes, intervals (PR, QRS, QT, QTc), electrical axis and HRV metrics.",
@@ -90,6 +94,7 @@ const translations = {
         metaVersion: "Profile version"
       },
       compare: {
+        label: "Compare",
         title: "Compare Profiles – rest vs after load",
         description:
           "This view compares two Digital Heart Profiles (for example, at rest and after load) and highlights changes in heart rate, intervals, electrical axis and HRV.",
@@ -149,7 +154,53 @@ const translations = {
         confidenceLow: "Based on a limited amount of data",
         hint:
           "We always compare the patient with their own baseline. The resting profile serves as a stable reference; the post-load profile shows how the cardiovascular system responds."
+      },
+      benefits: {
+        label: "Profile Benefits"
       }
+    },
+    benefits: {
+      label: "Profile Benefits",
+      title: "Why the Digital Heart Profile is useful",
+      subtitle:
+        "This section shows which practical problems the Digital Heart Profile solves and how it improves the use of ECG data.",
+      tableHeaders: {
+        problem: "Problem in classical ECG / monitoring",
+        solution: "How the Digital Heart Profile solves it",
+        value: "Practical value"
+      },
+      rows: [
+        {
+          problem: "A single ECG shows only one short moment and is highly affected by artefacts.",
+          solution: "The profile aggregates hundreds of clean 2-second windows into a stable median complex.",
+          value: "You see a clean, noise-free 'passport' of the heart instead of a random fragment."
+        },
+        {
+          problem: "Comparison is done only to population norms, without taking individual physiology into account.",
+          solution: "The profile builds a personal baseline of intervals, axis, morphology and heart rate variability.",
+          value: "You understand what is normal for this person, not just 'in general'."
+        },
+        {
+          problem: "Trends and gradual drifts are hard to detect from separate ECG recordings.",
+          solution: "Profiles can be compared over days, weeks or months.",
+          value: "Meaningful changes are detected earlier."
+        },
+        {
+          problem: "There is no clear metric for data reliability.",
+          solution: "Quality gating (green / yellow / red windows) and confidence for reconstructed leads.",
+          value: "It is clear how trustworthy the numerical results are."
+        },
+        {
+          problem: "Holter recordings contain too much raw data and are time-consuming to parse.",
+          solution: "The profile compresses thousands of beats into a compact set of key parameters.",
+          value: "Interpretation becomes faster and easier."
+        },
+        {
+          problem: "Physiological adaptation (load, stress) is difficult to separate from real deviations.",
+          solution: "Comparison is done against the personal baseline and can take context into account.",
+          value: "Normal adaptive reactions are not confused with problems."
+        }
+      ]
     },
     signalQuality: {
       infoButton: "How quality is calculated",
@@ -199,6 +250,7 @@ const translations = {
   ru: {
     tabs: {
       live: {
+        label: "Онлайн ЭКГ",
         title: "Онлайн ЭКГ – многоканальный поток",
         description:
           "Здесь имитируется поток многоканального ЭКГ. Сигнал разбивается на 2-секундные окна, которые в дальнейшем будут подсвечиваться по качеству (зелёный/жёлтый/красный).",
@@ -208,6 +260,7 @@ const translations = {
           "Вертикальные линии и цветные полосы показывают, как ЭКГ делится на 2-секундные окна для анализа качества."
       },
       quality: {
+        label: "Качество сигнала",
         title: "Качество сигнала – зелёные / жёлтые / красные окна",
         description:
           "Здесь будет показано, как каждое 2-секундное окно классифицируется по качеству на основе шума, дрейфа, артефактов движения и других метрик.",
@@ -219,6 +272,7 @@ const translations = {
         distributionTitle: "Качество по каждому окну"
       },
       leads: {
+        label: "12-канальный вид",
         title: "12-канальный вид – реконструированное ЭКГ",
         description:
           "Здесь представлен реконструированный 12-канальный вид ЭКГ с учётом фиксированной геометрии текстильных электродов и показателей достоверности по каждому отведению.",
@@ -241,6 +295,7 @@ const translations = {
           "Наведите на V2–V6, чтобы увидеть вклад записанных отведений."
       },
       profile: {
+        label: "Цифровой профиль сердца",
         title: "Цифровой профиль сердца – агрегированные параметры",
         description:
           "Здесь визуализируется Цифровой Профиль Сердца: медианные комплексы P–QRS–T, интервалы (PR, QRS, QT, QTc), электрическая ось и показатели вариабельности ритма.",
@@ -285,6 +340,7 @@ const translations = {
         metaVersion: "Версия профиля"
       },
       compare: {
+        label: "Сравнение",
         title: "Сравнение профилей – покой и нагрузка",
         description:
           "Здесь сравниваются два Цифровых Профиля Сердца (например, в покое и после нагрузки) с выделением изменений ЧСС, интервалов, электрической оси и показателей HRV.",
@@ -344,7 +400,53 @@ const translations = {
         confidenceLow: "Оценка по ограниченному объёму данных",
         hint:
           "Всегда сравниваем пациента только с его базовым уровнем. Профиль покоя — стабильная опора, профиль после нагрузки показывает реакцию сердечно-сосудистой системы."
+      },
+      benefits: {
+        label: "Преимущества профиля"
       }
+    },
+    benefits: {
+      label: "Преимущества профиля",
+      title: "Почему цифровой профиль сердца важен",
+      subtitle:
+        "Этот раздел показывает, какие практические задачи решает цифровой профиль и чем он улучшает использование данных ЭКГ.",
+      tableHeaders: {
+        problem: "Проблема традиционной ЭКГ / мониторинга",
+        solution: "Как это решает цифровой профиль",
+        value: "Практическая ценность"
+      },
+      rows: [
+        {
+          problem: "Обычная ЭКГ показывает только один короткий момент и сильно зависит от артефактов.",
+          solution: "Профиль агрегирует сотни чистых 2-секундных окон в стабильный медианный комплекс.",
+          value: "Отображается чистый «паспорт» сердца, а не случайный фрагмент."
+        },
+        {
+          problem: "Сравнение выполняется только с усреднённой нормой и не учитывает индивидуальную физиологию.",
+          solution: "Профиль формирует персональный базовый уровень интервалов, оси, формы комплекса и вариабельности ритма.",
+          value: "Понятно, что является нормой именно для этого человека."
+        },
+        {
+          problem: "Трудно увидеть динамику и постепенные смещения по отдельным ЭКГ.",
+          solution: "Профили позволяют сравнивать состояние по дням, неделям и месяцам.",
+          value: "Значимые изменения фиксируются раньше."
+        },
+        {
+          problem: "Нет явной оценки надёжности данных.",
+          solution: "Используются окна качества (зелёные/жёлтые/красные) и уверенность восстановленных отведений.",
+          value: "Понятно, насколько полученным числам можно доверять."
+        },
+        {
+          problem: "Холтер содержит слишком много необработанных данных и требует много времени на анализ.",
+          solution: "Профиль превращает тысячи комплексов в компактный набор ключевых показателей.",
+          value: "Анализ становится быстрее и проще."
+        },
+        {
+          problem: "Физиологическую адаптацию (нагрузка, стресс) сложно отделить от реальных отклонений.",
+          solution: "Сравнение ведётся с персональным профилем с учётом контекста.",
+          value: "Нормальные реакции не путаются с проблемами."
+        }
+      ]
     },
     signalQuality: {
       infoButton: "Как определяется качество",
@@ -394,6 +496,7 @@ const translations = {
   nl: {
     tabs: {
       live: {
+        label: "Live ECG",
         title: "Live ECG – meerkanaals signaal",
         description:
           "Deze weergave simuleert een live meerkanaals ECG-signaal. Het signaal wordt opgesplitst in vensters van 2 seconden, die later op kwaliteit worden ingekleurd (groen/geel/rood).",
@@ -403,6 +506,7 @@ const translations = {
           "Verticale lijnen en gekleurde banden tonen hoe het ECG in 2-seconden vensters wordt opgedeeld voor kwaliteitsanalyse."
       },
       quality: {
+        label: "Signaalkwaliteit",
         title: "Signaalkwaliteit – groene / gele / rode vensters",
         description:
           "Deze weergave laat zien hoe elk 2-seconden venster wordt geclassificeerd op basis van ruis, baselinedrift, bewegingsartefacten en andere kwaliteitsparameters.",
@@ -414,6 +518,7 @@ const translations = {
         distributionTitle: "Kwaliteit per venster"
       },
       leads: {
+        label: "12-afleidingen",
         title: "12-afleidingen weergave – gereconstrueerd ECG",
         description:
           "Deze weergave toont een gereconstrueerd 12-kanaals ECG met de vaste geometrie van textiele elektroden en een betrouwbaarheidsscore per afleiding.",
@@ -435,6 +540,7 @@ const translations = {
         howComputedHint: "Beweeg over V2–V6 om te zien welke gemeten leads bijdragen."
       },
       profile: {
+        label: "Digitaal profiel",
         title: "Digitaal Hartprofiel – geaggregeerde parameters",
         description:
           "Deze weergave visualiseert het Digitale Hartprofiel: mediane P–QRS–T-complexen, intervallen (PR, QRS, QT, QTc), elektrische as en HRV-metingen.",
@@ -479,6 +585,7 @@ const translations = {
         metaVersion: "Profielversie"
       },
       compare: {
+        label: "Profielen vergelijken",
         title: "Profielen vergelijken – rust versus belasting",
         description:
           "Deze weergave vergelijkt twee Digitale Hartprofielen (bijvoorbeeld in rust en na belasting) en laat veranderingen in hartritme, intervallen, elektrische as en HRV zien.",
@@ -538,7 +645,53 @@ const translations = {
         confidenceLow: "Gebaseerd op een beperkt aantal gegevens",
         hint:
           "We vergelijken de patiënt altijd met zijn of haar eigen basislijn. Het rustprofiel is het stabiele referentiepunt; het na-belasting profiel toont hoe het cardiovasculaire systeem reageert."
+      },
+      benefits: {
+        label: "Profielvoordelen"
       }
+    },
+    benefits: {
+      label: "Profielvoordelen",
+      title: "Waarom het Digital Heart Profile nuttig is",
+      subtitle:
+        "In dit gedeelte zie je welke praktische problemen het profiel oplost en hoe het het gebruik van ECG-data verbetert.",
+      tableHeaders: {
+        problem: "Probleem in klassieke ECG / monitoring",
+        solution: "Hoe het profiel dit oplost",
+        value: "Praktische waarde"
+      },
+      rows: [
+        {
+          problem: "Een enkele ECG toont slechts een kort moment en is sterk beïnvloed door artefacten.",
+          solution: "Het profiel bundelt honderden schone vensters van 2 seconden tot een stabiel mediane complex.",
+          value: "Je krijgt een schoon, ruisvrij 'paspoort' van het hart in plaats van een willekeurig fragment."
+        },
+        {
+          problem: "Vergelijkingen gebeuren alleen met populatienormen en houden geen rekening met individuele fysiologie.",
+          solution: "Het profiel bouwt een persoonlijke referentie op van intervallen, as, morfologie en hartslagvariabiliteit.",
+          value: "Je begrijpt wat normaal is voor deze persoon en niet alleen 'gemiddeld'."
+        },
+        {
+          problem: "Trends en geleidelijke verschuivingen zijn moeilijk te zien in losse ECG-registraties.",
+          solution: "Profielen kunnen over dagen, weken of maanden worden vergeleken.",
+          value: "Betekenisvolle veranderingen worden eerder gedetecteerd."
+        },
+        {
+          problem: "Er is geen duidelijke maat voor databetrouwbaarheid.",
+          solution: "Kwaliteitsselectie (groen / geel / rood) en vertrouwen voor gereconstrueerde afleidingen.",
+          value: "Het is duidelijk hoe betrouwbaar de numerieke resultaten zijn."
+        },
+        {
+          problem: "Holterregistraties bevatten te veel ruwe data en kosten veel tijd om te beoordelen.",
+          solution: "Het profiel comprimeert duizenden slagen tot een compact pakket van kernparameters.",
+          value: "Interpretatie gaat sneller en eenvoudiger."
+        },
+        {
+          problem: "Fysiologische adaptatie (belasting, stress) is lastig te scheiden van echte afwijkingen.",
+          solution: "Vergelijking gebeurt met de persoonlijke referentie en kan rekening houden met context.",
+          value: "Normale adaptieve reacties worden niet verward met problemen."
+        }
+      ]
     },
     signalQuality: {
       infoButton: "How quality is calculated",
@@ -726,8 +879,42 @@ document.addEventListener("DOMContentLoaded", () => {
     langButtons.forEach((btn) => {
       btn.classList.toggle("active", btn.dataset.lang === lang);
     });
+    updateTabLabels();
     renderTabContent();
     renderFooter();
+  }
+
+  function getTabLabel(tabId) {
+    const langTabs = translations[currentLang]?.tabs || {};
+    const defaultTabs = translations.en?.tabs || {};
+    if (tabId === "benefits") {
+      return (
+        langTabs[tabId]?.label ||
+        translations[currentLang]?.benefits?.label ||
+        translations.en?.benefits?.label ||
+        defaultTabs[tabId]?.label ||
+        defaultTabs[tabId]?.title ||
+        ""
+      );
+    }
+    return (
+      langTabs[tabId]?.label ||
+      langTabs[tabId]?.title ||
+      defaultTabs[tabId]?.label ||
+      defaultTabs[tabId]?.title ||
+      ""
+    );
+  }
+
+  function updateTabLabels() {
+    tabButtons.forEach((btn) => {
+      const tabId = btn.dataset.tab;
+      if (!tabId) return;
+      const label = getTabLabel(tabId);
+      if (label) {
+        btn.textContent = label;
+      }
+    });
   }
 
   function renderTabContent() {
@@ -760,6 +947,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (currentTab === "compare") {
       renderCompareView(tabContent, currentLang);
+      return;
+    }
+
+    if (currentTab === "benefits") {
+      renderBenefitsView(tabContent, currentLang);
       return;
     }
 
@@ -1931,6 +2123,50 @@ document.addEventListener("DOMContentLoaded", () => {
 
   }
 
+  function renderBenefitsView(container, lang) {
+    const t = translations[lang]?.benefits || translations.en?.benefits;
+    if (!t) {
+      container.innerHTML = "";
+      return;
+    }
+
+    const headerHtml = `
+      <h1 class="tab-title">${t.title}</h1>
+      <p class="tab-description">${t.subtitle}</p>
+    `;
+
+    const rowsHtml = (t.rows || [])
+      .map(
+        (row) => `
+        <tr>
+          <td class="benefits-cell benefits-problem">${row.problem}</td>
+          <td class="benefits-cell benefits-solution">${row.solution}</td>
+          <td class="benefits-cell benefits-value">${row.value}</td>
+        </tr>
+      `
+      )
+      .join("");
+
+    const tableHtml = `
+      <div class="benefits-table-wrapper">
+        <table class="benefits-table">
+          <thead>
+            <tr>
+              <th>${t.tableHeaders.problem}</th>
+              <th>${t.tableHeaders.solution}</th>
+              <th>${t.tableHeaders.value}</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rowsHtml}
+          </tbody>
+        </table>
+      </div>
+    `;
+
+    container.innerHTML = headerHtml + tableHtml;
+  }
+
   function renderLiveEcgView(container, lang) {
     const t = translations[lang];
     const liveT = t.tabs.live;
@@ -2033,6 +2269,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
+  updateTabLabels();
   renderTabContent();
   renderFooter();
 });
