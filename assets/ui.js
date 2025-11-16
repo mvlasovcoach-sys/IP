@@ -94,12 +94,31 @@ const translations = {
 
         leftTitle: "Rest profile",
         rightTitle: "Post-load profile",
+        evidenceTitle: "Profile evidence",
+        evidenceRestLabel: "Rest profile",
+        evidenceLoadLabel: "Post-load profile",
+        evidenceWindows: "Windows used",
+        evidenceGreen: "Green windows",
+        evidenceScoreHigh: "High evidence",
+        evidenceScoreMedium: "Medium evidence",
+        evidenceScoreLow: "Low evidence",
         deltaTitle: "Key changes (Δ)",
         deltaHr: "Heart rate",
         deltaAxis: "Electrical axis",
         deltaQtc: "QTc interval",
         deltaSdnn: "HRV SDNN",
         deltaRmssd: "HRV RMSSD",
+        morphTitle: "Morphology difference",
+        morphHigh: "High similarity",
+        morphModerate: "Moderate change",
+        morphMarked: "Marked change",
+        abruptnessTitle: "Abruptness of change",
+        abruptnessMinimal: "Minimal change",
+        abruptnessExpected: "Expected adaptation (e.g. after load)",
+        abruptnessSudden: "Sudden change – interpret with caution",
+        confidenceHigh: "High confidence",
+        confidenceMedium: "Medium confidence",
+        confidenceLow: "Low confidence (limited data)",
         hint:
           "We always compare the patient with their own baseline. The resting profile serves as a stable reference; the post-load profile shows how the cardiovascular system responds."
       }
@@ -244,12 +263,31 @@ const translations = {
 
         leftTitle: "Профиль покоя",
         rightTitle: "Профиль после нагрузки",
+        evidenceTitle: "Достоверность профилей",
+        evidenceRestLabel: "Профиль покоя",
+        evidenceLoadLabel: "Профиль после нагрузки",
+        evidenceWindows: "Использовано окон",
+        evidenceGreen: "Зелёные окна",
+        evidenceScoreHigh: "Высокая достоверность",
+        evidenceScoreMedium: "Средняя достоверность",
+        evidenceScoreLow: "Низкая достоверность",
         deltaTitle: "Ключевые изменения (Δ)",
         deltaHr: "Частота сердечных сокращений",
         deltaAxis: "Электрическая ось",
         deltaQtc: "Интервал QTc",
         deltaSdnn: "HRV SDNN",
         deltaRmssd: "HRV RMSSD",
+        morphTitle: "Изменение формы комплекса",
+        morphHigh: "Высокое сходство",
+        morphModerate: "Умеренное изменение",
+        morphMarked: "Выраженное изменение",
+        abruptnessTitle: "Характер изменения",
+        abruptnessMinimal: "Минимальные изменения",
+        abruptnessExpected: "Ожидаемая адаптация (например, после нагрузки)",
+        abruptnessSudden: "Резкое изменение — интерпретировать с осторожностью",
+        confidenceHigh: "Высокая уверенность",
+        confidenceMedium: "Средняя уверенность",
+        confidenceLow: "Низкая уверенность (мало данных)",
         hint:
           "Всегда сравниваем пациента только с его базовым уровнем. Профиль покоя — стабильная опора, профиль после нагрузки показывает реакцию сердечно-сосудистой системы."
       }
@@ -393,12 +431,31 @@ const translations = {
 
         leftTitle: "Rustprofiel",
         rightTitle: "Na-belasting profiel",
+        evidenceTitle: "Bewijs voor profielen",
+        evidenceRestLabel: "Rustprofiel",
+        evidenceLoadLabel: "Na-belasting profiel",
+        evidenceWindows: "Gebruikte vensters",
+        evidenceGreen: "Groene vensters",
+        evidenceScoreHigh: "Sterk bewijs",
+        evidenceScoreMedium: "Gemiddeld bewijs",
+        evidenceScoreLow: "Beperkt bewijs",
         deltaTitle: "Belangrijkste veranderingen (Δ)",
         deltaHr: "Hartritme",
         deltaAxis: "Elektrische as",
         deltaQtc: "QTc-interval",
         deltaSdnn: "HRV SDNN",
         deltaRmssd: "HRV RMSSD",
+        morphTitle: "Verschil in morfologie",
+        morphHigh: "Hoge gelijkenis",
+        morphModerate: "Gematigde verandering",
+        morphMarked: "Duidelijke verandering",
+        abruptnessTitle: "Abruptheid van verandering",
+        abruptnessMinimal: "Minimale verandering",
+        abruptnessExpected: "Verwachte adaptatie (bijv. na belasting)",
+        abruptnessSudden: "Plotselinge verandering – met voorzichtigheid duiden",
+        confidenceHigh: "Hoge betrouwbaarheid",
+        confidenceMedium: "Gemiddelde betrouwbaarheid",
+        confidenceLow: "Lage betrouwbaarheid (weinig data)",
         hint:
           "We vergelijken de patiënt altijd met zijn of haar eigen basislijn. Het rustprofiel is het stabiele referentiepunt; het na-belasting profiel toont hoe het cardiovasculaire systeem reageert."
       }
@@ -459,6 +516,107 @@ function getSignalQualityStrings(lang) {
   const base = translations.en.signalQuality;
   const current = translations[lang]?.signalQuality;
   return { ...base, ...(current || {}) };
+}
+
+function capitalize(str = "") {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+function computeEvidenceWeight(profile = {}) {
+  const windows = profile.meta?.windowsUsed || 0;
+  const greenPct = profile.qualityMap?.greenPct || 0;
+  let score = "high";
+
+  if (windows < 20 || greenPct < 40) {
+    score = "low";
+  } else if (windows < 80 || greenPct < 70) {
+    score = "medium";
+  }
+
+  return { windows, greenPct, score };
+}
+
+function computePearsonCorrelation(a = [], b = []) {
+  const len = Math.min(a.length, b.length);
+  if (!len) return 0;
+
+  let sumA = 0;
+  let sumB = 0;
+  for (let i = 0; i < len; i++) {
+    sumA += a[i];
+    sumB += b[i];
+  }
+
+  const meanA = sumA / len;
+  const meanB = sumB / len;
+
+  let numerator = 0;
+  let denomA = 0;
+  let denomB = 0;
+
+  for (let i = 0; i < len; i++) {
+    const da = a[i] - meanA;
+    const db = b[i] - meanB;
+    numerator += da * db;
+    denomA += da * da;
+    denomB += db * db;
+  }
+
+  const denom = Math.sqrt(denomA * denomB) || 0;
+  if (!denom) return 0;
+  return numerator / denom;
+}
+
+function computeMorphologySimilarity(restProfile = {}, loadProfile = {}) {
+  const restBeat = restProfile.templateBeat?.values || [];
+  const loadBeat = loadProfile.templateBeat?.values || [];
+  const r = computePearsonCorrelation(restBeat, loadBeat);
+
+  let label = "marked";
+  if (r >= 0.9) label = "high";
+  else if (r >= 0.75) label = "moderate";
+
+  return { r, label };
+}
+
+function computeChangeAbruptness(restProfile = {}, loadProfile = {}) {
+  const r = restProfile.intervals || {};
+  const l = loadProfile.intervals || {};
+  const rHrv = restProfile.hrv || {};
+  const lHrv = loadProfile.hrv || {};
+
+  const dHr = (l.hrBpm || 0) - (r.hrBpm || 0);
+  const dQtc = (l.qtcMs || 0) - (r.qtcMs || 0);
+  const dSdnn = (lHrv.sdnnMs || 0) - (rHrv.sdnnMs || 0);
+  const dRmssd = (lHrv.rmssdMs || 0) - (rHrv.rmssdMs || 0);
+
+  const absHr = Math.abs(dHr);
+  const absQtc = Math.abs(dQtc);
+
+  let level = "minimal";
+  if (absHr > 20 || absQtc > 20 || (dSdnn <= -20 && dRmssd <= -15)) {
+    level = "sudden";
+  } else if (absHr >= 10 && absHr <= 20) {
+    level = "expected";
+  }
+
+  return { level };
+}
+
+function computeParamConfidence(evidenceRest, evidenceLoad, morphSim) {
+  const restScore = evidenceRest?.score;
+  const loadScore = evidenceLoad?.score;
+  const morphLabel = morphSim?.label;
+
+  if (restScore === "high" && loadScore === "high" && morphLabel !== "marked") {
+    return "high";
+  }
+
+  if (restScore === "low" || loadScore === "low" || morphLabel === "marked") {
+    return "low";
+  }
+
+  return "medium";
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -1395,6 +1553,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const dSdnn = (lHrv.sdnnMs || 0) - (rHrv.sdnnMs || 0);
     const dRmssd = (lHrv.rmssdMs || 0) - (rHrv.rmssdMs || 0);
 
+    const evidenceRest = computeEvidenceWeight(rest);
+    const evidenceLoad = computeEvidenceWeight(load);
+    const morph = computeMorphologySimilarity(rest, load);
+    const abrupt = computeChangeAbruptness(rest, load);
+    const overallConf = computeParamConfidence(evidenceRest, evidenceLoad, morph);
+
     function formatDelta(value, unit, invertDirectionForLowerIsBetter = false) {
       const sign = value > 0 ? "+" : value < 0 ? "−" : "±";
       const absVal = Math.abs(value);
@@ -1411,6 +1575,30 @@ document.addEventListener("DOMContentLoaded", () => {
     const deltaQtc = formatDelta(dQtc, " ms", false);
     const deltaSdnn = formatDelta(dSdnn, " ms", true);
     const deltaRmssd = formatDelta(dRmssd, " ms", true);
+
+    const evidenceHtml = `
+      <div class="compare-evidence">
+        <h3>${t.evidenceTitle}</h3>
+        <div class="compare-evidence-row">
+          <div class="compare-evidence-card">
+            <div class="label">${t.evidenceRestLabel}</div>
+            <div>${t.evidenceWindows}: ${evidenceRest.windows}</div>
+            <div>${t.evidenceGreen}: ${evidenceRest.greenPct.toFixed(1)}%</div>
+            <div class="score score-${evidenceRest.score}">
+              ${t[`evidenceScore${capitalize(evidenceRest.score)}`]}
+            </div>
+          </div>
+          <div class="compare-evidence-card">
+            <div class="label">${t.evidenceLoadLabel}</div>
+            <div>${t.evidenceWindows}: ${evidenceLoad.windows}</div>
+            <div>${t.evidenceGreen}: ${evidenceLoad.greenPct.toFixed(1)}%</div>
+            <div class="score score-${evidenceLoad.score}">
+              ${t[`evidenceScore${capitalize(evidenceLoad.score)}`]}
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
 
     const leftMetricsHtml = `
       <div class="compare-metric-list">
@@ -1467,23 +1655,75 @@ document.addEventListener("DOMContentLoaded", () => {
         <div class="compare-delta-title">${t.deltaTitle}</div>
         <div class="compare-delta-row">
           <span class="compare-delta-label">${t.deltaHr}</span>
-          <span class="compare-delta-value ${deltaHr.cls}">${deltaHr.text}</span>
+          <span>
+            <span class="compare-delta-value ${deltaHr.cls}">${deltaHr.text}</span>
+            <span class="compare-conf-chip conf-${overallConf}">
+              ${t[`confidence${capitalize(overallConf)}`]}
+            </span>
+          </span>
         </div>
         <div class="compare-delta-row">
           <span class="compare-delta-label">${t.deltaAxis}</span>
-          <span class="compare-delta-value ${deltaAxis.cls}">${deltaAxis.text}</span>
+          <span>
+            <span class="compare-delta-value ${deltaAxis.cls}">${deltaAxis.text}</span>
+            <span class="compare-conf-chip conf-${overallConf}">
+              ${t[`confidence${capitalize(overallConf)}`]}
+            </span>
+          </span>
         </div>
         <div class="compare-delta-row">
           <span class="compare-delta-label">${t.deltaQtc}</span>
-          <span class="compare-delta-value ${deltaQtc.cls}">${deltaQtc.text}</span>
+          <span>
+            <span class="compare-delta-value ${deltaQtc.cls}">${deltaQtc.text}</span>
+            <span class="compare-conf-chip conf-${overallConf}">
+              ${t[`confidence${capitalize(overallConf)}`]}
+            </span>
+          </span>
         </div>
         <div class="compare-delta-row">
           <span class="compare-delta-label">${t.deltaSdnn}</span>
-          <span class="compare-delta-value ${deltaSdnn.cls}">${deltaSdnn.text}</span>
+          <span>
+            <span class="compare-delta-value ${deltaSdnn.cls}">${deltaSdnn.text}</span>
+            <span class="compare-conf-chip conf-${overallConf}">
+              ${t[`confidence${capitalize(overallConf)}`]}
+            </span>
+          </span>
         </div>
         <div class="compare-delta-row">
           <span class="compare-delta-label">${t.deltaRmssd}</span>
-          <span class="compare-delta-value ${deltaRmssd.cls}">${deltaRmssd.text}</span>
+          <span>
+            <span class="compare-delta-value ${deltaRmssd.cls}">${deltaRmssd.text}</span>
+            <span class="compare-conf-chip conf-${overallConf}">
+              ${t[`confidence${capitalize(overallConf)}`]}
+            </span>
+          </span>
+        </div>
+      </div>
+    `;
+
+    const morphText =
+      morph.label === "high"
+        ? t.morphHigh
+        : morph.label === "moderate"
+        ? t.morphModerate
+        : t.morphMarked;
+
+    const abruptText =
+      abrupt.level === "minimal"
+        ? t.abruptnessMinimal
+        : abrupt.level === "expected"
+        ? t.abruptnessExpected
+        : t.abruptnessSudden;
+
+    const secondaryHtml = `
+      <div class="compare-secondary">
+        <div class="compare-secondary-item">
+          <div class="title">${t.morphTitle}</div>
+          <div class="value">${morphText} (${morph.r.toFixed(2)})</div>
+        </div>
+        <div class="compare-secondary-item">
+          <div class="title">${t.abruptnessTitle}</div>
+          <div class="value">${abruptText}</div>
         </div>
       </div>
     `;
@@ -1503,7 +1743,9 @@ document.addEventListener("DOMContentLoaded", () => {
             ${rightMetricsHtml}
           </div>
         </div>
+        ${evidenceHtml}
         ${deltaHtml}
+        ${secondaryHtml}
         <p style="font-size:12px; color: var(--text-muted); margin-top:4px;">
           ${t.hint}
         </p>
