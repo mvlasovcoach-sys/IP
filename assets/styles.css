@@ -488,6 +488,89 @@ body {
   font-weight: 500;
 }
 
+.compare-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.compare-main {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.compare-column {
+  flex: 1 1 280px;
+  background-color: var(--bg-card);
+  border-radius: 12px;
+  border: 1px solid var(--border-soft);
+  padding: 14px 16px 16px;
+}
+
+.compare-profile-title {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.compare-metric-list {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.compare-metric-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.compare-metric-label {
+  margin-right: 8px;
+}
+
+.compare-metric-value {
+  font-weight: 500;
+  color: var(--text-main);
+}
+
+.compare-delta {
+  background-color: var(--bg-card);
+  border-radius: 12px;
+  border: 1px solid var(--border-soft);
+  padding: 12px 14px 14px;
+}
+
+.compare-delta-title {
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.compare-delta-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  margin-bottom: 4px;
+}
+
+.compare-delta-label {
+  color: var(--text-muted);
+}
+
+.compare-delta-value {
+  font-weight: 600;
+}
+
+.compare-delta-value.up {
+  color: #b91c1c;
+}
+
+.compare-delta-value.down {
+  color: #15803d;
+}
+
 @media (max-width: 768px) {
   .app-header {
     flex-direction: column;

@@ -179,6 +179,7 @@ ecgDemoData.qualityStats = (function () {
 })();
 
 const templateBeatValues = generateTemplateBeat(360, 0.005);
+const templateBeatValuesLoad = generateSyntheticEcg(300, 0.015).map((v) => v * 1.05);
 const greenWindowsCount = ecgDemoData.windows.filter((w) => w.quality === "green").length;
 const yellowWindowsCount = ecgDemoData.windows.filter((w) => w.quality === "yellow").length;
 const redWindowsCount = ecgDemoData.windows.filter((w) => w.quality === "red").length;
@@ -217,6 +218,40 @@ ecgDemoData.profiles = {
       greenPct: Number(((greenWindowsCount / totalWindowsCount) * 100).toFixed(1)),
       yellowPct: Number(((yellowWindowsCount / totalWindowsCount) * 100).toFixed(1)),
       redPct: Number(((redWindowsCount / totalWindowsCount) * 100).toFixed(1))
+    }
+  },
+  load: {
+    id: "load",
+    label: "Post-load profile",
+    meta: {
+      createdAt: "2025-01-01T12:30:00Z",
+      durationSeconds: 10 * 60,
+      windowsUsed: Math.round(greenWindowsCount * 0.9),
+      geometryId: "T-shirt-M",
+      version: 1
+    },
+    templateBeat: {
+      values: templateBeatValuesLoad,
+      sampleRateHz: 250
+    },
+    intervals: {
+      hrBpm: 92,
+      prMs: 150,
+      qrsMs: 94,
+      qtMs: 390,
+      qtcMs: 420
+    },
+    axis: {
+      frontalPlaneDeg: 18
+    },
+    hrv: {
+      sdnnMs: 40,
+      rmssdMs: 30
+    },
+    qualityMap: {
+      greenPct: 78.0,
+      yellowPct: 16.0,
+      redPct: 6.0
     }
   }
 };
