@@ -27,6 +27,9 @@ const translations = {
           "This view will compare two profiles (for example, rest vs after load) and highlight changes in axis, intervals and HRV."
       }
     },
+    liveLegendGreen: "High-quality window used for analysis",
+    liveLegendYellow: "Borderline quality, used with caution",
+    liveLegendRed: "Artefacts – excluded from analysis",
     footer: {
       disclaimer:
         "This demo is not a medical device and does not provide diagnostic conclusions."
@@ -60,6 +63,9 @@ const translations = {
           "Здесь будут сравниваться два профиля (например, покой и после нагрузки) с выделением изменений оси, интервалов и показателей HRV."
       }
     },
+    liveLegendGreen: "Высокое качество, окно идёт в анализ",
+    liveLegendYellow: "Пограничное качество, использовать с осторожностью",
+    liveLegendRed: "Артефакты — исключено из анализа",
     footer: {
       disclaimer:
         "Данная демонстрация не является медицинским изделием и не даёт диагностических заключений."
@@ -93,6 +99,9 @@ const translations = {
           "Deze weergave vergelijkt twee profielen (bijvoorbeeld rust versus na belasting) en markeert de veranderingen in as, intervallen en HRV."
       }
     },
+    liveLegendGreen: "Venster van hoge kwaliteit gebruikt voor analyse",
+    liveLegendYellow: "Grenzeloze kwaliteit, met voorzichtigheid gebruiken",
+    liveLegendRed: "Artefacten – uitgesloten van analyse",
     footer: {
       disclaimer:
         "Deze demo is geen medisch hulpmiddel en levert geen diagnostische conclusies."
@@ -103,6 +112,8 @@ const translations = {
 document.addEventListener("DOMContentLoaded", () => {
   let currentLang = "en";
   let currentTab = "live";
+  let liveActiveWindowIndex = 0;
+  let liveWindowTimer = null;
 
   const tabButtons = document.querySelectorAll(".tab-btn");
   const langButtons = document.querySelectorAll(".lang-btn");
@@ -129,13 +140,20 @@ document.addEventListener("DOMContentLoaded", () => {
   function renderTabContent() {
     const t = translations[currentLang];
 
+    if (currentTab === "live") {
+      renderLiveEcgView(tabContent, currentLang);
+      return;
+    }
+
+    if (liveWindowTimer) {
+      clearInterval(liveWindowTimer);
+      liveWindowTimer = null;
+    }
+
     let title = "";
     let description = "";
 
-    if (currentTab === "live") {
-      title = t.tabs.live.title;
-      description = t.tabs.live.description;
-    } else if (currentTab === "quality") {
+    if (currentTab === "quality") {
       title = t.tabs.quality.title;
       description = t.tabs.quality.description;
     } else if (currentTab === "leads") {
@@ -153,6 +171,125 @@ document.addEventListener("DOMContentLoaded", () => {
       <h1 class="tab-title">${title}</h1>
       <p class="tab-description">${description}</p>
     `;
+  }
+
+  function createChannelSvg(values, { sampleRate, durationSeconds }) {
+    const totalSamples = values.length;
+    const sliceLength = sampleRate * durationSeconds;
+    const startIndex = Math.max(0, totalSamples - sliceLength);
+    const slice = values.slice(startIndex);
+
+    const width = 800;
+    const height = 60;
+
+    const min = Math.min(...slice);
+    const max = Math.max(...slice);
+    const range = max - min || 1;
+
+    const points = slice
+      .map((v, i) => {
+        const x = (i / (slice.length - 1 || 1)) * width;
+        const y = height - ((v - min) / range) * (height - 4) - 2;
+        return `${x.toFixed(1)},${y.toFixed(1)}`;
+      })
+      .join(" ");
+
+    return `
+      <svg viewBox="0 0 ${width} ${height}" preserveAspectRatio="none">
+        <polyline
+          points="${points}"
+          fill="none"
+          stroke="#22c55e"
+          stroke-width="1.4"
+          stroke-linejoin="round"
+          stroke-linecap="round"
+        />
+      </svg>
+    `;
+  }
+
+  function buildWindowsStrip(windows) {
+    return windows
+      .map((w, idx) => {
+        return `<div class="live-ecg-window ${w.quality}" data-window-index="${idx}"></div>`;
+      })
+      .join("");
+  }
+
+  function highlightActiveWindow() {
+    const strip = document.getElementById("live-ecg-windows-strip");
+    if (!strip) return;
+
+    const items = strip.querySelectorAll(".live-ecg-window");
+    items.forEach((el, idx) => {
+      el.classList.toggle("active", idx === liveActiveWindowIndex);
+    });
+  }
+
+  function renderLiveEcgView(container, lang) {
+    const t = translations[lang];
+    const channels = ecgDemoData.channels.slice(0, 3);
+    const windows = ecgDemoData.windows;
+
+    const title = t.tabs.live.title;
+    const description = t.tabs.live.description;
+
+    const windowStripHtml = buildWindowsStrip(windows);
+    const channelsHtml = channels
+      .map((ch) => {
+        const svg = createChannelSvg(ch.values, {
+          sampleRate: ecgDemoData.sampleRateHz,
+          durationSeconds: 4
+        });
+        return `
+          <div class="live-ecg-channel">
+            <div class="live-ecg-channel-label">${ch.label}</div>
+            <div class="live-ecg-channel-plot">${svg}</div>
+          </div>
+        `;
+      })
+      .join("");
+
+    container.innerHTML = `
+      <h1 class="tab-title">${title}</h1>
+      <p class="tab-description">${description}</p>
+
+      <div class="live-ecg-layout">
+        <div class="live-ecg-top">
+          ${channelsHtml}
+        </div>
+        <div class="live-ecg-bottom">
+          <div class="live-ecg-windows-strip" id="live-ecg-windows-strip">
+            ${windowStripHtml}
+          </div>
+          <div class="live-ecg-legend">
+            <div class="live-ecg-legend-item">
+              <span class="live-ecg-legend-dot green"></span>
+              <span>${t.liveLegendGreen || "High-quality window used for analysis"}</span>
+            </div>
+            <div class="live-ecg-legend-item">
+              <span class="live-ecg-legend-dot yellow"></span>
+              <span>${t.liveLegendYellow || "Borderline quality, used with caution"}</span>
+            </div>
+            <div class="live-ecg-legend-item">
+              <span class="live-ecg-legend-dot red"></span>
+              <span>${t.liveLegendRed || "Artefacts – excluded from analysis"}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+
+    if (liveWindowTimer) {
+      clearInterval(liveWindowTimer);
+    }
+
+    liveActiveWindowIndex = 0;
+    highlightActiveWindow();
+    liveWindowTimer = setInterval(() => {
+      liveActiveWindowIndex = (liveActiveWindowIndex + 1) % (windows.length || 1);
+      highlightActiveWindow();
+    }, 900);
   }
 
   function renderFooter() {
