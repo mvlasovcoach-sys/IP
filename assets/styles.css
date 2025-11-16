@@ -1,0 +1,164 @@
+:root {
+  --bg-main: #f5f7fb;
+  --bg-card: #ffffff;
+  --border-soft: #dde2ee;
+  --accent: #2b7cff;
+  --accent-soft: #e2edff;
+  --text-main: #1f2933;
+  --text-muted: #6b7280;
+  --danger: #ef4444;
+  --warning: #f59e0b;
+  --success: #10b981;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background-color: var(--bg-main);
+  color: var(--text-main);
+}
+
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 24px;
+  background-color: #ffffff;
+  border-bottom: 1px solid var(--border-soft);
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+}
+
+.app-title {
+  font-weight: 600;
+  font-size: 18px;
+  letter-spacing: 0.2px;
+}
+
+.language-switcher {
+  display: flex;
+  align-items: center;
+}
+
+.language-switcher .lang-btn {
+  border: none;
+  background: transparent;
+  padding: 6px 10px;
+  margin-left: 4px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--text-muted);
+  transition: background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.language-switcher .lang-btn:hover {
+  background-color: var(--accent-soft);
+  color: var(--accent);
+}
+
+.language-switcher .lang-btn.active {
+  background-color: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(43, 124, 255, 0.15);
+}
+
+.app-tabs {
+  display: flex;
+  padding: 8px 24px;
+  background-color: #ffffff;
+  border-bottom: 1px solid var(--border-soft);
+  gap: 8px;
+  position: sticky;
+  top: 58px;
+  z-index: 9;
+}
+
+.tab-btn {
+  border: none;
+  background-color: transparent;
+  padding: 8px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--text-muted);
+  transition: background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.tab-btn.active {
+  background-color: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(43, 124, 255, 0.15);
+}
+
+.tab-btn:hover {
+  background-color: #edf2ff;
+}
+
+.app-main {
+  max-width: 1200px;
+  margin: 24px auto 32px;
+  padding: 0 24px 48px;
+}
+
+.tab-content {
+  background-color: var(--bg-card);
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
+  padding: 24px 24px 32px;
+  min-height: 320px;
+  border: 1px solid #e8ecf6;
+}
+
+.tab-title {
+  margin-top: 0;
+  margin-bottom: 12px;
+  font-size: 20px;
+}
+
+.tab-description {
+  margin-top: 0;
+  font-size: 14px;
+  color: var(--text-muted);
+  max-width: 800px;
+  line-height: 1.6;
+}
+
+.app-footer {
+  border-top: 1px solid var(--border-soft);
+  padding: 12px 24px 24px;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+@media (max-width: 768px) {
+  .app-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .language-switcher {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .app-tabs {
+    flex-wrap: wrap;
+    top: 96px;
+  }
+
+  .tab-btn {
+    flex: 1 0 45%;
+    text-align: center;
+  }
+}

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SPA2099 – Digital Heart Profile Demo</title>
+  <link rel="stylesheet" href="assets/styles.css" />
+</head>
+<body>
+  <header class="app-header">
+    <div class="app-title">SPA2099 – Digital Heart Profile</div>
+    <div class="language-switcher" id="language-switcher">
+      <button data-lang="en" class="lang-btn active">EN</button>
+      <button data-lang="ru" class="lang-btn">RU</button>
+      <button data-lang="nl" class="lang-btn">NL</button>
+    </div>
+  </header>
+
+  <nav class="app-tabs">
+    <button class="tab-btn active" data-tab="live">Live ECG</button>
+    <button class="tab-btn" data-tab="quality">Signal Quality</button>
+    <button class="tab-btn" data-tab="leads">12-Lead View</button>
+    <button class="tab-btn" data-tab="profile">Digital Heart Profile</button>
+    <button class="tab-btn" data-tab="compare">Compare</button>
+  </nav>
+
+  <main class="app-main">
+    <section id="tab-content" class="tab-content">
+      <!-- Dynamic content will be injected here by ui.js -->
+      <h1 class="tab-title">Live ECG (placeholder)</h1>
+      <p class="tab-description">
+        This is a placeholder for the Live ECG view. In later steps we will add
+        animated multi-channel ECG and colored windows (green/yellow/red).
+      </p>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    <small id="footer-disclaimer">
+      This demo is not a medical device and does not provide diagnostic conclusions.
+    </small>
+  </footer>
+
+  <script src="assets/ui.js"></script>
+</body>
+</html>
