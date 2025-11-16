@@ -29,6 +29,13 @@ const translations = {
         confidenceLabel: "Confidence",
         lowConfidenceHint:
           "Leads with confidence < 0.80 are greyed out and not used in the Digital Heart Profile.",
+        recordedGroupTitle: "Recorded leads (7-lead input)",
+        reconstructedGroupTitle: "Reconstructed leads (derived from 7-lead input)",
+        badgeRecorded: "Recorded",
+        badgeReconstructed: "Reconstructed",
+        legendRecorded: "Recorded leads are acquired directly from the device.",
+        legendReconstructed:
+          "Reconstructed chest leads (V2–V6) are derived from the 7-lead input and included in the Digital Heart Profile only when confidence is sufficiently high.",
         legendHigh: "High-confidence leads used in profile",
         legendLow: "Low-confidence leads (visualised but excluded from profile)"
       },
@@ -149,6 +156,13 @@ const translations = {
         confidenceLabel: "Уверенность",
         lowConfidenceHint:
           "Отведения с уверенностью < 0.80 подсвечены серым и не используются в Цифровом профиле сердца.",
+        recordedGroupTitle: "Снимаемые отведения (7-канальный вход)",
+        reconstructedGroupTitle: "Восстановленные отведения (на основе 7-канального входа)",
+        badgeRecorded: "Измерено",
+        badgeReconstructed: "Восстановлено",
+        legendRecorded: "Снимаемые отведения поступают с устройства без изменений.",
+        legendReconstructed:
+          "Грудные отведения V2–V6 восстанавливаются по данным 7 каналов и используются в Цифровом профиле сердца только при достаточно высокой уверенности.",
         legendHigh: "Отведения с высокой уверенностью участвуют в профиле",
         legendLow: "Отведения с низкой уверенностью отображаются, но исключены из профиля"
       },
@@ -269,6 +283,13 @@ const translations = {
         confidenceLabel: "Betrouwbaarheid",
         lowConfidenceHint:
           "Afleidingen met betrouwbaarheid < 0.80 worden grijs getoond en niet gebruikt in het Digitale Hartprofiel.",
+        recordedGroupTitle: "Geregistreerde afleidingen (7-kanaals input)",
+        reconstructedGroupTitle: "Gereconstrueerde afleidingen (afgeleid van 7-kanaals input)",
+        badgeRecorded: "Geregistreerd",
+        badgeReconstructed: "Gereconstrueerd",
+        legendRecorded: "Geregistreerde afleidingen worden direct door het apparaat gemeten.",
+        legendReconstructed:
+          "Gereconstrueerde borstafleidingen (V2–V6) zijn afgeleid van de 7-kanaals invoer en worden alleen in het Digitale Hartprofiel opgenomen wanneer de betrouwbaarheid voldoende hoog is.",
         legendHigh: "Afleidingen met hoge betrouwbaarheid die in het profiel gaan",
         legendLow: "Afleidingen met lage betrouwbaarheid worden getoond, maar niet meegenomen"
       },
@@ -890,14 +911,23 @@ document.addEventListener("DOMContentLoaded", () => {
     const t = translations[lang].tabs.leads;
     const leads = ecgDemoData.leads12 || [];
 
-    const cardsHtml = leads
-      .map((lead) => {
-        const isLow = lead.confidence < 0.8;
-        const svg = createLeadSvg(lead.values);
-        return `
+    const recordedLeads = leads.filter((lead) => lead.isRecorded);
+    const reconstructedLeads = leads.filter((lead) => !lead.isRecorded);
+
+    const renderCards = (leadArray) =>
+      leadArray
+        .map((lead) => {
+          const isLow = lead.confidence < 0.8;
+          const svg = createLeadSvg(lead.values);
+          const typeText = lead.isRecorded ? t.badgeRecorded : t.badgeReconstructed;
+          const typeClass = lead.isRecorded ? "recorded" : "reconstructed";
+          return `
         <div class="lead-card">
           <div class="lead-header">
-            <span class="lead-label">${lead.label}</span>
+            <span class="lead-label">
+              ${lead.label}
+              <span class="lead-type-badge ${typeClass}">${typeText}</span>
+            </span>
             <span class="lead-confidence ${isLow ? "low" : ""}">
               ${t.confidenceLabel}: ${(lead.confidence * 100).toFixed(0)}%
             </span>
@@ -907,10 +937,10 @@ document.addEventListener("DOMContentLoaded", () => {
           </div>
         </div>
       `;
-      })
-      .join("");
+        })
+        .join("");
 
-    const legendLines = [t.legendHigh, t.legendLow, t.lowConfidenceHint]
+    const legendLines = [t.legendRecorded, t.legendReconstructed, t.lowConfidenceHint]
       .filter(Boolean)
       .map((line) => `<div>${line}</div>`) // preserve order
       .join("");
@@ -920,9 +950,10 @@ document.addEventListener("DOMContentLoaded", () => {
       <p class="tab-description">${t.description}</p>
       <div class="leads-layout">
         <h3>${t.gridTitle}</h3>
-        <div class="leads-grid">
-          ${cardsHtml}
-        </div>
+        <h3 class="leads-group-title">${t.recordedGroupTitle}</h3>
+        <div class="leads-grid">${renderCards(recordedLeads)}</div>
+        <h3 class="leads-group-title">${t.reconstructedGroupTitle}</h3>
+        <div class="leads-grid">${renderCards(reconstructedLeads)}</div>
         <div class="leads-legend">
           ${legendLines || t.lowConfidenceHint || ""}
         </div>
