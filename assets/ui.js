@@ -74,6 +74,43 @@ const translations = {
           "We always compare the patient with their own baseline. The resting profile serves as a stable reference; the post-load profile shows how the cardiovascular system responds."
       }
     },
+    signalQuality: {
+      infoButton: "How quality is calculated",
+      drawerTitle: "How we calculate signal quality",
+      drawerIntro:
+        "SPA2099 evaluates ECG in 2-second windows and assigns each window a quality level. Green windows are used for diagnostics and baseline, yellow only for trends, red are excluded from analysis.",
+      levelsTitle: "How we classify windows",
+      examplesTitle: "Examples of artefacts",
+      closeDrawer: "Close panel",
+      indexNoiseTitle: "Q_noise — noise & mains frequency",
+      indexNoiseText:
+        "High-frequency noise or mains hum on top of the ECG that reduces morphology clarity.",
+      indexDriftTitle: "Q_drift — baseline drift",
+      indexDriftText:
+        "Slow baseline shift due to movement or electrode displacement that makes the isoelectric line unstable.",
+      indexImpTitle: "Q_imp — impulse artefacts",
+      indexImpText:
+        "Sharp spikes caused by cable motion or muscle activity that distort the QRS complexes.",
+      indexReconTitle: "Q_recon — channel consistency & reconstruction quality",
+      indexReconText:
+        "Inconsistency between channels or reconstruction artefacts when deriving the 12-lead layout.",
+      greenTitle: "Green windows",
+      greenText:
+        "Q* ≥ 0.75–0.85, no saturation, per-lead accuracy ≥ 0.85. Used for diagnostics, baseline and stress/burnout metrics.",
+      yellowTitle: "Yellow windows",
+      yellowText:
+        "Q* ≈ 0.60–0.75 or moderate artifacts. Used for trend statistics only; do not affect baseline.",
+      redTitle: "Red windows",
+      redText:
+        "Q* < 0.60 or severe artifacts (noise, drift, impulses, channel mismatch). Excluded from analysis.",
+      showExamples: "Show examples",
+      tooltipGreen:
+        "Green windows — high-quality ECG segments used for diagnostics, baseline profile and detailed metrics.",
+      tooltipYellow:
+        "Yellow windows — medium-quality segments used for trend statistics only. They do not update the baseline profile.",
+      tooltipRed:
+        "Red windows — segments with severe artifacts (noise, drift, impulses or channel mismatch). They are excluded from analysis."
+    },
     liveLegendGreen: "High-quality window used for analysis",
     liveLegendYellow: "Borderline quality, used with caution",
     liveLegendRed: "Artefacts – excluded from analysis",
@@ -156,6 +193,43 @@ const translations = {
         hint:
           "Всегда сравниваем пациента только с его базовым уровнем. Профиль покоя — стабильная опора, профиль после нагрузки показывает реакцию сердечно-сосудистой системы."
       }
+    },
+    signalQuality: {
+      infoButton: "Как определяется качество",
+      drawerTitle: "Как мы определяем качество сигнала",
+      drawerIntro:
+        "SPA2099 оценивает ЭКГ каждые 2 секунды и присваивает каждому окну уровень качества. Зелёные окна используются для диагностики и базового профиля, жёлтые — только для трендов, красные — полностью исключаются из анализа.",
+      levelsTitle: "Как мы классифицируем окна",
+      examplesTitle: "Примеры артефактов",
+      closeDrawer: "Закрыть панель",
+      indexNoiseTitle: "Q_noise — шум и наводки",
+      indexNoiseText:
+        "Высокочастотный шум или сетевые наводки поверх ЭКГ, ухудшающие читаемость морфологии.",
+      indexDriftTitle: "Q_drift — дрейф изолинии",
+      indexDriftText:
+        "Медленное смещение базовой линии из-за движения или смещения электродов, делающие изолинию нестабильной.",
+      indexImpTitle: "Q_imp — импульсные артефакты",
+      indexImpText:
+        "Резкие всплески из-за движения кабеля или мышечной активности, искажающие комплексы QRS.",
+      indexReconTitle: "Q_recon — согласованность каналов и реконструкция",
+      indexReconText:
+        "Несоответствие между каналами или артефакты реконструкции при формировании 12-канальной раскладки.",
+      greenTitle: "Зелёные окна",
+      greenText:
+        "Q* ≥ 0.75–0.85, нет насыщения, per-lead accuracy ≥ 0.85. Используются для диагностики, baseline-профиля и расчёта стресса/выгорания.",
+      yellowTitle: "Жёлтые окна",
+      yellowText:
+        "Q* ≈ 0.60–0.75 или умеренные артефакты. Используются только для трендов, не влияют на baseline.",
+      redTitle: "Красные окна",
+      redText:
+        "Q* < 0.60 или выраженные артефакты (шум, дрейф, импульсы, рассогласование каналов). Исключаются из анализа.",
+      showExamples: "Показать примеры",
+      tooltipGreen:
+        "Зелёные окна — качественные сегменты ЭКГ, которые используются для диагностики, baseline-профиля и детальных метрик.",
+      tooltipYellow:
+        "Жёлтые окна — сегменты среднего качества, которые используются только для статистики трендов и не обновляют baseline-профиль.",
+      tooltipRed:
+        "Красные окна — сегменты с выраженными артефактами (шум, дрейф, импульсы, рассогласование каналов). Исключаются из анализа."
     },
     liveLegendGreen: "Высокое качество, окно идёт в анализ",
     liveLegendYellow: "Пограничное качество, использовать с осторожностью",
@@ -240,6 +314,43 @@ const translations = {
           "We vergelijken de patiënt altijd met zijn of haar eigen basislijn. Het rustprofiel is het stabiele referentiepunt; het na-belasting profiel toont hoe het cardiovasculaire systeem reageert."
       }
     },
+    signalQuality: {
+      infoButton: "How quality is calculated",
+      drawerTitle: "How we calculate signal quality",
+      drawerIntro:
+        "SPA2099 evaluates ECG in 2-second windows and assigns each window a quality level. Green windows are used for diagnostics and baseline, yellow only for trends, red are excluded from analysis.",
+      levelsTitle: "How we classify windows",
+      examplesTitle: "Examples of artefacts",
+      closeDrawer: "Close panel",
+      indexNoiseTitle: "Q_noise — noise & mains frequency",
+      indexNoiseText:
+        "High-frequency noise or mains hum on top of the ECG that reduces morphology clarity.",
+      indexDriftTitle: "Q_drift — baseline drift",
+      indexDriftText:
+        "Slow baseline shift due to movement or electrode displacement that makes the isoelectric line unstable.",
+      indexImpTitle: "Q_imp — impulse artefacts",
+      indexImpText:
+        "Sharp spikes caused by cable motion or muscle activity that distort the QRS complexes.",
+      indexReconTitle: "Q_recon — channel consistency & reconstruction quality",
+      indexReconText:
+        "Inconsistency between channels or reconstruction artefacts when deriving the 12-lead layout.",
+      greenTitle: "Green windows",
+      greenText:
+        "Q* ≥ 0.75–0.85, no saturation, per-lead accuracy ≥ 0.85. Used for diagnostics, baseline and stress/burnout metrics.",
+      yellowTitle: "Yellow windows",
+      yellowText:
+        "Q* ≈ 0.60–0.75 or moderate artifacts. Used for trend statistics only; do not affect baseline.",
+      redTitle: "Red windows",
+      redText:
+        "Q* < 0.60 or severe artifacts (noise, drift, impulses, channel mismatch). Excluded from analysis.",
+      showExamples: "Show examples",
+      tooltipGreen:
+        "Green windows — high-quality ECG segments used for diagnostics, baseline profile and detailed metrics.",
+      tooltipYellow:
+        "Yellow windows — medium-quality segments used for trend statistics only. They do not update the baseline profile.",
+      tooltipRed:
+        "Red windows — segments with severe artifacts (noise, drift, impulses or channel mismatch). They are excluded from analysis."
+    },
     liveLegendGreen: "Venster van hoge kwaliteit gebruikt voor analyse",
     liveLegendYellow: "Grenzeloze kwaliteit, met voorzichtigheid gebruiken",
     liveLegendRed: "Artefacten – uitgesloten van analyse",
@@ -251,6 +362,14 @@ const translations = {
 };
 
 let liveSegmentationEnabled = false;
+let isQualityDrawerOpen = false;
+let scrollToExamplesAfterOpen = false;
+
+function getSignalQualityStrings(lang) {
+  const base = translations.en.signalQuality;
+  const current = translations[lang]?.signalQuality;
+  return { ...base, ...(current || {}) };
+}
 
 document.addEventListener("DOMContentLoaded", () => {
   let currentLang = "en";
@@ -268,6 +387,9 @@ document.addEventListener("DOMContentLoaded", () => {
     tabButtons.forEach((btn) => {
       btn.classList.toggle("active", btn.dataset.tab === tab);
     });
+    if (tab !== "quality") {
+      closeQualityDrawer();
+    }
     renderTabContent();
   }
 
@@ -424,6 +546,173 @@ document.addEventListener("DOMContentLoaded", () => {
     `;
   }
 
+  function createEcgExample(type) {
+    const width = 280;
+    const height = 80;
+
+    const base = [
+      [0, 50],
+      [30, 48],
+      [50, 52],
+      [70, 30],
+      [90, 65],
+      [110, 40],
+      [140, 55],
+      [170, 45],
+      [190, 50],
+      [220, 42],
+      [240, 65],
+      [260, 50],
+      [280, 52]
+    ];
+
+    function toPolyline(points) {
+      return points
+        .map(([x, y]) => `${x},${y}`)
+        .join(" ");
+    }
+
+    const overlays = {
+      noise: toPolyline(
+        base.map(([x, y], idx) => [x, y + Math.sin(idx * 2) * 3 + (idx % 2 === 0 ? 2 : -2)])
+      ),
+      drift: toPolyline(base.map(([x, y]) => [x, y + (x / width) * 10 - 5])),
+      impulses: toPolyline(
+        [...base].map(([x, y]) => {
+          if (x === 140 || x === 200) return [x, y - 25];
+          return [x, y];
+        })
+      ),
+      recon: toPolyline(
+        base.map(([x, y], idx) => [x, y + (idx > 6 && idx < 9 ? (idx % 2 === 0 ? 10 : -10) : 0)])
+      )
+    };
+
+    const primaryLine = toPolyline(base);
+    const overlayLine = overlays[type] || primaryLine;
+
+    return `
+      <svg viewBox="0 0 ${width} ${height}" class="ecg-example" aria-hidden="true">
+        <rect x="0" y="0" width="${width}" height="${height}" fill="#0b1120" rx="8" />
+        <polyline
+          points="${primaryLine}"
+          fill="none"
+          stroke="#22c55e"
+          stroke-width="2"
+          stroke-linejoin="round"
+          stroke-linecap="round"
+        />
+        <polyline
+          points="${overlayLine}"
+          fill="none"
+          stroke="${type === "drift" ? "#f59e0b" : "#f87171"}"
+          stroke-width="1.6"
+          stroke-linejoin="round"
+          stroke-linecap="round"
+          stroke-dasharray="${type === "recon" ? "5,4" : ""}"
+        />
+      </svg>
+    `;
+  }
+
+  function ensureQualityDrawerContainer() {
+    if (!document.getElementById("quality-drawer-root")) {
+      const el = document.createElement("div");
+      el.id = "quality-drawer-root";
+      document.body.appendChild(el);
+    }
+  }
+
+  function renderQualityDrawer(lang) {
+    ensureQualityDrawerContainer();
+    const tSignal = getSignalQualityStrings(lang);
+    const root = document.getElementById("quality-drawer-root");
+    if (!root) return;
+
+    root.innerHTML = `
+      <div class="quality-drawer-overlay ${isQualityDrawerOpen ? "open" : ""}" id="quality-drawer-overlay"></div>
+      <aside class="quality-drawer ${isQualityDrawerOpen ? "open" : ""}" id="quality-drawer" aria-hidden="${!isQualityDrawerOpen}">
+        <div class="quality-drawer-header">
+          <h3 class="quality-drawer-title">${tSignal.drawerTitle}</h3>
+          <button class="drawer-close-btn" id="quality-drawer-close" aria-label="${tSignal.closeDrawer}">×</button>
+        </div>
+        <div class="quality-drawer-content">
+          <div class="drawer-section">
+            <strong>${tSignal.drawerTitle}</strong>
+            <p>${tSignal.drawerIntro}</p>
+          </div>
+          <div class="drawer-section" id="quality-drawer-examples">
+            <div style="font-weight:600;">${tSignal.examplesTitle}</div>
+            <div class="artefact-grid">
+              <div class="artefact-card">
+                <h4>${tSignal.indexNoiseTitle}</h4>
+                <div class="artefact-example">${createEcgExample("noise")}</div>
+                <p>${tSignal.indexNoiseText}</p>
+              </div>
+              <div class="artefact-card">
+                <h4>${tSignal.indexDriftTitle}</h4>
+                <div class="artefact-example">${createEcgExample("drift")}</div>
+                <p>${tSignal.indexDriftText}</p>
+              </div>
+              <div class="artefact-card">
+                <h4>${tSignal.indexImpTitle}</h4>
+                <div class="artefact-example">${createEcgExample("impulses")}</div>
+                <p>${tSignal.indexImpText}</p>
+              </div>
+              <div class="artefact-card">
+                <h4>${tSignal.indexReconTitle}</h4>
+                <div class="artefact-example">${createEcgExample("recon")}</div>
+                <p>${tSignal.indexReconText}</p>
+              </div>
+            </div>
+          </div>
+          <div class="drawer-section">
+            <div style="font-weight:600;">${tSignal.levelsTitle}</div>
+            <div class="classification-cards">
+              <div class="classification-card green">
+                <h4>${tSignal.greenTitle}</h4>
+                <p>${tSignal.greenText}</p>
+              </div>
+              <div class="classification-card yellow">
+                <h4>${tSignal.yellowTitle}</h4>
+                <p>${tSignal.yellowText}</p>
+              </div>
+              <div class="classification-card red">
+                <h4>${tSignal.redTitle}</h4>
+                <p>${tSignal.redText}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </aside>
+    `;
+
+    const overlay = document.getElementById("quality-drawer-overlay");
+    const closeBtn = document.getElementById("quality-drawer-close");
+    if (overlay) overlay.onclick = () => closeQualityDrawer();
+    if (closeBtn) closeBtn.onclick = () => closeQualityDrawer();
+
+    if (isQualityDrawerOpen && scrollToExamplesAfterOpen) {
+      setTimeout(() => {
+        const target = document.getElementById("quality-drawer-examples");
+        if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
+        scrollToExamplesAfterOpen = false;
+      }, 80);
+    }
+  }
+
+  function openQualityDrawer(options = {}) {
+    isQualityDrawerOpen = true;
+    scrollToExamplesAfterOpen = !!options.scrollToExamples;
+    renderQualityDrawer(currentLang);
+  }
+
+  function closeQualityDrawer() {
+    isQualityDrawerOpen = false;
+    scrollToExamplesAfterOpen = false;
+    renderQualityDrawer(currentLang);
+  }
+
   function buildWindowsStrip(windows) {
     return windows
       .map((w, idx) => {
@@ -504,25 +793,29 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function renderQualityView(container, lang) {
     const t = translations[lang].tabs.quality;
+    const tSignal = getSignalQualityStrings(lang);
     const stats = ecgDemoData.qualityStats;
     const windows = ecgDemoData.windows;
 
     const statsHtml = `
       <div class="quality-stats">
-        <div class="quality-stat-item">
+        <div class="quality-stat-item tooltip-wrapper" tabindex="0">
           <div>${t.statsGreen}</div>
           <h2>${stats.greenPct}%</h2>
           <div class="stat-sub">${stats.greenCount} / ${stats.total}</div>
+          <div class="tooltip-bubble">${tSignal.tooltipGreen}</div>
         </div>
-        <div class="quality-stat-item">
+        <div class="quality-stat-item tooltip-wrapper" tabindex="0">
           <div>${t.statsYellow}</div>
           <h2>${stats.yellowPct}%</h2>
           <div class="stat-sub">${stats.yellowCount} / ${stats.total}</div>
+          <div class="tooltip-bubble">${tSignal.tooltipYellow}</div>
         </div>
-        <div class="quality-stat-item">
+        <div class="quality-stat-item tooltip-wrapper" tabindex="0">
           <div>${t.statsRed}</div>
           <h2>${stats.redPct}%</h2>
           <div class="stat-sub">${stats.redCount} / ${stats.total}</div>
+          <div class="tooltip-bubble">${tSignal.tooltipRed}</div>
         </div>
       </div>
     `;
@@ -552,8 +845,22 @@ document.addEventListener("DOMContentLoaded", () => {
       </div>
     `;
 
+    const actionsHtml = `
+      <div class="quality-actions">
+        <button class="ghost-button" id="quality-show-examples">${tSignal.showExamples}</button>
+      </div>
+    `;
+
     container.innerHTML = `
-      <h1 class="tab-title">${t.title}</h1>
+      <div class="tab-title-row">
+        <h1 class="tab-title">${t.title}</h1>
+        <div class="tab-title-actions">
+          <button class="info-button" id="quality-info-btn">
+            <span class="icon">i</span>
+            <span>${tSignal.infoButton}</span>
+          </button>
+        </div>
+      </div>
       <p class="tab-description">${t.description}</p>
       <div class="quality-layout">
         <div>
@@ -562,8 +869,21 @@ document.addEventListener("DOMContentLoaded", () => {
         </div>
         ${chartHtml}
         ${distHtml}
+        ${actionsHtml}
       </div>
     `;
+
+    renderQualityDrawer(lang);
+
+    const infoBtn = document.getElementById("quality-info-btn");
+    if (infoBtn) {
+      infoBtn.onclick = () => openQualityDrawer();
+    }
+
+    const examplesBtn = document.getElementById("quality-show-examples");
+    if (examplesBtn) {
+      examplesBtn.onclick = () => openQualityDrawer({ scrollToExamples: true });
+    }
   }
 
   function renderLeadsView(container, lang) {
