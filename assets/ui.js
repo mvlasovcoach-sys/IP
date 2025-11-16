@@ -9,7 +9,13 @@ const translations = {
       quality: {
         title: "Signal Quality – green / yellow / red windows",
         description:
-          "This view will show how each 2-second window is classified by quality based on noise, drift, motion artefacts and other metrics."
+          "This view will show how each 2-second window is classified by quality based on noise, drift, motion artefacts and other metrics.",
+        statsTitle: "Window Quality Statistics",
+        statsGreen: "High-quality (green)",
+        statsYellow: "Borderline (yellow)",
+        statsRed: "Artefacts (red)",
+        chartTitle: "Quality Distribution",
+        distributionTitle: "Window-by-window quality distribution"
       },
       leads: {
         title: "12-Lead View – reconstructed ECG layout",
@@ -45,7 +51,13 @@ const translations = {
       quality: {
         title: "Качество сигнала – зелёные / жёлтые / красные окна",
         description:
-          "Здесь будет показано, как каждое 2-секундное окно классифицируется по качеству на основе шума, дрейфа, артефактов движения и других метрик."
+          "Здесь будет показано, как каждое 2-секундное окно классифицируется по качеству на основе шума, дрейфа, артефактов движения и других метрик.",
+        statsTitle: "Статистика качества окон",
+        statsGreen: "Высокое качество (зелёный)",
+        statsYellow: "Пограничное качество (жёлтый)",
+        statsRed: "Артефакты (красный)",
+        chartTitle: "Распределение качества",
+        distributionTitle: "Качество по каждому окну"
       },
       leads: {
         title: "12-канальный вид – реконструированное ЭКГ",
@@ -81,7 +93,13 @@ const translations = {
       quality: {
         title: "Signaalkwaliteit – groene / gele / rode vensters",
         description:
-          "Deze weergave laat zien hoe elk 2-seconden venster wordt geclassificeerd op basis van ruis, baselinedrift, bewegingsartefacten en andere kwaliteitsparameters."
+          "Deze weergave laat zien hoe elk 2-seconden venster wordt geclassificeerd op basis van ruis, baselinedrift, bewegingsartefacten en andere kwaliteitsparameters.",
+        statsTitle: "Vensterkwaliteitsstatistiek",
+        statsGreen: "Hoge kwaliteit (groen)",
+        statsYellow: "Grenzgeval (geel)",
+        statsRed: "Artefacten (rood)",
+        chartTitle: "Kwaliteitsverdeling",
+        distributionTitle: "Kwaliteit per venster"
       },
       leads: {
         title: "12-afleidingen weergave – gereconstrueerd ECG",
@@ -150,13 +168,15 @@ document.addEventListener("DOMContentLoaded", () => {
       liveWindowTimer = null;
     }
 
+    if (currentTab === "quality") {
+      renderQualityView(tabContent, currentLang);
+      return;
+    }
+
     let title = "";
     let description = "";
 
-    if (currentTab === "quality") {
-      title = t.tabs.quality.title;
-      description = t.tabs.quality.description;
-    } else if (currentTab === "leads") {
+    if (currentTab === "leads") {
       title = t.tabs.leads.title;
       description = t.tabs.leads.description;
     } else if (currentTab === "profile") {
@@ -224,6 +244,70 @@ document.addEventListener("DOMContentLoaded", () => {
     items.forEach((el, idx) => {
       el.classList.toggle("active", idx === liveActiveWindowIndex);
     });
+  }
+
+  function renderQualityView(container, lang) {
+    const t = translations[lang].tabs.quality;
+    const stats = ecgDemoData.qualityStats;
+    const windows = ecgDemoData.windows;
+
+    const statsHtml = `
+      <div class="quality-stats">
+        <div class="quality-stat-item">
+          <div>${t.statsGreen}</div>
+          <h2>${stats.greenPct}%</h2>
+          <div class="stat-sub">${stats.greenCount} / ${stats.total}</div>
+        </div>
+        <div class="quality-stat-item">
+          <div>${t.statsYellow}</div>
+          <h2>${stats.yellowPct}%</h2>
+          <div class="stat-sub">${stats.yellowCount} / ${stats.total}</div>
+        </div>
+        <div class="quality-stat-item">
+          <div>${t.statsRed}</div>
+          <h2>${stats.redPct}%</h2>
+          <div class="stat-sub">${stats.redCount} / ${stats.total}</div>
+        </div>
+      </div>
+    `;
+
+    const chartHtml = `
+      <div>
+        <h3>${t.chartTitle}</h3>
+        <svg class="quality-chart" viewBox="0 0 120 120" aria-label="${t.chartTitle}">
+          <rect x="18" y="${100 - stats.greenPct}" width="22" height="${stats.greenPct}" rx="3" fill="rgba(16,185,129,0.8)"></rect>
+          <rect x="49" y="${100 - stats.yellowPct}" width="22" height="${stats.yellowPct}" rx="3" fill="rgba(245,158,11,0.8)"></rect>
+          <rect x="80" y="${100 - stats.redPct}" width="22" height="${stats.redPct}" rx="3" fill="rgba(239,68,68,0.8)"></rect>
+          <text x="29" y="112" text-anchor="middle" font-size="8" fill="#6b7280">G</text>
+          <text x="60" y="112" text-anchor="middle" font-size="8" fill="#6b7280">Y</text>
+          <text x="91" y="112" text-anchor="middle" font-size="8" fill="#6b7280">R</text>
+        </svg>
+      </div>
+    `;
+
+    const distHtml = `
+      <div>
+        <h3>${t.distributionTitle}</h3>
+        <div class="quality-distribution-strip">
+          ${windows
+            .map((w) => `<div class="quality-window ${w.quality}" title="#${w.id}"></div>`)
+            .join("")}
+        </div>
+      </div>
+    `;
+
+    container.innerHTML = `
+      <h1 class="tab-title">${t.title}</h1>
+      <p class="tab-description">${t.description}</p>
+      <div class="quality-layout">
+        <div>
+          <h3>${t.statsTitle}</h3>
+          ${statsHtml}
+        </div>
+        ${chartHtml}
+        ${distHtml}
+      </div>
+    `;
   }
 
   function renderLiveEcgView(container, lang) {
