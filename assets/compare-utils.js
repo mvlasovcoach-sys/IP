@@ -39,3 +39,37 @@ export function computeDeviationScore(param, delta, evidence, abruptness, morphR
 
   return Math.round(score);
 }
+
+// score: 0..100 from computeDeviationScore
+// context: { param, delta, evidence, abruptness, morphR, isLoadContext }
+export function classifyDeviation(score, context) {
+  let zone = "green";
+  if (score >= 70) zone = "red";
+  else if (score >= 40) zone = "yellow";
+
+  let baseReason = "zoneReasonNormalAdapt";
+
+  if (zone === "green") {
+    if (context.evidence === "low") {
+      baseReason = "zoneReasonLimitedData";
+    } else if (context.isLoadContext && Math.abs(context.delta) > 0) {
+      baseReason = "zoneReasonAfterLoad";
+    } else {
+      baseReason = "zoneReasonNormalAdapt";
+    }
+  } else if (zone === "yellow") {
+    baseReason = "zoneReasonNoticeable";
+    if (context.evidence === "low") {
+      baseReason = "zoneReasonLimitedData";
+    }
+  } else if (zone === "red") {
+    baseReason = "zoneReasonSignificant";
+  }
+
+  const morphChanged = context.morphR < 0.75;
+  return {
+    zone,
+    baseReasonKey: baseReason,
+    morphChanged
+  };
+}

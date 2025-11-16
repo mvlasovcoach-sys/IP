@@ -1,4 +1,4 @@
-import { computeDeviationScore } from "./compare-utils.js";
+import { computeDeviationScore, classifyDeviation } from "./compare-utils.js";
 
 const translations = {
   en: {
@@ -110,6 +110,24 @@ const translations = {
         deltaQtc: "QTc interval",
         deltaSdnn: "HRV SDNN",
         deltaRmssd: "HRV RMSSD",
+        zoneLegendTitle: "Zone meaning",
+        zoneGreenLabel: "Green zone – normal physiological variability",
+        zoneYellowLabel: "Yellow zone – noticeable deviation from baseline",
+        zoneRedLabel: "Red zone – significant deviation that may require attention",
+        zoneCardTitle: "Parameter deviation summary",
+        zoneParamHR: "Heart rate",
+        zoneParamQTc: "QTc interval",
+        zoneParamAxis: "Electrical axis",
+        zoneParamHRV: "HRV (SDNN/RMSSD)",
+        zoneGreenShort: "Green zone",
+        zoneYellowShort: "Yellow zone",
+        zoneRedShort: "Red zone",
+        zoneReasonLimitedData: "Based on a limited amount of data",
+        zoneReasonNormalAdapt: "Within expected adaptive range",
+        zoneReasonNoticeable: "Noticeable change vs baseline",
+        zoneReasonSignificant: "Marked change vs baseline",
+        zoneReasonAfterLoad: "Expected change after load",
+        zoneReasonMorphChange: "Accompanied by morphology change",
         deviationScaleTitle: "Deviation scale",
         deviationGreen: "Green zone – normal physiological variability",
         deviationYellow: "Yellow zone – noticeable deviation",
@@ -128,7 +146,7 @@ const translations = {
         abruptnessSudden: "Sudden change – interpret with caution",
         confidenceHigh: "High confidence",
         confidenceMedium: "Medium confidence",
-        confidenceLow: "Low confidence (limited data)",
+        confidenceLow: "Based on a limited amount of data",
         hint:
           "We always compare the patient with their own baseline. The resting profile serves as a stable reference; the post-load profile shows how the cardiovascular system responds."
       }
@@ -287,6 +305,24 @@ const translations = {
         deltaQtc: "Интервал QTc",
         deltaSdnn: "HRV SDNN",
         deltaRmssd: "HRV RMSSD",
+        zoneLegendTitle: "Значение зон",
+        zoneGreenLabel: "Зелёная зона — в пределах нормальной вариабельности",
+        zoneYellowLabel: "Жёлтая зона — заметное отклонение от базового профиля",
+        zoneRedLabel: "Красная зона — выраженное отклонение, может требовать внимания",
+        zoneCardTitle: "Сводка отклонений параметров",
+        zoneParamHR: "ЧСС",
+        zoneParamQTc: "Интервал QTc",
+        zoneParamAxis: "Электрическая ось",
+        zoneParamHRV: "ВСР (SDNN/RMSSD)",
+        zoneGreenShort: "Зелёная зона",
+        zoneYellowShort: "Жёлтая зона",
+        zoneRedShort: "Красная зона",
+        zoneReasonLimitedData: "Оценка по ограниченному объёму данных",
+        zoneReasonNormalAdapt: "В пределах ожидаемой адаптации",
+        zoneReasonNoticeable: "Заметное изменение относительно базового профиля",
+        zoneReasonSignificant: "Выраженное изменение относительно базового профиля",
+        zoneReasonAfterLoad: "Ожидаемое изменение после нагрузки",
+        zoneReasonMorphChange: "Сопровождается изменением формы комплекса",
         deviationScaleTitle: "Шкала отклонений",
         deviationGreen: "Зелёная зона – физиологическая вариабельность",
         deviationYellow: "Жёлтая зона – заметное отклонение",
@@ -305,7 +341,7 @@ const translations = {
         abruptnessSudden: "Резкое изменение — интерпретировать с осторожностью",
         confidenceHigh: "Высокая уверенность",
         confidenceMedium: "Средняя уверенность",
-        confidenceLow: "Низкая уверенность (мало данных)",
+        confidenceLow: "Оценка по ограниченному объёму данных",
         hint:
           "Всегда сравниваем пациента только с его базовым уровнем. Профиль покоя — стабильная опора, профиль после нагрузки показывает реакцию сердечно-сосудистой системы."
       }
@@ -463,6 +499,24 @@ const translations = {
         deltaQtc: "QTc-interval",
         deltaSdnn: "HRV SDNN",
         deltaRmssd: "HRV RMSSD",
+        zoneLegendTitle: "Betekenis van zones",
+        zoneGreenLabel: "Groene zone – normale fysiologische variatie",
+        zoneYellowLabel: "Gele zone – merkbare afwijking van de basislijn",
+        zoneRedLabel: "Rode zone – duidelijke afwijking die mogelijk aandacht vraagt",
+        zoneCardTitle: "Samenvatting parameterafwijkingen",
+        zoneParamHR: "Hartritme",
+        zoneParamQTc: "QTc-interval",
+        zoneParamAxis: "Elektrische as",
+        zoneParamHRV: "HRV (SDNN/RMSSD)",
+        zoneGreenShort: "Groene zone",
+        zoneYellowShort: "Gele zone",
+        zoneRedShort: "Rode zone",
+        zoneReasonLimitedData: "Gebaseerd op een beperkt aantal gegevens",
+        zoneReasonNormalAdapt: "Binnen verwacht adaptatiebereik",
+        zoneReasonNoticeable: "Merkbare verandering t.o.v. basislijn",
+        zoneReasonSignificant: "Duidelijke verandering t.o.v. basislijn",
+        zoneReasonAfterLoad: "Verwachte verandering na belasting",
+        zoneReasonMorphChange: "Gepaard met morfologische verandering",
         deviationScaleTitle: "Afwijkingsschaal",
         deviationGreen: "Groene zone – normale fysiologische variatie",
         deviationYellow: "Gele zone – merkbare afwijking",
@@ -481,7 +535,7 @@ const translations = {
         abruptnessSudden: "Plotselinge verandering – met voorzichtigheid duiden",
         confidenceHigh: "Hoge betrouwbaarheid",
         confidenceMedium: "Gemiddelde betrouwbaarheid",
-        confidenceLow: "Lage betrouwbaarheid (weinig data)",
+        confidenceLow: "Gebaseerd op een beperkt aantal gegevens",
         hint:
           "We vergelijken de patiënt altijd met zijn of haar eigen basislijn. Het rustprofiel is het stabiele referentiepunt; het na-belasting profiel toont hoe het cardiovasculaire systeem reageert."
       }
@@ -1602,10 +1656,79 @@ document.addEventListener("DOMContentLoaded", () => {
     const deltaSdnn = formatDelta(dSdnn, " ms", true);
     const deltaRmssd = formatDelta(dRmssd, " ms", true);
 
-    const devHR = computeDeviationScore("HR", dHr, evidenceRest.score, abrupt.level, morph.r);
-    const devQTc = computeDeviationScore("QTc", dQtc, evidenceRest.score, abrupt.level, morph.r);
-    const devAxis = computeDeviationScore("Axis", dAxis, evidenceRest.score, abrupt.level, morph.r);
-    const devHRV = computeDeviationScore("HRV", dSdnn, evidenceRest.score, abrupt.level, morph.r);
+    const dAxisText = deltaAxis.text;
+    const dHrvText = `${deltaSdnn.text} / ${deltaRmssd.text}`;
+
+    const isLoadContext = true;
+
+    const devHRScore = computeDeviationScore("HR", dHr, evidenceRest.score, abrupt.level, morph.r);
+    const devQTcScore = computeDeviationScore("QTc", dQtc, evidenceRest.score, abrupt.level, morph.r);
+    const devAxisScore = computeDeviationScore("Axis", dAxis, evidenceRest.score, abrupt.level, morph.r);
+    const devHRVScore = computeDeviationScore("HRV", dSdnn, evidenceRest.score, abrupt.level, morph.r);
+
+    const devHR = classifyDeviation(devHRScore, {
+      param: "HR",
+      delta: dHr,
+      evidence: evidenceRest.score,
+      abruptness: abrupt.level,
+      morphR: morph.r,
+      isLoadContext
+    });
+    const devQTc = classifyDeviation(devQTcScore, {
+      param: "QTc",
+      delta: dQtc,
+      evidence: evidenceRest.score,
+      abruptness: abrupt.level,
+      morphR: morph.r,
+      isLoadContext
+    });
+    const devAxis = classifyDeviation(devAxisScore, {
+      param: "Axis",
+      delta: dAxis,
+      evidence: evidenceRest.score,
+      abruptness: abrupt.level,
+      morphR: morph.r,
+      isLoadContext
+    });
+    const devHRV = classifyDeviation(devHRVScore, {
+      param: "HRV",
+      delta: dSdnn,
+      evidence: evidenceRest.score,
+      abruptness: abrupt.level,
+      morphR: morph.r,
+      isLoadContext
+    });
+
+    function renderZoneCard(label, deltaText, devInfo, t) {
+      const zoneClass = devInfo.zone;
+      const zoneLabelKey =
+        devInfo.zone === "green"
+          ? "zoneGreenShort"
+          : devInfo.zone === "yellow"
+          ? "zoneYellowShort"
+          : "zoneRedShort";
+
+      const reasonText = t[devInfo.baseReasonKey] || "";
+      const morphSuffix = devInfo.morphChanged
+        ? " " + (t.zoneReasonMorphChange || t.morphMarked)
+        : "";
+
+      return `
+        <div class="zone-card zone-${zoneClass}">
+          <div class="zone-card-header">
+            <span class="zone-card-label">${label}</span>
+            <span class="zone-card-delta">${deltaText}</span>
+          </div>
+          <div class="zone-card-zone">${t[zoneLabelKey]}</div>
+          <div class="zone-card-reason">${reasonText}${morphSuffix}</div>
+        </div>
+      `;
+    }
+
+    const confidenceLabel =
+      overallConf === "low"
+        ? t.zoneReasonLimitedData
+        : t[`confidence${capitalize(overallConf)}`];
 
     const evidenceHtml = `
       <div class="compare-evidence">
@@ -1689,7 +1812,7 @@ document.addEventListener("DOMContentLoaded", () => {
           <span>
             <span class="compare-delta-value ${deltaHr.cls}">${deltaHr.text}</span>
             <span class="compare-conf-chip conf-${overallConf}">
-              ${t[`confidence${capitalize(overallConf)}`]}
+              ${confidenceLabel}
             </span>
           </span>
         </div>
@@ -1698,7 +1821,7 @@ document.addEventListener("DOMContentLoaded", () => {
           <span>
             <span class="compare-delta-value ${deltaAxis.cls}">${deltaAxis.text}</span>
             <span class="compare-conf-chip conf-${overallConf}">
-              ${t[`confidence${capitalize(overallConf)}`]}
+              ${confidenceLabel}
             </span>
           </span>
         </div>
@@ -1707,7 +1830,7 @@ document.addEventListener("DOMContentLoaded", () => {
           <span>
             <span class="compare-delta-value ${deltaQtc.cls}">${deltaQtc.text}</span>
             <span class="compare-conf-chip conf-${overallConf}">
-              ${t[`confidence${capitalize(overallConf)}`]}
+              ${confidenceLabel}
             </span>
           </span>
         </div>
@@ -1716,7 +1839,7 @@ document.addEventListener("DOMContentLoaded", () => {
           <span>
             <span class="compare-delta-value ${deltaSdnn.cls}">${deltaSdnn.text}</span>
             <span class="compare-conf-chip conf-${overallConf}">
-              ${t[`confidence${capitalize(overallConf)}`]}
+              ${confidenceLabel}
             </span>
           </span>
         </div>
@@ -1725,7 +1848,7 @@ document.addEventListener("DOMContentLoaded", () => {
           <span>
             <span class="compare-delta-value ${deltaRmssd.cls}">${deltaRmssd.text}</span>
             <span class="compare-conf-chip conf-${overallConf}">
-              ${t[`confidence${capitalize(overallConf)}`]}
+              ${confidenceLabel}
             </span>
           </span>
         </div>
@@ -1733,35 +1856,23 @@ document.addEventListener("DOMContentLoaded", () => {
     `;
 
     const deviationHtml = `
-      <div class="deviation-scale">
-        <div class="deviation-title">${t.deviationScaleTitle}</div>
+      <div class="zone-card-section">
+        <h3 class="zone-card-title">${t.zoneCardTitle}</h3>
 
-        <div class="deviation-bar" data-param="HR">
-          <div class="deviation-label">${t.deviationLabelHR}</div>
-          <div class="deviation-track">
-            <div class="deviation-fill" id="dev-HR"></div>
-          </div>
+        <div class="zone-card-row">
+          ${renderZoneCard(t.zoneParamHR, deltaHr.text, devHR, t)}
+          ${renderZoneCard(t.zoneParamQTc, deltaQtc.text, devQTc, t)}
+        </div>
+        <div class="zone-card-row">
+          ${renderZoneCard(t.zoneParamAxis, dAxisText, devAxis, t)}
+          ${renderZoneCard(t.zoneParamHRV, dHrvText, devHRV, t)}
         </div>
 
-        <div class="deviation-bar" data-param="QTc">
-          <div class="deviation-label">${t.deviationLabelQTc}</div>
-          <div class="deviation-track">
-            <div class="deviation-fill" id="dev-QTc"></div>
-          </div>
-        </div>
-
-        <div class="deviation-bar" data-param="Axis">
-          <div class="deviation-label">${t.deviationLabelAxis}</div>
-          <div class="deviation-track">
-            <div class="deviation-fill" id="dev-Axis"></div>
-          </div>
-        </div>
-
-        <div class="deviation-bar" data-param="HRV">
-          <div class="deviation-label">${t.deviationLabelHRV}</div>
-          <div class="deviation-track">
-            <div class="deviation-fill" id="dev-HRV"></div>
-          </div>
+        <div class="zone-legend">
+          <div class="zone-legend-title">${t.zoneLegendTitle}</div>
+          <div class="zone-legend-line">🟢 ${t.zoneGreenLabel}</div>
+          <div class="zone-legend-line">🟡 ${t.zoneYellowLabel}</div>
+          <div class="zone-legend-line">🔴 ${t.zoneRedLabel}</div>
         </div>
       </div>
     `;
@@ -1818,17 +1929,6 @@ document.addEventListener("DOMContentLoaded", () => {
       </div>
     `;
 
-    const setDeviationFill = (id, value) => {
-      const el = container.querySelector(`#${id}`);
-      if (!el) return;
-      el.style.width = `${value}%`;
-      el.setAttribute("data-tip", `${value}/100`);
-    };
-
-    setDeviationFill("dev-HR", devHR);
-    setDeviationFill("dev-QTc", devQTc);
-    setDeviationFill("dev-Axis", devAxis);
-    setDeviationFill("dev-HRV", devHRV);
   }
 
   function renderLiveEcgView(container, lang) {
