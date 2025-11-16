@@ -1225,12 +1225,21 @@ document.addEventListener("DOMContentLoaded", () => {
     isQualityDrawerOpen = true;
     scrollToExamplesAfterOpen = !!options.scrollToExamples;
     renderQualityDrawer(currentLang);
+    updateQualityInfoPulseState();
   }
 
   function closeQualityDrawer() {
     isQualityDrawerOpen = false;
     scrollToExamplesAfterOpen = false;
     renderQualityDrawer(currentLang);
+    updateQualityInfoPulseState();
+  }
+
+  function updateQualityInfoPulseState() {
+    const btn = document.getElementById("quality-info-toggle");
+    if (!btn) return;
+    btn.classList.toggle("demo-button-pulse", !isQualityDrawerOpen);
+    btn.classList.toggle("is-active", isQualityDrawerOpen);
   }
 
   function buildWindowsStrip(windows) {
@@ -1371,11 +1380,19 @@ document.addEventListener("DOMContentLoaded", () => {
       </div>
     `;
 
+    const qualityInfoBtnClasses = [
+      "demo-button",
+      "demo-button-primary",
+      isQualityDrawerOpen ? "is-active" : "demo-button-pulse"
+    ]
+      .filter(Boolean)
+      .join(" ");
+
     container.innerHTML = `
       <div class="tab-title-row">
         <h1 class="tab-title">${t.title}</h1>
         <div class="tab-title-actions">
-          <button class="info-button" id="quality-info-btn">
+          <button class="${qualityInfoBtnClasses}" id="quality-info-toggle">
             <span class="icon">i</span>
             <span>${tSignal.infoButton}</span>
           </button>
@@ -1394,8 +1411,9 @@ document.addEventListener("DOMContentLoaded", () => {
     `;
 
     renderQualityDrawer(lang);
+    updateQualityInfoPulseState();
 
-    const infoBtn = document.getElementById("quality-info-btn");
+    const infoBtn = document.getElementById("quality-info-toggle");
     if (infoBtn) {
       infoBtn.onclick = () => openQualityDrawer();
     }
@@ -1447,13 +1465,21 @@ document.addEventListener("DOMContentLoaded", () => {
       .map((line) => `<div>${line}</div>`) // preserve order
       .join("");
 
+    const howComputedBtnClasses = [
+      "demo-button",
+      "demo-button-primary",
+      howComputedEnabled ? "is-active" : "demo-button-pulse"
+    ]
+      .filter(Boolean)
+      .join(" ");
+
     container.innerHTML = `
       <h1 class="tab-title">${t.title}</h1>
       <p class="tab-description">${t.description}</p>
       <div class="leads-layout">
         <h3>${t.gridTitle}</h3>
         <div class="leads-toolbar">
-          <button id="how-computed-toggle" class="btn-toggle"></button>
+          <button id="how-computed-toggle" class="${howComputedBtnClasses}"></button>
           <span class="leads-hint">${t.howComputedHint}</span>
         </div>
         <div id="leads-grid-wrapper" class="leads-grid-wrapper">
@@ -1498,7 +1524,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const t = translations[lang].tabs.leads;
     const setUi = () => {
       btn.textContent = howComputedEnabled ? t.howComputedToggleOn : t.howComputedToggleOff;
-      btn.classList.toggle("active", howComputedEnabled);
+      btn.classList.toggle("is-active", howComputedEnabled);
+      btn.classList.toggle("demo-button-pulse", !howComputedEnabled);
     };
     setUi();
     btn.onclick = () => {
@@ -2176,6 +2203,13 @@ document.addEventListener("DOMContentLoaded", () => {
     const toggleLabel = liveSegmentationEnabled
       ? liveT.segmentationToggleOn
       : liveT.segmentationToggleOff;
+    const segmentationClasses = [
+      "demo-button",
+      "demo-button-primary",
+      liveSegmentationEnabled ? "is-active" : "demo-button-pulse"
+    ]
+      .filter(Boolean)
+      .join(" ");
 
     const windowStripHtml = buildWindowsStrip(windows);
     const channelsHtml = channels
@@ -2203,9 +2237,7 @@ document.addEventListener("DOMContentLoaded", () => {
       <p class="tab-description">${liveT.description}</p>
 
       <div class="live-ecg-toolbar">
-        <button id="segmentation-toggle" class="segmentation-toggle-btn ${
-          liveSegmentationEnabled ? "active" : ""
-        }">
+        <button id="segmentation-toggle" class="${segmentationClasses}">
           ${toggleLabel}
         </button>
         <span>${liveT.segmentationHint}</span>
