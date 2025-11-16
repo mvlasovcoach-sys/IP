@@ -56,7 +56,18 @@ const translations = {
       compare: {
         title: "Compare Profiles – rest vs after load",
         description:
-          "This view will compare two profiles (for example, rest vs after load) and highlight changes in axis, intervals and HRV."
+          "This view compares two Digital Heart Profiles (for example, at rest and after load) and highlights changes in heart rate, intervals, electrical axis and HRV.",
+
+        leftTitle: "Rest profile",
+        rightTitle: "Post-load profile",
+        deltaTitle: "Key changes (Δ)",
+        deltaHr: "Heart rate",
+        deltaAxis: "Electrical axis",
+        deltaQtc: "QTc interval",
+        deltaSdnn: "HRV SDNN",
+        deltaRmssd: "HRV RMSSD",
+        hint:
+          "We always compare the patient with their own baseline. The resting profile serves as a stable reference; the post-load profile shows how the cardiovascular system responds."
       }
     },
     liveLegendGreen: "High-quality window used for analysis",
@@ -124,7 +135,18 @@ const translations = {
       compare: {
         title: "Сравнение профилей – покой и нагрузка",
         description:
-          "Здесь будут сравниваться два профиля (например, покой и после нагрузки) с выделением изменений оси, интервалов и показателей HRV."
+          "Здесь сравниваются два Цифровых Профиля Сердца (например, в покое и после нагрузки) с выделением изменений ЧСС, интервалов, электрической оси и показателей HRV.",
+
+        leftTitle: "Профиль покоя",
+        rightTitle: "Профиль после нагрузки",
+        deltaTitle: "Ключевые изменения (Δ)",
+        deltaHr: "Частота сердечных сокращений",
+        deltaAxis: "Электрическая ось",
+        deltaQtc: "Интервал QTc",
+        deltaSdnn: "HRV SDNN",
+        deltaRmssd: "HRV RMSSD",
+        hint:
+          "Всегда сравниваем пациента только с его базовым уровнем. Профиль покоя — стабильная опора, профиль после нагрузки показывает реакцию сердечно-сосудистой системы."
       }
     },
     liveLegendGreen: "Высокое качество, окно идёт в анализ",
@@ -192,7 +214,18 @@ const translations = {
       compare: {
         title: "Profielen vergelijken – rust versus belasting",
         description:
-          "Deze weergave vergelijkt twee profielen (bijvoorbeeld rust versus na belasting) en markeert de veranderingen in as, intervallen en HRV."
+          "Deze weergave vergelijkt twee Digitale Hartprofielen (bijvoorbeeld in rust en na belasting) en laat veranderingen in hartritme, intervallen, elektrische as en HRV zien.",
+
+        leftTitle: "Rustprofiel",
+        rightTitle: "Na-belasting profiel",
+        deltaTitle: "Belangrijkste veranderingen (Δ)",
+        deltaHr: "Hartritme",
+        deltaAxis: "Elektrische as",
+        deltaQtc: "QTc-interval",
+        deltaSdnn: "HRV SDNN",
+        deltaRmssd: "HRV RMSSD",
+        hint:
+          "We vergelijken de patiënt altijd met zijn of haar eigen basislijn. Het rustprofiel is het stabiele referentiepunt; het na-belasting profiel toont hoe het cardiovasculaire systeem reageert."
       }
     },
     liveLegendGreen: "Venster van hoge kwaliteit gebruikt voor analyse",
@@ -261,12 +294,13 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
+    if (currentTab === "compare") {
+      renderCompareView(tabContent, currentLang);
+      return;
+    }
+
     let title = "";
     let description = "";
-    if (currentTab === "compare") {
-      title = t.tabs.compare.title;
-      description = t.tabs.compare.description;
-    }
 
     tabContent.innerHTML = `
       <h1 class="tab-title">${title}</h1>
@@ -615,6 +649,145 @@ document.addEventListener("DOMContentLoaded", () => {
             ${t.qualityHint}
           </div>
         </div>
+      </div>
+    `;
+  }
+
+  function renderCompareView(container, lang) {
+    const t = translations[lang].tabs.compare;
+    const rest = ecgDemoData.profiles?.rest;
+    const load = ecgDemoData.profiles?.load;
+
+    if (!rest || !load) {
+      container.innerHTML = "<p>No profiles available for comparison.</p>";
+      return;
+    }
+
+    const r = rest.intervals || {};
+    const l = load.intervals || {};
+    const rHrv = rest.hrv || {};
+    const lHrv = load.hrv || {};
+    const rAxis = rest.axis || {};
+    const lAxis = load.axis || {};
+
+    const dHr = (l.hrBpm || 0) - (r.hrBpm || 0);
+    const dAxis = (lAxis.frontalPlaneDeg || 0) - (rAxis.frontalPlaneDeg || 0);
+    const dQtc = (l.qtcMs || 0) - (r.qtcMs || 0);
+    const dSdnn = (lHrv.sdnnMs || 0) - (rHrv.sdnnMs || 0);
+    const dRmssd = (lHrv.rmssdMs || 0) - (rHrv.rmssdMs || 0);
+
+    function formatDelta(value, unit, invertDirectionForLowerIsBetter = false) {
+      const sign = value > 0 ? "+" : value < 0 ? "−" : "±";
+      const absVal = Math.abs(value);
+      const directionUp = invertDirectionForLowerIsBetter ? value < 0 : value > 0;
+      const directionDown = invertDirectionForLowerIsBetter ? value > 0 : value < 0;
+      let cls = "";
+      if (directionUp) cls = "up";
+      else if (directionDown) cls = "down";
+      return { text: `${sign}${absVal}${unit}`.trim(), cls };
+    }
+
+    const deltaHr = formatDelta(dHr, " bpm", false);
+    const deltaAxis = formatDelta(dAxis, "°", false);
+    const deltaQtc = formatDelta(dQtc, " ms", false);
+    const deltaSdnn = formatDelta(dSdnn, " ms", true);
+    const deltaRmssd = formatDelta(dRmssd, " ms", true);
+
+    const leftMetricsHtml = `
+      <div class="compare-metric-list">
+        <div class="compare-metric-row">
+          <span class="compare-metric-label">${t.deltaHr}:</span>
+          <span class="compare-metric-value">${r.hrBpm} bpm</span>
+        </div>
+        <div class="compare-metric-row">
+          <span class="compare-metric-label">${t.deltaAxis}:</span>
+          <span class="compare-metric-value">${rAxis.frontalPlaneDeg}°</span>
+        </div>
+        <div class="compare-metric-row">
+          <span class="compare-metric-label">${t.deltaQtc}:</span>
+          <span class="compare-metric-value">${r.qtcMs} ms</span>
+        </div>
+        <div class="compare-metric-row">
+          <span class="compare-metric-label">${t.deltaSdnn}:</span>
+          <span class="compare-metric-value">${rHrv.sdnnMs} ms</span>
+        </div>
+        <div class="compare-metric-row">
+          <span class="compare-metric-label">${t.deltaRmssd}:</span>
+          <span class="compare-metric-value">${rHrv.rmssdMs} ms</span>
+        </div>
+      </div>
+    `;
+
+    const rightMetricsHtml = `
+      <div class="compare-metric-list">
+        <div class="compare-metric-row">
+          <span class="compare-metric-label">${t.deltaHr}:</span>
+          <span class="compare-metric-value">${l.hrBpm} bpm</span>
+        </div>
+        <div class="compare-metric-row">
+          <span class="compare-metric-label">${t.deltaAxis}:</span>
+          <span class="compare-metric-value">${lAxis.frontalPlaneDeg}°</span>
+        </div>
+        <div class="compare-metric-row">
+          <span class="compare-metric-label">${t.deltaQtc}:</span>
+          <span class="compare-metric-value">${l.qtcMs} ms</span>
+        </div>
+        <div class="compare-metric-row">
+          <span class="compare-metric-label">${t.deltaSdnn}:</span>
+          <span class="compare-metric-value">${lHrv.sdnnMs} ms</span>
+        </div>
+        <div class="compare-metric-row">
+          <span class="compare-metric-label">${t.deltaRmssd}:</span>
+          <span class="compare-metric-value">${lHrv.rmssdMs} ms</span>
+        </div>
+      </div>
+    `;
+
+    const deltaHtml = `
+      <div class="compare-delta">
+        <div class="compare-delta-title">${t.deltaTitle}</div>
+        <div class="compare-delta-row">
+          <span class="compare-delta-label">${t.deltaHr}</span>
+          <span class="compare-delta-value ${deltaHr.cls}">${deltaHr.text}</span>
+        </div>
+        <div class="compare-delta-row">
+          <span class="compare-delta-label">${t.deltaAxis}</span>
+          <span class="compare-delta-value ${deltaAxis.cls}">${deltaAxis.text}</span>
+        </div>
+        <div class="compare-delta-row">
+          <span class="compare-delta-label">${t.deltaQtc}</span>
+          <span class="compare-delta-value ${deltaQtc.cls}">${deltaQtc.text}</span>
+        </div>
+        <div class="compare-delta-row">
+          <span class="compare-delta-label">${t.deltaSdnn}</span>
+          <span class="compare-delta-value ${deltaSdnn.cls}">${deltaSdnn.text}</span>
+        </div>
+        <div class="compare-delta-row">
+          <span class="compare-delta-label">${t.deltaRmssd}</span>
+          <span class="compare-delta-value ${deltaRmssd.cls}">${deltaRmssd.text}</span>
+        </div>
+      </div>
+    `;
+
+    container.innerHTML = `
+      <h1 class="tab-title">${t.title}</h1>
+      <p class="tab-description">${t.description}</p>
+
+      <div class="compare-layout">
+        <div class="compare-main">
+          <div class="compare-column">
+            <div class="compare-profile-title">${t.leftTitle}</div>
+            ${leftMetricsHtml}
+          </div>
+          <div class="compare-column">
+            <div class="compare-profile-title">${t.rightTitle}</div>
+            ${rightMetricsHtml}
+          </div>
+        </div>
+        ${deltaHtml}
+        <p style="font-size:12px; color: var(--text-muted); margin-top:4px;">
+          ${t.hint}
+        </p>
       </div>
     `;
   }
