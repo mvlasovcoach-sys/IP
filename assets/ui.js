@@ -159,6 +159,47 @@ const translations = {
         label: "Profile Benefits"
       }
     },
+    profileHelp: {
+      title: "What each graph and metric means",
+      sections: {
+        leadProvenanceTitle: "Lead provenance",
+        leadProvenanceText:
+          "The tags above show which leads are recorded directly by Healthbox 2 (Recorded), which chest leads are reconstructed from the 7-lead input (Reconstructed), and which leads are excluded due to low confidence. Only high-confidence leads are used when building the Digital Heart Profile.",
+        medianBeatTitle: "Resting profile (median P–QRS–T complex)",
+        medianBeatText:
+          "This graph shows the median P–QRS–T beat built from all high-quality windows (green). It is cleaned from noise and artefacts and represents the typical electrical activity of the heart. The shape of the P wave, QRS complex and T wave reflects atrial activation, ventricular depolarization and repolarization.",
+        medianBeatToggleTitle: "Show intervals button",
+        medianBeatToggleText:
+          "The \"Show intervals\" button adds vertical markers for automatically detected P, PR, QRS, ST and QT boundaries on the median beat. This helps to see where each interval is measured.",
+        hrTitle: "Heart rate",
+        hrText:
+          "Average heart rate calculated from the R–R intervals of the windows that entered the profile. This is not a momentary pulse value but a stable, noise-filtered estimate.",
+        prTitle: "PR interval",
+        prText:
+          "Time from the onset of atrial activation to the onset of ventricular activation. Changes in PR reflect how quickly impulses travel from atria to ventricles.",
+        qrsTitle: "QRS duration",
+        qrsText:
+          "Duration of ventricular depolarization. A narrow QRS indicates fast conduction; a broader QRS may indicate intraventricular conduction delays. Typically measured in a lead with a clear QRS, such as V2 or V3.",
+        qtQtcTitle: "QT and QTc intervals",
+        qtQtcText:
+          "The QT interval covers both ventricular depolarization and repolarization. QTc is the QT corrected for heart rate. In the profile we look not only at the absolute QTc, but also at how it deviates from the person’s own baseline.",
+        axisTitle: "Electrical axis (frontal plane)",
+        axisText:
+          "The arrow shows the direction of the mean QRS vector in the frontal plane, and the numeric value is the angle in degrees. It reflects the spatial orientation of ventricular depolarization relative to the standard limb leads.",
+        hrvTitle: "HRV metrics (SDNN, RMSSD, pNN50)",
+        hrvText:
+          "SDNN reflects overall heart rate variability over the recording. RMSSD is more related to parasympathetic activity. pNN50 shows the percentage of adjacent RR intervals that differ by more than 50 ms. Together they characterize the state of autonomic regulation.",
+        poincareTitle: "Poincaré plot",
+        poincareText:
+          "Each dot is a pair of consecutive RR intervals (RR(n), RR(n+1)). The ellipse shows the average shape of the cloud. A wide ellipse indicates higher variability; a narrow one indicates reduced variability. The plot helps to see patterns and outliers in autonomic regulation.",
+        summaryTitle: "Recording summary",
+        summaryText:
+          "Duration shows how many minutes were used to build the profile. Windows used indicates how many 2-second high-quality windows entered the calculations. Geometry ID identifies the garment/electrode configuration. Profile version shows the algorithm version used to build this profile.",
+        qualityMapTitle: "Profile quality map",
+        qualityMapText:
+          "The colored bar at the bottom represents the sequence of windows used for the profile. Green segments entered the profile fully, yellow segments may be down-weighted or used only for trends, and red segments are excluded. This indicates how strongly the profile is supported by good-quality data."
+      }
+    },
     benefits: {
       label: "Profile Benefits",
       title: "Why the Digital Heart Profile is useful",
@@ -439,6 +480,47 @@ const translations = {
       },
       benefits: {
         label: "Преимущества профиля"
+      }
+    },
+    profileHelp: {
+      title: "Что означает каждый график и каждая метрика",
+      sections: {
+        leadProvenanceTitle: "Происхождение отведений",
+        leadProvenanceText:
+          "Теги над графиком показывают, какие отведения сняты напрямую устройством Healthbox 2 (Recorded), какие грудные отведения восстановлены по модели (Reconstructed), а какие исключены из профиля из-за низкой уверенности. В расчётах используются только отведения с достаточной уверенностью.",
+        medianBeatTitle: "Resting profile (медианный комплекс P–QRS–T)",
+        medianBeatText:
+          "Этот график показывает медианный комплекс P–QRS–T, построенный по всем окнам высокого качества (зелёные). Он очищен от шума и артефактов и отражает типичную электрическую активность сердца: форму P-зубца (предсердия), QRS-комплекса (деполяризация желудочков) и T-волны (реполяризация).",
+        medianBeatToggleTitle: "Кнопка «Show intervals»",
+        medianBeatToggleText:
+          "Кнопка «Show intervals» добавляет вертикальные маркеры автоматически найденных границ P/PR/QRS/ST/QT на медианном комплексе. Это помогает визуально понять, где именно измеряются интервалы.",
+        hrTitle: "Частота сердечных сокращений",
+        hrText:
+          "Средняя частота сердечных сокращений, рассчитанная по интервалам R–R тех окон, которые вошли в профиль. Это не моментный пульс, а устойчивое значение, очищенное от помех.",
+        prTitle: "Интервал PR",
+        prText:
+          "Время от начала возбуждения предсердий до начала возбуждения желудочков. Изменения PR отражают скорость проведения импульса через атриовентрикулярное соединение.",
+        qrsTitle: "Длительность QRS",
+        qrsText:
+          "Длительность деполяризации желудочков. Узкий QRS говорит о быстрой проводимости; расширение QRS может указывать на замедление проведения внутри желудочков. Обычно измеряется в отведении с чётким QRS, например V2 или V3.",
+        qtQtcTitle: "Интервалы QT и QTc",
+        qtQtcText:
+          "Интервал QT охватывает фазу деполяризации и реполяризации желудочков. QTc — QT, скорректированный по частоте сердечных сокращений. В цифровом профиле важно не только абсолютное значение QTc, но и то, насколько оно отличается от персональной базовой величины.",
+        axisTitle: "Электрическая ось (фронтальная плоскость)",
+        axisText:
+          "Стрелка показывает направление среднего вектора QRS в фронтальной плоскости, а число отражает угол в градусах. Это пространственная характеристика деполяризации желудочков относительно стандартных конечностных отведений.",
+        hrvTitle: "Показатели вариабельности ритма (SDNN, RMSSD, pNN50)",
+        hrvText:
+          "SDNN отражает общую вариабельность сердечного ритма за запись. RMSSD в большей степени характеризует парасимпатическую активность. pNN50 показывает долю пар соседних RR-интервалов, различающихся более чем на 50 мс. Совместно эти показатели описывают состояние автономной регуляции.",
+        poincareTitle: "Диаграмма Пуанкаре",
+        poincareText:
+          "Каждая точка на диаграмме — пара соседних RR-интервалов (RR(n), RR(n+1)). Эллипс показывает среднюю форму облака. Широкий эллипс означает высокую вариабельность, узкий — снижённую. Диаграмма позволяет увидеть структуру вариабельности и выбросы.",
+        summaryTitle: "Сводка записи",
+        summaryText:
+          "Duration показывает, сколько минут записи использовано для построения профиля. Windows used — сколько 2-секундных окон высокого качества вошло в расчёты. Geometry ID задаёт тип одежды и конфигурацию электродов. Profile version — версия алгоритма построения профиля.",
+        qualityMapTitle: "Карта качества профиля",
+        qualityMapText:
+          "Цветная полоса внизу отображает последовательность окон, использованных для профиля. Зелёные сегменты полностью вошли в профиль, жёлтые могут учитываться с меньшим весом или только для оценок тренда, красные окна исключены. Это показывает, насколько профиль опирается на надёжные данные."
       }
     },
     benefits: {
@@ -960,6 +1042,56 @@ function computeParamConfidence(evidenceRest, evidenceLoad, morphSim) {
   return "medium";
 }
 
+function openProfileHelpPanel(lang) {
+  const help = translations[lang]?.profileHelp || translations.en.profileHelp;
+  if (!help) return;
+
+  const overlay = document.getElementById("help-overlay");
+  const panel = document.getElementById("help-panel");
+  const titleEl = document.getElementById("help-panel-title");
+  const contentEl = document.getElementById("help-panel-content");
+
+  if (!overlay || !panel || !titleEl || !contentEl) return;
+
+  titleEl.textContent = help.title;
+  const s = help.sections || {};
+  const sectionsHtml = `
+    ${renderHelpSection(s.leadProvenanceTitle, s.leadProvenanceText)}
+    ${renderHelpSection(s.medianBeatTitle, s.medianBeatText)}
+    ${renderHelpSection(s.medianBeatToggleTitle, s.medianBeatToggleText)}
+    ${renderHelpSection(s.hrTitle, s.hrText)}
+    ${renderHelpSection(s.prTitle, s.prText)}
+    ${renderHelpSection(s.qrsTitle, s.qrsText)}
+    ${renderHelpSection(s.qtQtcTitle, s.qtQtcText)}
+    ${renderHelpSection(s.axisTitle, s.axisText)}
+    ${renderHelpSection(s.hrvTitle, s.hrvText)}
+    ${renderHelpSection(s.poincareTitle, s.poincareText)}
+    ${renderHelpSection(s.summaryTitle, s.summaryText)}
+    ${renderHelpSection(s.qualityMapTitle, s.qualityMapText)}
+  `;
+
+  contentEl.innerHTML = sectionsHtml;
+  overlay.hidden = false;
+  panel.hidden = false;
+}
+
+function renderHelpSection(title, text) {
+  if (!title && !text) return "";
+  return `
+    <section class="help-section">
+      ${title ? `<h3 class="help-section-title">${title}</h3>` : ""}
+      ${text ? `<p class="help-section-text">${text}</p>` : ""}
+    </section>
+  `;
+}
+
+function closeHelpPanel() {
+  const overlay = document.getElementById("help-overlay");
+  const panel = document.getElementById("help-panel");
+  if (overlay) overlay.hidden = true;
+  if (panel) panel.hidden = true;
+}
+
   document.addEventListener("DOMContentLoaded", () => {
     let currentLang = "en";
     let currentTab = "live";
@@ -972,6 +1104,8 @@ function computeParamConfidence(evidenceRest, evidenceLoad, morphSim) {
     const footerDisclaimer = document.getElementById("footer-disclaimer");
     const prereqOverlay = document.getElementById("prereq-panel-overlay");
     const prereqCloseButton = document.getElementById("prereq-panel-close");
+    const helpOverlay = document.getElementById("help-overlay");
+    const helpPanelCloseButton = document.getElementById("help-panel-close");
 
     function setActiveTab(tab) {
       currentTab = tab;
@@ -1778,6 +1912,7 @@ function computeParamConfidence(evidenceRest, evidenceLoad, morphSim) {
 
   function renderProfileView(container, lang) {
     const t = translations[lang].tabs.profile;
+    const help = translations[lang]?.profileHelp || translations.en.profileHelp;
     const profile = ecgDemoData.profiles?.rest;
 
     if (!profile) {
@@ -1910,9 +2045,20 @@ function computeParamConfidence(evidenceRest, evidenceLoad, morphSim) {
       </div>
     `;
 
+    const headerHtml = `
+      <div class="profile-header-with-info">
+        <h1 class="tab-title">
+          ${t.title}
+          <button class="info-icon-btn" id="profile-help-btn" aria-label="${help?.title || ""}">
+            i
+          </button>
+        </h1>
+        <p class="tab-description">${t.description}</p>
+      </div>
+    `;
+
     container.innerHTML = `
-      <h1 class="tab-title">${t.title}</h1>
-      <p class="tab-description">${t.description}</p>
+      ${headerHtml}
 
       <div class="profile-layout">
         <div class="profile-main">
@@ -1959,6 +2105,8 @@ function computeParamConfidence(evidenceRest, evidenceLoad, morphSim) {
       </div>
     `;
 
+    setupProfileHelp(lang);
+
     const intervalToggle = container.querySelector("#interval-toggle");
     const templateSvgEl = container.querySelector(".profile-template-plot svg");
     let overlayEnabled = false;
@@ -1988,6 +2136,12 @@ function computeParamConfidence(evidenceRest, evidenceLoad, morphSim) {
         refreshOverlay();
       };
     }
+  }
+
+  function setupProfileHelp(lang) {
+    const btn = document.getElementById("profile-help-btn");
+    if (!btn) return;
+    btn.addEventListener("click", () => openProfileHelpPanel(lang));
   }
 
   function renderCompareView(container, lang) {
@@ -2482,6 +2636,14 @@ function computeParamConfidence(evidenceRest, evidenceLoad, morphSim) {
 
   if (prereqOverlay) {
     prereqOverlay.addEventListener("click", () => closePrereqPanel());
+  }
+
+  if (helpPanelCloseButton) {
+    helpPanelCloseButton.addEventListener("click", () => closeHelpPanel());
+  }
+
+  if (helpOverlay) {
+    helpOverlay.addEventListener("click", () => closeHelpPanel());
   }
 
   updateTabLabels();
