@@ -132,6 +132,30 @@ body {
   line-height: 1.6;
 }
 
+.live-ecg-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.segmentation-toggle-btn {
+  border: 1px solid var(--border-soft);
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 12px;
+  background-color: #ffffff;
+  cursor: pointer;
+}
+
+.segmentation-toggle-btn.active {
+  background-color: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 600;
+}
+
 .app-footer {
   border-top: 1px solid var(--border-soft);
   padding: 12px 24px 24px;
@@ -172,11 +196,52 @@ body {
   padding: 4px;
   overflow: hidden;
   border: 1px solid #111827;
+  position: relative;
 }
 
-.live-ecg-channel-plot svg {
+.live-ecg-channel-plot-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.live-ecg-channel-plot-inner svg {
   width: 100%;
   height: 44px;
+}
+
+.live-ecg-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.live-ecg-seg-band {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  opacity: 0.16;
+}
+
+.live-ecg-seg-band.green {
+  background-color: #10b981;
+}
+
+.live-ecg-seg-band.yellow {
+  background-color: #f59e0b;
+}
+
+.live-ecg-seg-band.red {
+  background-color: #ef4444;
+}
+
+.live-ecg-seg-line {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background-color: rgba(148, 163, 184, 0.7);
+  opacity: 0.7;
 }
 
 .live-ecg-bottom {
