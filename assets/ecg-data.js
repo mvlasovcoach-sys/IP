@@ -81,3 +81,20 @@ ecgDemoData = {
     id++;
   }
 })();
+
+ecgDemoData.qualityStats = (function () {
+  const g = ecgDemoData.windows.filter((w) => w.quality === "green").length;
+  const y = ecgDemoData.windows.filter((w) => w.quality === "yellow").length;
+  const r = ecgDemoData.windows.filter((w) => w.quality === "red").length;
+  const total = ecgDemoData.windows.length;
+
+  return {
+    greenCount: g,
+    yellowCount: y,
+    redCount: r,
+    total,
+    greenPct: ((g / total) * 100).toFixed(1),
+    yellowPct: ((y / total) * 100).toFixed(1),
+    redPct: ((r / total) * 100).toFixed(1)
+  };
+})();
