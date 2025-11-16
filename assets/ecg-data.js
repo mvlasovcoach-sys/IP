@@ -36,6 +36,41 @@ function generateSyntheticEcg(numSamples, noiseLevel = 0.02) {
   return data;
 }
 
+function generateTemplateBeat(numSamples, noiseLevel = 0.006) {
+  const data = [];
+
+  for (let i = 0; i < numSamples; i++) {
+    const phase = i / (numSamples - 1 || 1);
+    let value = 0;
+
+    // P wave
+    if (phase > 0.14 && phase < 0.22) {
+      value += 0.09 * Math.sin(((phase - 0.14) / 0.08) * Math.PI);
+    }
+
+    // QRS complex
+    if (phase > 0.26 && phase < 0.30) {
+      value -= 0.55 * Math.exp(-((phase - 0.28) ** 2) / 0.00035);
+    }
+    if (phase > 0.29 && phase < 0.33) {
+      value += 1.18 * Math.exp(-((phase - 0.31) ** 2) / 0.00030);
+    }
+
+    // T wave
+    if (phase > 0.42 && phase < 0.60) {
+      value += 0.18 * Math.sin(((phase - 0.42) / 0.18) * Math.PI);
+    }
+
+    // small baseline wander and noise
+    value += 0.02 * Math.sin(i / 520);
+    value += (Math.random() - 0.5) * noiseLevel;
+
+    data.push(value);
+  }
+
+  return data;
+}
+
 const numSamples = 250 * 22; // 22 seconds @ 250 Hz
 const baseChannel = generateSyntheticEcg(numSamples, 0.02);
 
@@ -142,3 +177,46 @@ ecgDemoData.qualityStats = (function () {
     redPct: ((r / total) * 100).toFixed(1)
   };
 })();
+
+const templateBeatValues = generateTemplateBeat(360, 0.005);
+const greenWindowsCount = ecgDemoData.windows.filter((w) => w.quality === "green").length;
+const yellowWindowsCount = ecgDemoData.windows.filter((w) => w.quality === "yellow").length;
+const redWindowsCount = ecgDemoData.windows.filter((w) => w.quality === "red").length;
+const totalWindowsCount = ecgDemoData.windows.length || 1;
+
+ecgDemoData.profiles = {
+  rest: {
+    id: "rest",
+    label: "Resting profile",
+    meta: {
+      createdAt: "2025-01-01T12:00:00Z",
+      durationSeconds: 20 * 60,
+      windowsUsed: greenWindowsCount,
+      geometryId: "T-shirt-M",
+      version: 1
+    },
+    templateBeat: {
+      values: templateBeatValues,
+      sampleRateHz: 250
+    },
+    intervals: {
+      hrBpm: 68,
+      prMs: 160,
+      qrsMs: 92,
+      qtMs: 380,
+      qtcMs: 410
+    },
+    axis: {
+      frontalPlaneDeg: 35
+    },
+    hrv: {
+      sdnnMs: 65,
+      rmssdMs: 52
+    },
+    qualityMap: {
+      greenPct: Number(((greenWindowsCount / totalWindowsCount) * 100).toFixed(1)),
+      yellowPct: Number(((yellowWindowsCount / totalWindowsCount) * 100).toFixed(1)),
+      redPct: Number(((redWindowsCount / totalWindowsCount) * 100).toFixed(1))
+    }
+  }
+};
