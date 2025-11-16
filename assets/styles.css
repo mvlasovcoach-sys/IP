@@ -649,6 +649,12 @@ body {
   gap: 12px;
 }
 
+.leads-group-title {
+  font-size: 13px;
+  font-weight: 600;
+  margin: 12px 0 6px;
+}
+
 .lead-card {
   background-color: var(--bg-card);
   border-radius: 8px;
@@ -668,6 +674,24 @@ body {
 
 .lead-label {
   font-weight: 600;
+}
+
+.lead-type-badge {
+  margin-left: 6px;
+  padding: 2px 6px;
+  border-radius: 999px;
+  font-size: 10px;
+  border: 1px solid var(--border-soft);
+}
+
+.lead-type-badge.recorded {
+  background-color: rgba(16, 185, 129, 0.12);
+  color: #047857;
+}
+
+.lead-type-badge.reconstructed {
+  background-color: rgba(59, 130, 246, 0.12);
+  color: #1d4ed8;
 }
 
 .lead-confidence {
