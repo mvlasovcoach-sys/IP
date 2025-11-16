@@ -20,7 +20,13 @@ const translations = {
       leads: {
         title: "12-Lead View – reconstructed ECG layout",
         description:
-          "This view will present a reconstructed 12-lead ECG layout, using the fixed geometry of textile electrodes and per-lead confidence scores."
+          "This view presents a reconstructed 12-lead ECG using the fixed geometry of the textile electrodes and per-lead confidence scores.",
+        gridTitle: "Reconstructed 12-lead ECG",
+        confidenceLabel: "Confidence",
+        lowConfidenceHint:
+          "Leads with confidence < 0.80 are greyed out and not used in the Digital Heart Profile.",
+        legendHigh: "High-confidence leads used in profile",
+        legendLow: "Low-confidence leads (visualised but excluded from profile)"
       },
       profile: {
         title: "Digital Heart Profile – aggregated metrics",
@@ -62,7 +68,13 @@ const translations = {
       leads: {
         title: "12-канальный вид – реконструированное ЭКГ",
         description:
-          "Здесь будет представлен реконструированный 12-канальный вид ЭКГ с учётом фиксированной геометрии текстильных электродов и показателей достоверности по каждому отведению."
+          "Здесь представлен реконструированный 12-канальный вид ЭКГ с учётом фиксированной геометрии текстильных электродов и показателей достоверности по каждому отведению.",
+        gridTitle: "Реконструированное 12-канальное ЭКГ",
+        confidenceLabel: "Уверенность",
+        lowConfidenceHint:
+          "Отведения с уверенностью < 0.80 подсвечены серым и не используются в Цифровом профиле сердца.",
+        legendHigh: "Отведения с высокой уверенностью участвуют в профиле",
+        legendLow: "Отведения с низкой уверенностью отображаются, но исключены из профиля"
       },
       profile: {
         title: "Цифровой профиль сердца – агрегированные параметры",
@@ -104,7 +116,13 @@ const translations = {
       leads: {
         title: "12-afleidingen weergave – gereconstrueerd ECG",
         description:
-          "Deze weergave toont een gereconstrueerde 12-kanaals ECG-layout, gebruikmakend van de vaste geometrie van textiele elektroden en een betrouwbaarheidsscore per afleiding."
+          "Deze weergave toont een gereconstrueerd 12-kanaals ECG met de vaste geometrie van textiele elektroden en een betrouwbaarheidsscore per afleiding.",
+        gridTitle: "Gereconstrueerd 12-afleidingen ECG",
+        confidenceLabel: "Betrouwbaarheid",
+        lowConfidenceHint:
+          "Afleidingen met betrouwbaarheid < 0.80 worden grijs getoond en niet gebruikt in het Digitale Hartprofiel.",
+        legendHigh: "Afleidingen met hoge betrouwbaarheid die in het profiel gaan",
+        legendLow: "Afleidingen met lage betrouwbaarheid worden getoond, maar niet meegenomen"
       },
       profile: {
         title: "Digitaal Hartprofiel – geaggregeerde parameters",
@@ -173,13 +191,14 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
+    if (currentTab === "leads") {
+      renderLeadsView(tabContent, currentLang);
+      return;
+    }
+
     let title = "";
     let description = "";
-
-    if (currentTab === "leads") {
-      title = t.tabs.leads.title;
-      description = t.tabs.leads.description;
-    } else if (currentTab === "profile") {
+    if (currentTab === "profile") {
       title = t.tabs.profile.title;
       description = t.tabs.profile.description;
     } else if (currentTab === "compare") {
@@ -221,6 +240,43 @@ document.addEventListener("DOMContentLoaded", () => {
           fill="none"
           stroke="#22c55e"
           stroke-width="1.4"
+          stroke-linejoin="round"
+          stroke-linecap="round"
+        />
+      </svg>
+    `;
+  }
+
+  function createLeadSvg(values) {
+    const sampleRate = ecgDemoData.sampleRateHz || 250;
+    const durationSeconds = 3;
+    const totalSamples = values.length;
+    const sliceLength = sampleRate * durationSeconds;
+    const startIndex = Math.max(0, totalSamples - sliceLength);
+    const slice = values.slice(startIndex);
+
+    const width = 200;
+    const height = 50;
+
+    const min = Math.min(...slice);
+    const max = Math.max(...slice);
+    const range = max - min || 1;
+
+    const points = slice
+      .map((v, i) => {
+        const x = (i / (slice.length - 1 || 1)) * width;
+        const y = height - ((v - min) / range) * (height - 4) - 2;
+        return `${x.toFixed(1)},${y.toFixed(1)}`;
+      })
+      .join(" ");
+
+    return `
+      <svg viewBox="0 0 ${width} ${height}" preserveAspectRatio="none">
+        <polyline
+          points="${points}"
+          fill="none"
+          stroke="#22c55e"
+          stroke-width="1.2"
           stroke-linejoin="round"
           stroke-linecap="round"
         />
@@ -306,6 +362,50 @@ document.addEventListener("DOMContentLoaded", () => {
         </div>
         ${chartHtml}
         ${distHtml}
+      </div>
+    `;
+  }
+
+  function renderLeadsView(container, lang) {
+    const t = translations[lang].tabs.leads;
+    const leads = ecgDemoData.leads12 || [];
+
+    const cardsHtml = leads
+      .map((lead) => {
+        const isLow = lead.confidence < 0.8;
+        const svg = createLeadSvg(lead.values);
+        return `
+        <div class="lead-card">
+          <div class="lead-header">
+            <span class="lead-label">${lead.label}</span>
+            <span class="lead-confidence ${isLow ? "low" : ""}">
+              ${t.confidenceLabel}: ${(lead.confidence * 100).toFixed(0)}%
+            </span>
+          </div>
+          <div class="lead-plot ${isLow ? "low-confidence" : ""}">
+            ${svg}
+          </div>
+        </div>
+      `;
+      })
+      .join("");
+
+    const legendLines = [t.legendHigh, t.legendLow, t.lowConfidenceHint]
+      .filter(Boolean)
+      .map((line) => `<div>${line}</div>`) // preserve order
+      .join("");
+
+    container.innerHTML = `
+      <h1 class="tab-title">${t.title}</h1>
+      <p class="tab-description">${t.description}</p>
+      <div class="leads-layout">
+        <h3>${t.gridTitle}</h3>
+        <div class="leads-grid">
+          ${cardsHtml}
+        </div>
+        <div class="leads-legend">
+          ${legendLines || t.lowConfidenceHint || ""}
+        </div>
       </div>
     `;
   }

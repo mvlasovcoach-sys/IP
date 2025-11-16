@@ -55,6 +55,50 @@ ecgDemoData = {
       values: baseChannel.map((v, i) => v * 0.92 - 0.015 * Math.cos(i / 72))
     }
   ],
+  leads12: [
+    { id: "I", label: "Lead I", values: baseChannel, confidence: 0.94 },
+    {
+      id: "II",
+      label: "Lead II",
+      values: baseChannel.map((v, i) => v * 1.02 + 0.01 * Math.sin(i / 40)),
+      confidence: 0.91
+    },
+    {
+      id: "III",
+      label: "Lead III",
+      values: baseChannel.map((v, i) => v * 0.97 - 0.01 * Math.cos(i / 60)),
+      confidence: 0.89
+    },
+    { id: "aVR", label: "aVR", values: baseChannel.map((v) => -v * 0.8), confidence: 0.83 },
+    {
+      id: "aVL",
+      label: "aVL",
+      values: baseChannel.map((v, i) => v * 0.85 + 0.005 * Math.sin(i / 35)),
+      confidence: 0.88
+    },
+    {
+      id: "aVF",
+      label: "aVF",
+      values: baseChannel.map((v, i) => v * 1.05 - 0.005 * Math.cos(i / 45)),
+      confidence: 0.86
+    },
+    { id: "V1", label: "V1", values: baseChannel.map((v) => v * 1.1), confidence: 0.93 },
+    { id: "V2", label: "V2", values: baseChannel.map((v) => v * 1.15), confidence: 0.9 },
+    { id: "V3", label: "V3", values: baseChannel.map((v) => v * 1.08), confidence: 0.87 },
+    { id: "V4", label: "V4", values: baseChannel.map((v) => v * 1.02), confidence: 0.81 },
+    {
+      id: "V5",
+      label: "V5",
+      values: baseChannel.map((v) => v * 0.95),
+      confidence: 0.76
+    },
+    {
+      id: "V6",
+      label: "V6",
+      values: baseChannel.map((v) => v * 0.92),
+      confidence: 0.72
+    }
+  ],
   windows: []
 };
 
