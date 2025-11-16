@@ -138,26 +138,21 @@ body {
   gap: 8px;
 }
 
-.info-button {
+.demo-button {
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-size: 12px;
+  border: 1px solid var(--border-soft);
+  background-color: #ffffff;
+  cursor: pointer;
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  border: 1px solid var(--border-soft);
-  background: #fff;
-  border-radius: 8px;
-  padding: 8px 10px;
-  font-size: 13px;
-  cursor: pointer;
-  color: var(--text-main);
-  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+  transition: box-shadow 0.2s ease, transform 0.2s ease, background-color 0.2s ease,
+    border-color 0.2s ease, color 0.2s ease;
 }
 
-.info-button:hover {
-  background-color: var(--accent-soft);
-  box-shadow: 0 6px 16px rgba(43, 124, 255, 0.12);
-}
-
-.info-button .icon {
+.demo-button .icon {
   width: 16px;
   height: 16px;
   display: inline-flex;
@@ -167,6 +162,55 @@ body {
   background-color: var(--accent-soft);
   color: var(--accent);
   font-weight: 700;
+  font-size: 11px;
+}
+
+.demo-button-primary {
+  border-color: rgba(37, 99, 235, 0.25);
+  background-color: #eef2ff;
+  color: #1d4ed8;
+}
+
+.demo-button-primary:hover,
+.demo-button-primary:focus-visible {
+  background-color: #e0e7ff;
+  box-shadow: 0 6px 18px rgba(59, 130, 246, 0.18);
+}
+
+.demo-button-primary.is-active {
+  background-color: #dbeafe;
+  border-color: rgba(37, 99, 235, 0.35);
+  box-shadow: 0 4px 14px rgba(59, 130, 246, 0.22);
+  color: #1d4ed8;
+  font-weight: 600;
+}
+
+@keyframes demoGlowPulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
+  }
+  40% {
+    box-shadow: 0 0 0 8px rgba(59, 130, 246, 0.18);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
+  }
+}
+
+.demo-button-pulse {
+  animation: demoGlowPulse 3.2s ease-in-out infinite;
+}
+
+.demo-button-pulse:hover,
+.demo-button-pulse:focus-visible,
+.demo-button-pulse:focus {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .demo-button-pulse {
+    animation: none;
+  }
 }
 
 .tab-description {
@@ -184,21 +228,6 @@ body {
   margin-bottom: 12px;
   font-size: 12px;
   color: var(--text-muted);
-}
-
-.segmentation-toggle-btn {
-  border: 1px solid var(--border-soft);
-  border-radius: 999px;
-  padding: 4px 10px;
-  font-size: 12px;
-  background-color: #ffffff;
-  cursor: pointer;
-}
-
-.segmentation-toggle-btn.active {
-  background-color: var(--accent-soft);
-  color: var(--accent);
-  font-weight: 600;
 }
 
 .app-footer {
