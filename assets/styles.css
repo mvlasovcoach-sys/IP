@@ -837,6 +837,7 @@ body {
   border-radius: 10px;
   border: 1px solid var(--border-soft);
   padding: 10px 12px;
+  position: relative;
 }
 
 .profile-metric-label {
@@ -848,6 +849,18 @@ body {
   margin-top: 4px;
   font-size: 16px;
   font-weight: 600;
+}
+
+.metric-source-chip {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  font-size: 10px;
+  padding: 0 6px;
+  border: 1px solid var(--border-soft);
+  border-radius: 999px;
+  background: #f8fafc;
+  color: #1f2937;
 }
 
 .profile-quality {
@@ -891,6 +904,110 @@ body {
 .profile-meta-label {
   min-width: 110px;
   font-weight: 500;
+}
+
+.prov-grid {
+  display: grid;
+  grid-template-columns: repeat(6, auto);
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.prov-cell {
+  font-size: 11px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--border-soft);
+}
+
+.prov-cell.recorded.used {
+  background: #ecfdf5;
+  color: #065f46;
+}
+
+.prov-cell.reconstructed.used {
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+
+.prov-cell.excluded {
+  background: #f3f4f6;
+  color: #6b7280;
+}
+
+.prov-legend {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 6px;
+}
+
+.profile-template-card {
+  position: relative;
+}
+
+.profile-template-plot {
+  position: relative;
+}
+
+.interval-hint {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 6px;
+}
+
+.ecg-overlay-line {
+  stroke: #94a3b8;
+  stroke-dasharray: 4 3;
+  stroke-width: 1;
+  fill: none;
+}
+
+.ecg-overlay-label {
+  font-size: 10px;
+  fill: #64748b;
+}
+
+.axis-widget-holder {
+  margin-top: 6px;
+}
+
+.axis-svg line {
+  stroke: #cbd5e1;
+  stroke-width: 1;
+}
+
+.axis-arrow {
+  stroke: #059669;
+  stroke-width: 2;
+}
+
+.axis-center {
+  fill: #059669;
+}
+
+.hrv-extra {
+  margin-top: 10px;
+  padding: 8px 10px;
+  border: 1px dashed var(--border-soft);
+  border-radius: 8px;
+  background: #f8fafc;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.hrv-extra-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.poincare-plot {
+  margin-top: 6px;
+}
+
+.quality-summary {
+  font-size: 12px;
+  color: var(--text-muted);
 }
 
 .compare-layout {

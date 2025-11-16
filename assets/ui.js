@@ -48,6 +48,18 @@ const translations = {
         description:
           "This view visualises the Digital Heart Profile: median P–QRS–T complexes, intervals (PR, QRS, QT, QTc), electrical axis and HRV metrics.",
 
+        leadProvTitle: "Lead provenance",
+        leadProvLegendRecorded: "Recorded",
+        leadProvLegendRecon: "Reconstructed",
+        leadProvLegendExcluded: "Excluded",
+        leadProvConfidenceNote:
+          "Profile built from recorded limb leads plus reconstructed chest leads. Only high-confidence leads are included.",
+
+        showIntervals: "Show intervals",
+        hideIntervals: "Hide intervals",
+        intervalsHint:
+          "Toggle interval markers to see detected P/PR/QRS/ST/QT boundaries on the median beat.",
+
         metricsTitle: "Key cardiac metrics",
         metricHr: "Heart rate",
         metricPr: "PR interval",
@@ -57,10 +69,17 @@ const translations = {
         metricAxis: "Electrical axis (frontal plane)",
         metricSdnn: "HRV SDNN",
         metricRmssd: "HRV RMSSD",
+        metricSourceLabel: "Source",
+        axisTitle: "Frontal electrical axis",
+        hrvPnn50Label: "pNN50",
 
         qualityTitle: "Profile quality map",
         qualityHint:
           "Only high-quality (green) windows are used to build the profile. Yellow and red windows are excluded or down-weighted.",
+        qualitySummaryWindows:
+          "Windows used: Green {greenPct}% ({greenCount}/{total}), Yellow {yellowPct}%, Red {redPct}%.",
+        qualitySummaryLeads:
+          "Leads included in profile: {recCount} recorded + {reconCount} reconstructed (excluded: {excluded}).",
 
         metaTitle: "Recording summary",
         metaDuration: "Duration",
@@ -179,6 +198,18 @@ const translations = {
         description:
           "Здесь визуализируется Цифровой Профиль Сердца: медианные комплексы P–QRS–T, интервалы (PR, QRS, QT, QTc), электрическая ось и показатели вариабельности ритма.",
 
+        leadProvTitle: "Происхождение отведений",
+        leadProvLegendRecorded: "Снято",
+        leadProvLegendRecon: "Восстановлено",
+        leadProvLegendExcluded: "Исключено",
+        leadProvConfidenceNote:
+          "Профиль формируется из снимаемых конечностных отведений и восстановленных грудных. Включаются только отведения с достаточной уверенностью.",
+
+        showIntervals: "Показать интервалы",
+        hideIntervals: "Скрыть интервалы",
+        intervalsHint:
+          "Переключите, чтобы увидеть границы P/PR/QRS/ST/QT, обнаруженные на медианном комплексе.",
+
         metricsTitle: "Ключевые кардиопараметры",
         metricHr: "Частота сердечных сокращений",
         metricPr: "Интервал PR",
@@ -188,10 +219,17 @@ const translations = {
         metricAxis: "Электрическая ось (фронтальная плоскость)",
         metricSdnn: "HRV SDNN",
         metricRmssd: "HRV RMSSD",
+        metricSourceLabel: "Источник",
+        axisTitle: "Фронтальная электрическая ось",
+        hrvPnn50Label: "pNN50",
 
         qualityTitle: "Карта качества профиля",
         qualityHint:
           "В профиль входят только окна высокого качества (зелёные). Жёлтые и красные окна исключены или имеют меньший вес.",
+        qualitySummaryWindows:
+          "Использованные окна: зелёные {greenPct}% ({greenCount}/{total}), жёлтые {yellowPct}%, красные {redPct}%.",
+        qualitySummaryLeads:
+          "В профиль вошли: {recCount} снимаемых + {reconCount} восстановленных (исключено: {excluded}).",
 
         metaTitle: "Сводка записи",
         metaDuration: "Длительность",
@@ -309,6 +347,18 @@ const translations = {
         description:
           "Deze weergave visualiseert het Digitale Hartprofiel: mediane P–QRS–T-complexen, intervallen (PR, QRS, QT, QTc), elektrische as en HRV-metingen.",
 
+        leadProvTitle: "Herkomst van afleidingen",
+        leadProvLegendRecorded: "Geregistreerd",
+        leadProvLegendRecon: "Gereconstrueerd",
+        leadProvLegendExcluded: "Uitgesloten",
+        leadProvConfidenceNote:
+          "Profiel is opgebouwd uit geregistreerde extremiteitsleads en gereconstrueerde borstleads. Alleen leads met voldoende betrouwbaarheid tellen mee.",
+
+        showIntervals: "Intervallen tonen",
+        hideIntervals: "Intervallen verbergen",
+        intervalsHint:
+          "Schakel overlay in om de gedetecteerde P/PR/QRS/ST/QT-grenzen op het mediane complex te zien.",
+
         metricsTitle: "Belangrijkste cardiale metrics",
         metricHr: "Hartritme",
         metricPr: "PR-interval",
@@ -318,10 +368,17 @@ const translations = {
         metricAxis: "Elektrische as (frontaal vlak)",
         metricSdnn: "HRV SDNN",
         metricRmssd: "HRV RMSSD",
+        metricSourceLabel: "Bron",
+        axisTitle: "Frontale elektrische as",
+        hrvPnn50Label: "pNN50",
 
         qualityTitle: "Kwaliteitskaart van profiel",
         qualityHint:
           "Alleen ramen met hoge kwaliteit (groen) worden gebruikt om het profiel op te bouwen. Gele en rode ramen worden uitgesloten of lager gewogen.",
+        qualitySummaryWindows:
+          "Gebruikte ramen: groen {greenPct}% ({greenCount}/{total}), geel {yellowPct}%, rood {redPct}%.",
+        qualitySummaryLeads:
+          "Afleidingen in profiel: {recCount} geregistreerd + {reconCount} gereconstrueerd (uitgesloten: {excluded}).",
 
         metaTitle: "Samenvatting van de opname",
         metaDuration: "Duur",
@@ -1116,43 +1173,67 @@ document.addEventListener("DOMContentLoaded", () => {
     const axis = profile.axis || {};
     const q = profile.qualityMap || {};
     const meta = profile.meta || {};
-
+    const boundaries = profile.intervalBoundaries;
+    const rr = meta.rr || [];
+    const pnn50 = hrv.pnn50Pct ?? computePnn50(rr);
     const durationMinutes = Math.round((meta.durationSeconds || 0) / 60);
+    const leads = ecgDemoData.leads12 || [];
+    const sources = meta.sources || {};
+
+    const formatTemplate = (template, values) =>
+      (template || "").replace(/\{(\w+?)\}/g, (_, key) => values[key] ?? "");
+
+    const leadOrder = ["I", "II", "III", "aVR", "aVL", "aVF", "V1", "V2", "V3", "V4", "V5", "V6"];
+    const leadCells = leadOrder
+      .map((id) => {
+        const lead = leads.find((l) => l.id === id) || { id, label: id };
+        const used = lead.usedInProfile ?? lead.confidence >= 0.8;
+        const typeClass = lead.isRecorded ? "recorded" : lead.isRecorded === false ? "reconstructed" : "";
+        const statusClass = used ? "used" : "excluded";
+        return `<div class="prov-cell ${typeClass} ${statusClass}">${lead.label}</div>`;
+      })
+      .join("");
+
+    const recordedUsed = leads.filter((l) => l.isRecorded && (l.usedInProfile ?? l.confidence >= 0.8)).length;
+    const reconUsed = leads.filter((l) => !l.isRecorded && (l.usedInProfile ?? l.confidence >= 0.8)).length;
+    const excludedLeads = leads.filter((l) => !(l.usedInProfile ?? l.confidence >= 0.8)).map((l) => l.id);
+    const leadNote = t.leadProvConfidenceNote || "";
+
+    const metrics = [
+      { key: "hr", label: t.metricHr, value: `${m.hrBpm} bpm` },
+      { key: "pr", label: t.metricPr, value: `${m.prMs} ms`, source: sources.PR },
+      { key: "qrs", label: t.metricQrs, value: `${m.qrsMs} ms`, source: sources.QRS },
+      { key: "qt", label: t.metricQt, value: `${m.qtMs} ms`, source: sources.QT },
+      { key: "qtc", label: t.metricQtc, value: `${m.qtcMs} ms`, source: sources.QTc },
+      {
+        key: "axis",
+        label: t.metricAxis,
+        value: `${axis.frontalPlaneDeg}°`,
+        widget: `<div class="axis-widget" data-axis="${axis.frontalPlaneDeg}">${createAxisSvg(axis.frontalPlaneDeg)}</div>`
+      },
+      { key: "sdnn", label: t.metricSdnn, value: `${hrv.sdnnMs} ms` },
+      { key: "rmssd", label: t.metricRmssd, value: `${hrv.rmssdMs} ms` }
+    ];
 
     const metricsHtml = `
       <div class="profile-metric-grid">
-        <div class="profile-metric-card">
-          <div class="profile-metric-label">${t.metricHr}</div>
-          <div class="profile-metric-value">${m.hrBpm} bpm</div>
-        </div>
-        <div class="profile-metric-card">
-          <div class="profile-metric-label">${t.metricPr}</div>
-          <div class="profile-metric-value">${m.prMs} ms</div>
-        </div>
-        <div class="profile-metric-card">
-          <div class="profile-metric-label">${t.metricQrs}</div>
-          <div class="profile-metric-value">${m.qrsMs} ms</div>
-        </div>
-        <div class="profile-metric-card">
-          <div class="profile-metric-label">${t.metricQt}</div>
-          <div class="profile-metric-value">${m.qtMs} ms</div>
-        </div>
-        <div class="profile-metric-card">
-          <div class="profile-metric-label">${t.metricQtc}</div>
-          <div class="profile-metric-value">${m.qtcMs} ms</div>
-        </div>
-        <div class="profile-metric-card">
-          <div class="profile-metric-label">${t.metricAxis}</div>
-          <div class="profile-metric-value">${axis.frontalPlaneDeg}°</div>
-        </div>
-        <div class="profile-metric-card">
-          <div class="profile-metric-label">${t.metricSdnn}</div>
-          <div class="profile-metric-value">${hrv.sdnnMs} ms</div>
-        </div>
-        <div class="profile-metric-card">
-          <div class="profile-metric-label">${t.metricRmssd}</div>
-          <div class="profile-metric-value">${hrv.rmssdMs} ms</div>
-        </div>
+        ${metrics
+          .map((metric) => {
+            const chip = metric.source
+              ? `<span class="metric-source-chip">${t.metricSourceLabel}: ${metric.source}</span>`
+              : "";
+            const valueBlock = metric.widget
+              ? `<div class="profile-metric-value">${metric.value}</div><div class="axis-widget-holder">${metric.widget}</div>`
+              : `<div class="profile-metric-value">${metric.value}</div>`;
+            return `
+              <div class="profile-metric-card">
+                ${chip}
+                <div class="profile-metric-label">${metric.label}</div>
+                ${valueBlock}
+              </div>
+            `;
+          })
+          .join("")}
       </div>
     `;
 
@@ -1185,6 +1266,32 @@ document.addEventListener("DOMContentLoaded", () => {
       </div>
     `;
 
+    const qualitySummaryText = formatTemplate(t.qualitySummaryWindows, {
+      greenPct: q.greenPct,
+      yellowPct: q.yellowPct,
+      redPct: q.redPct,
+      greenCount: ecgDemoData.qualityStats?.greenCount || 0,
+      yellowCount: ecgDemoData.qualityStats?.yellowCount || 0,
+      redCount: ecgDemoData.qualityStats?.redCount || 0,
+      total: ecgDemoData.qualityStats?.total || 0
+    });
+
+    const leadSummaryText = formatTemplate(t.qualitySummaryLeads, {
+      recCount: recordedUsed,
+      reconCount: reconUsed,
+      excluded: excludedLeads.length ? excludedLeads.join(", ") : "—"
+    });
+
+    const hrvExtras = `
+      <div class="hrv-extra">
+        <div class="hrv-extra-row">
+          <span>${t.hrvPnn50Label}:</span>
+          <strong>${pnn50}%</strong>
+        </div>
+        ${rr.length > 1 ? renderPoincareSvg(rr) : ""}
+      </div>
+    `;
+
     container.innerHTML = `
       <h1 class="tab-title">${t.title}</h1>
       <p class="tab-description">${t.description}</p>
@@ -1192,16 +1299,31 @@ document.addEventListener("DOMContentLoaded", () => {
       <div class="profile-layout">
         <div class="profile-main">
           <div class="profile-left">
+            <div class="lead-provenance">
+              <div class="tab-title-row">
+                <h3 class="profile-template-title" style="margin-bottom: 4px;">${t.leadProvTitle}</h3>
+              </div>
+              <div class="prov-grid">${leadCells}</div>
+              <div class="prov-legend">${t.leadProvLegendRecorded} • ${t.leadProvLegendRecon} • ${t.leadProvLegendExcluded}</div>
+              <div class="prov-legend" style="margin-top:4px;">${t.leadProvLegendRecorded} (${recordedUsed}) · ${t.leadProvLegendRecon} (${reconUsed})</div>
+              ${leadNote ? `<div class="prov-legend" style="margin-top:4px;">${leadNote}</div>` : ""}
+            </div>
+
             <div class="profile-template-card">
-              <h3 class="profile-template-title">${profile.label}</h3>
+              <div class="tab-title-row" style="margin-bottom:6px;">
+                <h3 class="profile-template-title" style="margin:0;">${profile.label}</h3>
+                <button id="interval-toggle" class="btn-toggle"></button>
+              </div>
               <div class="profile-template-plot">
                 ${beatSvg}
               </div>
+              <div class="interval-hint">${t.intervalsHint}</div>
             </div>
           </div>
           <div class="profile-right">
             <h3>${t.metricsTitle}</h3>
             ${metricsHtml}
+            ${hrvExtras}
             <h4 style="margin-top:16px;">${t.metaTitle}</h4>
             ${metaHtml}
           </div>
@@ -1213,9 +1335,41 @@ document.addEventListener("DOMContentLoaded", () => {
           <div style="font-size:12px; margin-top:6px; color: var(--text-muted);">
             ${t.qualityHint}
           </div>
+          <div class="quality-summary">${qualitySummaryText}</div>
+          <div class="quality-summary">${leadSummaryText}</div>
         </div>
       </div>
     `;
+
+    const intervalToggle = container.querySelector("#interval-toggle");
+    const templateSvgEl = container.querySelector(".profile-template-plot svg");
+    let overlayEnabled = false;
+
+    const updateToggleUi = () => {
+      if (!intervalToggle) return;
+      intervalToggle.textContent = overlayEnabled ? t.hideIntervals : t.showIntervals;
+      intervalToggle.classList.toggle("active", overlayEnabled);
+    };
+
+    const refreshOverlay = () => {
+      if (!templateSvgEl) return;
+      if (overlayEnabled && boundaries) {
+        drawIntervalOverlay(templateSvgEl, boundaries, profile.templateBeat.values.length);
+      } else {
+        clearIntervalOverlay(templateSvgEl);
+      }
+    };
+
+    updateToggleUi();
+    refreshOverlay();
+
+    if (intervalToggle) {
+      intervalToggle.onclick = () => {
+        overlayEnabled = !overlayEnabled;
+        updateToggleUi();
+        refreshOverlay();
+      };
+    }
   }
 
   function renderCompareView(container, lang) {
