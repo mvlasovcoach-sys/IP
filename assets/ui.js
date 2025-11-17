@@ -555,7 +555,7 @@ const translations = {
       ]
     },
     signalQuality: {
-      infoButton: "How quality is calculated",
+      infoButton: "How we calculate signal quality",
       drawerTitle: "How we calculate signal quality",
       drawerIntro:
         "SPA2099 evaluates ECG in 2-second windows and assigns each window a quality level. Green windows are used for diagnostics and baseline, yellow only for trends, red are excluded from analysis.",
@@ -590,6 +590,28 @@ const translations = {
         "Yellow windows — medium-quality segments used for trend statistics only. They do not update the baseline profile.",
       tooltipRed:
         "Red windows — segments with severe artifacts (noise, drift, impulses or channel mismatch). They are excluded from analysis."
+    },
+    signalQualityInfo: {
+      panelTitle: "How we calculate signal quality",
+      block1Title: "How we calculate signal quality",
+      block1Body:
+        "SPA2099 evaluates the ECG in short 2-second windows and assigns each window a quality level. For every window we combine several metrics: noise level, baseline stability, motion artefacts and electrode contact quality. The result is a single score that tells us whether this window is safe to use for analysis.\n\nWindows with a high score are marked as green and are used both for diagnostics and for building the Digital Heart Profile. Yellow windows have borderline quality – the signal is mostly readable, but with noticeable artefacts. Red windows contain strong noise, motion or signal loss and are excluded from analysis.\n\nOn this page you see how many windows fall into each category. Percentages show the share of green, yellow and red windows; the counters below (for example “13 / 21”) show how many windows of each type we currently have in this recording.",
+      examplesTitle: "Examples of artefacts",
+      noiseTitle: "Q_noise — noise & mains frequency",
+      noiseBody:
+        "High-frequency noise or mains hum (50/60 Hz) superimposed on the ECG. It makes the P waves and QRS complexes less clear and can hide small morphological changes.",
+      driftTitle: "Q_drift — baseline drift",
+      driftBody:
+        "Slow movement of the isoelectric line up and down, usually caused by breathing, body position changes or gradual electrode displacement. The overall shape of the complexes is preserved, but the signal floats and becomes less stable for measurement.",
+      impulseTitle: "Q_imp — impulse artefacts",
+      impulseBody:
+        "Short, sharp spikes that do not look like real heart beats. They can appear due to cable movement, static electricity, tapping on the device or sudden electrode micro-movements.",
+      motionTitle: "Q_motion — motion artefacts",
+      motionBody:
+        "Distortions that occur when a person moves, tenses muscles or changes posture. The ECG becomes irregular, with deformed complexes and segments that are difficult to interpret reliably.",
+      contactTitle: "Q_contact — poor electrode contact",
+      contactBody:
+        "Episodes where the contact between the textile electrodes and the skin is unstable. Parts of the signal may drop out, become low-amplitude or turn into wide irregular noise."
     },
     liveEcg: {
       infoTitle: "Live ECG – how to read this view",
@@ -926,6 +948,28 @@ const translations = {
       tooltipRed:
         "Красные окна — сегменты с выраженными артефактами (шум, дрейф, импульсы, рассогласование каналов). Исключаются из анализа."
     },
+    signalQualityInfo: {
+      panelTitle: "Как мы определяем качество сигнала",
+      block1Title: "Как мы рассчитываем качество сигнала",
+      block1Body:
+        "SPA2099 оценивает ЭКГ в коротких 2-секундных окнах и присваивает каждому окну уровень качества. Для каждого окна объединяются несколько метрик: уровень шума, стабильность изолинии, артефакты движения и качество контакта электродов. В результате получается единый показатель, показывающий, можно ли использовать это окно для анализа.\n\nОкна с высоким качеством помечаются зелёным цветом и используются как для диагностики, так и для построения цифрового профиля сердца (Digital Heart Profile). Жёлтые окна имеют пограничное качество — сигнал в целом читаемый, но с заметными артефактами. Красные окна содержат сильные шумы, движение или потерю данных и полностью исключаются из анализа.\n\nНа этой странице видно, сколько окон попадает в каждую категорию. Проценты показывают долю зелёных, жёлтых и красных окон, а счётчики ниже (например «13 / 21») — сколько окон каждого типа есть в текущей записи.",
+      examplesTitle: "Примеры артефактов",
+      noiseTitle: "Q_noise — шум и частота сети",
+      noiseBody:
+        "Высокочастотный шум или фон от электросети 50/60 Гц, накладывающийся на ЭКГ. Из-за него хуже видны зубцы P и комплекс QRS, могут скрываться небольшие изменения формы сигнала.",
+      driftTitle: "Q_drift — дрейф изолинии",
+      driftBody:
+        "Медленное «уплывание» изолинии вверх и вниз, обычно из-за дыхания, смены положения тела или постепенного смещения электродов. Общая форма комплексов сохраняется, но сигнал «плавает» и становится менее стабильным для измерений.",
+      impulseTitle: "Q_imp — импульсные артефакты",
+      impulseBody:
+        "Короткие резкие всплески, не похожие на реальные сердечные сокращения. Могут появляться из-за движения кабелей, статического электричества, лёгких ударов по устройству или микродвижений электродов.",
+      motionTitle: "Q_motion — артефакты движения",
+      motionBody:
+        "Искажения, возникающие при движении человека, напряжении мышц или смене позы. ЭКГ становится неровным, комплексы деформируются, появляются участки, которые сложно надёжно интерпретировать.",
+      contactTitle: "Q_contact — нестабильный контакт электродов",
+      contactBody:
+        "Эпизоды, когда контакт между текстильными электродами и кожей нестабилен. Части сигнала могут пропадать, становиться низкоамплитудными или превращаться в широкополосный шум."
+    },
     liveEcg: {
       infoTitle: "Live ECG – как читать этот экран",
       infoBody:
@@ -1183,7 +1227,7 @@ const translations = {
       ]
     },
     signalQuality: {
-      infoButton: "How quality is calculated",
+      infoButton: "How we calculate signal quality",
       drawerTitle: "How we calculate signal quality",
       drawerIntro:
         "SPA2099 evaluates ECG in 2-second windows and assigns each window a quality level. Green windows are used for diagnostics and baseline, yellow only for trends, red are excluded from analysis.",
@@ -1219,6 +1263,28 @@ const translations = {
       tooltipRed:
         "Red windows — segments with severe artifacts (noise, drift, impulses or channel mismatch). They are excluded from analysis."
     },
+    signalQualityInfo: {
+      panelTitle: "How we calculate signal quality",
+      block1Title: "How we calculate signal quality",
+      block1Body:
+        "SPA2099 evaluates the ECG in short 2-second windows and assigns each window a quality level. For every window we combine several metrics: noise level, baseline stability, motion artefacts and electrode contact quality. The result is a single score that tells us whether this window is safe to use for analysis.\n\nWindows with a high score are marked as green and are used both for diagnostics and for building the Digital Heart Profile. Yellow windows have borderline quality – the signal is mostly readable, but with noticeable artefacts. Red windows contain strong noise, motion or signal loss and are excluded from analysis.\n\nOn this page you see how many windows fall into each category. Percentages show the share of green, yellow and red windows; the counters below (for example “13 / 21”) show how many windows of each type we currently have in this recording.",
+      examplesTitle: "Examples of artefacts",
+      noiseTitle: "Q_noise — noise & mains frequency",
+      noiseBody:
+        "High-frequency noise or mains hum (50/60 Hz) superimposed on the ECG. It makes the P waves and QRS complexes less clear and can hide small morphological changes.",
+      driftTitle: "Q_drift — baseline drift",
+      driftBody:
+        "Slow movement of the isoelectric line up and down, usually caused by breathing, body position changes or gradual electrode displacement. The overall shape of the complexes is preserved, but the signal floats and becomes less stable for measurement.",
+      impulseTitle: "Q_imp — impulse artefacts",
+      impulseBody:
+        "Short, sharp spikes that do not look like real heart beats. They can appear due to cable movement, static electricity, tapping on the device or sudden electrode micro-movements.",
+      motionTitle: "Q_motion — motion artefacts",
+      motionBody:
+        "Distortions that occur when a person moves, tenses muscles or changes posture. The ECG becomes irregular, with deformed complexes and segments that are difficult to interpret reliably.",
+      contactTitle: "Q_contact — poor electrode contact",
+      contactBody:
+        "Episodes where the contact between the textile electrodes and the skin is unstable. Parts of the signal may drop out, become low-amplitude or turn into wide irregular noise."
+    },
     liveEcg: {
       infoTitle: "Live ECG – how to read this view",
       infoBody:
@@ -1243,6 +1309,12 @@ let howComputedEnabled = false;
 function getSignalQualityStrings(lang) {
   const base = translations.en.signalQuality;
   const current = translations[lang]?.signalQuality;
+  return { ...base, ...(current || {}) };
+}
+
+function getSignalQualityInfoStrings(lang) {
+  const base = translations.en?.signalQualityInfo || {};
+  const current = translations[lang]?.signalQualityInfo || {};
   return { ...base, ...(current || {}) };
 }
 
@@ -1422,6 +1494,15 @@ function formatInfoParagraphs(text = "") {
     .map((paragraph) => paragraph.trim())
     .filter(Boolean)
     .map((paragraph) => `<p class="help-section-text">${escapeHtml(paragraph)}</p>`)
+    .join("");
+}
+
+function formatDrawerParagraphs(text = "") {
+  return text
+    .split(/\n\s*\n/g)
+    .map((paragraph) => paragraph.trim())
+    .filter(Boolean)
+    .map((paragraph) => `<p>${escapeHtml(paragraph)}</p>`)
     .join("");
 }
 
@@ -1674,19 +1755,38 @@ function closeHelpPanel() {
         base.map(([x, y], idx) => [x, y + Math.sin(idx * 2) * 3 + (idx % 2 === 0 ? 2 : -2)])
       ),
       drift: toPolyline(base.map(([x, y]) => [x, y + (x / width) * 10 - 5])),
-      impulses: toPolyline(
+      impulse: toPolyline(
         [...base].map(([x, y]) => {
           if (x === 140 || x === 200) return [x, y - 25];
           return [x, y];
         })
       ),
-      recon: toPolyline(
-        base.map(([x, y], idx) => [x, y + (idx > 6 && idx < 9 ? (idx % 2 === 0 ? 10 : -10) : 0)])
+      motion: toPolyline(
+        base.map(([x, y], idx) => {
+          const wobble = Math.sin(idx * 1.2) * 6;
+          const spike = idx % 5 === 0 ? (idx % 10 === 0 ? -18 : 14) : 0;
+          return [x, y + wobble + spike];
+        })
+      ),
+      contact: toPolyline(
+        base.map(([x, y], idx) => {
+          if (idx >= 4 && idx <= 6) return [x, y + 30];
+          if (idx >= 9 && idx <= 11) return [x, y - 28];
+          const scale = idx % 3 === 0 ? 0.4 : 0.6;
+          return [x, y * scale];
+        })
       )
     };
 
     const primaryLine = toPolyline(base);
     const overlayLine = overlays[type] || primaryLine;
+    const overlayColors = {
+      drift: "#f59e0b",
+      motion: "#fb923c",
+      contact: "#a855f7"
+    };
+    const strokeColor = overlayColors[type] || "#f87171";
+    const dashPattern = type === "motion" ? "4,3" : type === "contact" ? "2,6" : "";
 
     return `
       <svg viewBox="0 0 ${width} ${height}" class="ecg-example" aria-hidden="true">
@@ -1702,11 +1802,11 @@ function closeHelpPanel() {
         <polyline
           points="${overlayLine}"
           fill="none"
-          stroke="${type === "drift" ? "#f59e0b" : "#f87171"}"
+          stroke="${strokeColor}"
           stroke-width="1.6"
           stroke-linejoin="round"
           stroke-linecap="round"
-          stroke-dasharray="${type === "recon" ? "5,4" : ""}"
+          stroke-dasharray="${dashPattern}"
         />
       </svg>
     `;
@@ -1723,46 +1823,84 @@ function closeHelpPanel() {
   function renderQualityDrawer(lang) {
     ensureQualityDrawerContainer();
     const tSignal = getSignalQualityStrings(lang);
+    const tInfo = getSignalQualityInfoStrings(lang);
     const root = document.getElementById("quality-drawer-root");
     if (!root) return;
+
+    const panelTitle = tInfo.panelTitle || tSignal.drawerTitle || "";
+    const block1Title = tInfo.block1Title || panelTitle;
+    const block1BodyHtml = formatDrawerParagraphs(tInfo.block1Body || tSignal.drawerIntro || "");
+    const examplesTitle = tInfo.examplesTitle || tSignal.examplesTitle;
+    const exampleCards = [
+      {
+        type: "noise",
+        title: tInfo.noiseTitle || tSignal.indexNoiseTitle,
+        body: tInfo.noiseBody || tSignal.indexNoiseText
+      },
+      {
+        type: "drift",
+        title: tInfo.driftTitle || tSignal.indexDriftTitle,
+        body: tInfo.driftBody || tSignal.indexDriftText
+      },
+      {
+        type: "impulse",
+        title: tInfo.impulseTitle || tSignal.indexImpTitle,
+        body: tInfo.impulseBody || tSignal.indexImpText
+      },
+      {
+        type: "motion",
+        title: tInfo.motionTitle,
+        body: tInfo.motionBody
+      },
+      {
+        type: "contact",
+        title: tInfo.contactTitle,
+        body: tInfo.contactBody
+      }
+    ];
+    const exampleCardsHtml = exampleCards
+      .filter((card) => card.title || card.body)
+      .map(
+        (card) => `
+          <div class="artefact-card">
+            ${card.title ? `<h4>${card.title}</h4>` : ""}
+            <div class="artefact-example">${createEcgExample(card.type)}</div>
+            ${card.body ? `<p>${card.body}</p>` : ""}
+          </div>
+        `
+      )
+      .join("");
+
+    const introSection = block1Title || block1BodyHtml
+      ? `
+        <div class="drawer-section">
+          ${block1Title ? `<strong>${block1Title}</strong>` : ""}
+          ${block1BodyHtml || ""}
+        </div>
+      `
+      : "";
+
+    const examplesSection = exampleCardsHtml
+      ? `
+        <div class="drawer-section" id="quality-drawer-examples">
+          ${examplesTitle ? `<div style="font-weight:600;">${examplesTitle}</div>` : ""}
+          <div class="artefact-grid">
+            ${exampleCardsHtml}
+          </div>
+        </div>
+      `
+      : "";
 
     root.innerHTML = `
       <div class="quality-drawer-overlay ${isQualityDrawerOpen ? "open" : ""}" id="quality-drawer-overlay"></div>
       <aside class="quality-drawer ${isQualityDrawerOpen ? "open" : ""}" id="quality-drawer" aria-hidden="${!isQualityDrawerOpen}">
         <div class="quality-drawer-header">
-          <h3 class="quality-drawer-title">${tSignal.drawerTitle}</h3>
+          <h3 class="quality-drawer-title">${panelTitle}</h3>
           <button class="drawer-close-btn" id="quality-drawer-close" aria-label="${tSignal.closeDrawer}">×</button>
         </div>
         <div class="quality-drawer-content">
-          <div class="drawer-section">
-            <strong>${tSignal.drawerTitle}</strong>
-            <p>${tSignal.drawerIntro}</p>
-          </div>
-          <div class="drawer-section" id="quality-drawer-examples">
-            <div style="font-weight:600;">${tSignal.examplesTitle}</div>
-            <div class="artefact-grid">
-              <div class="artefact-card">
-                <h4>${tSignal.indexNoiseTitle}</h4>
-                <div class="artefact-example">${createEcgExample("noise")}</div>
-                <p>${tSignal.indexNoiseText}</p>
-              </div>
-              <div class="artefact-card">
-                <h4>${tSignal.indexDriftTitle}</h4>
-                <div class="artefact-example">${createEcgExample("drift")}</div>
-                <p>${tSignal.indexDriftText}</p>
-              </div>
-              <div class="artefact-card">
-                <h4>${tSignal.indexImpTitle}</h4>
-                <div class="artefact-example">${createEcgExample("impulses")}</div>
-                <p>${tSignal.indexImpText}</p>
-              </div>
-              <div class="artefact-card">
-                <h4>${tSignal.indexReconTitle}</h4>
-                <div class="artefact-example">${createEcgExample("recon")}</div>
-                <p>${tSignal.indexReconText}</p>
-              </div>
-            </div>
-          </div>
+          ${introSection}
+          ${examplesSection}
           <div class="drawer-section">
             <div style="font-weight:600;">${tSignal.levelsTitle}</div>
             <div class="classification-cards">
@@ -1949,6 +2087,7 @@ function closeHelpPanel() {
   function renderQualityView(container, lang) {
     const t = translations[lang].tabs.quality;
     const tSignal = getSignalQualityStrings(lang);
+    const tInfo = getSignalQualityInfoStrings(lang);
     const stats = ecgDemoData.qualityStats;
     const windows = ecgDemoData.windows;
 
@@ -2014,13 +2153,15 @@ function closeHelpPanel() {
       .filter(Boolean)
       .join(" ");
 
+    const infoButtonLabel = tSignal.infoButton || tInfo.panelTitle || "";
+
     container.innerHTML = `
       <div class="tab-title-row">
         <h1 class="tab-title">${t.title}</h1>
         <div class="tab-title-actions">
           <button class="${qualityInfoBtnClasses}" id="quality-info-toggle">
             <span class="icon">i</span>
-            <span>${tSignal.infoButton}</span>
+            <span>${infoButtonLabel}</span>
           </button>
         </div>
       </div>
