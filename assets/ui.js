@@ -280,7 +280,8 @@ const translations = {
         segmentationToggleOn: "Hide 2-second windows",
         segmentationToggleOff: "Show 2-second windows",
         segmentationHint:
-          "Vertical lines and colored bands show how the ECG is segmented into 2-second windows for quality analysis."
+          "Vertical lines and colored bands show how the ECG is segmented into 2-second windows for quality analysis.",
+        backgroundButton: "Background"
       },
       quality: {
         label: "Signal Quality",
@@ -610,7 +611,8 @@ const translations = {
         segmentationToggleOn: "Скрыть 2-секундные окна",
         segmentationToggleOff: "Показать 2-секундные окна",
         segmentationHint:
-          "Вертикальные линии и цветные полосы показывают, как ЭКГ делится на 2-секундные окна для анализа качества."
+          "Вертикальные линии и цветные полосы показывают, как ЭКГ делится на 2-секундные окна для анализа качества.",
+        backgroundButton: "Предпосылки"
       },
       quality: {
         label: "Качество сигнала",
@@ -940,7 +942,8 @@ const translations = {
         segmentationToggleOn: "2-seconden vensters verbergen",
         segmentationToggleOff: "2-seconden vensters tonen",
         segmentationHint:
-          "Verticale lijnen en gekleurde banden tonen hoe het ECG in 2-seconden vensters wordt opgedeeld voor kwaliteitsanalyse."
+          "Verticale lijnen en gekleurde banden tonen hoe het ECG in 2-seconden vensters wordt opgedeeld voor kwaliteitsanalyse.",
+        backgroundButton: "Achtergrond"
       },
       quality: {
         label: "Signaalkwaliteit",
@@ -2979,10 +2982,15 @@ function closeHelpPanel() {
       <p class="tab-description">${liveT.description}</p>
 
       <div class="live-ecg-toolbar">
-        <button id="segmentation-toggle" class="${segmentationClasses}">
-          ${toggleLabel}
-        </button>
-        <span>${liveT.segmentationHint}</span>
+        <div class="live-ecg-toolbar-buttons">
+          <button id="segmentation-toggle" class="${segmentationClasses}">
+            ${toggleLabel}
+          </button>
+          <button id="live-background-button" class="demo-button demo-button-ghost">
+            ${liveT.backgroundButton}
+          </button>
+        </div>
+        <span class="live-ecg-toolbar-hint">${liveT.segmentationHint}</span>
       </div>
 
       <div class="live-ecg-layout">
@@ -3024,6 +3032,11 @@ function closeHelpPanel() {
 
     setupSegmentationToggle();
     renderSegmentationOverlay();
+
+    const backgroundButton = document.getElementById("live-background-button");
+    if (backgroundButton) {
+      backgroundButton.addEventListener("click", () => openPrereqPanel(lang));
+    }
   }
 
   function renderFooter() {
