@@ -1,5 +1,250 @@
 import { computeDeviationScore, classifyDeviation } from "./compare-utils.js";
 
+const dataContainerContent = {
+  en: {
+    flow: {
+      title: "Data Flow Architecture",
+      text:
+        "SPA2099 collects raw ECG and motion signals from the Healthbox, pre-processes them, and stores them in a unified Data Container. All visualisations and metrics on other pages use this container as a single source of truth.",
+      steps: ["Healthbox", "Pre-processing", "Data Container", "Analytics", "UI dashboards"]
+    },
+    inside: {
+      title: "What Is Inside the Data Container?",
+      description:
+        "The container keeps a synchronised slice of everything needed for the Digital Heart Profile: time range, ECG, detections, motion context and quality scores.",
+      bullets: [
+        "Recording time range (start/end timestamps).",
+        "Raw ECG with up to 12 leads plus sampling-rate metadata.",
+        "Detected R-peaks and RR intervals for rhythm metrics.",
+        "Aligned IMU channels (accelerometer / gyroscope).",
+        "Per-window quality metadata and Q-markers.",
+        "Aggregated HRV blocks and summary statistics."
+      ],
+      codeSample: `{
+  "timestamp_start": "2025-11-16 14:22:01",
+  "timestamp_end": "2025-11-16 14:24:01",
+  "ecg": {
+    "leads": 12,
+    "sampling_rate": 500,
+    "data": [ ... ]
+  },
+  "rpeaks": [ ... ],
+  "rr_intervals": [ ... ],
+  "imu": {
+    "acc": [ ... ],
+    "gyro": [ ... ]
+  },
+  "quality": {
+    "Q_noise": 0.12,
+    "Q_IMU": 0.03,
+    "Q_baseline": 0.04
+  },
+  "hrv_block": {
+    "sdnn": 42,
+    "rmssd": 38,
+    "poincare_points": 512
+  }
+}`
+    },
+    segmentation: {
+      title: "Segmentation Logic",
+      text:
+        "For different metrics SPA2099 uses different window lengths: 10 s, 30 s, 2 min, 5 min, etc. Each window becomes a segment in the Data Container.",
+      timelineLabel: "ECG timeline (10-second windows)",
+      windows: ["10 s", "10 s", "10 s", "10 s", "10 s", "10 s"],
+      metrics: ["RR & arrhythmia (10 s)", "Quality gating (10 s)", "HRV block (2 min)", "Stress trend (5 min)"]
+    },
+    quality: {
+      title: "Quality Scores (Q-Markers)",
+      text:
+        "Each segment receives Q-markers that describe the main artefacts. They drive green/yellow/red gating across the demo.",
+      markers: [
+        {
+          id: "Q_noise",
+          title: "Q_noise",
+          description: "Level of noise and 50/60 Hz powerline interference."
+        },
+        {
+          id: "Q_drift",
+          title: "Q_drift",
+          description: "Baseline drift caused by breathing, slow movements or contact changes."
+        },
+        {
+          id: "Q_IMU",
+          title: "Q_IMU",
+          description: "Motion artefacts detected using accelerometer and gyroscope data."
+        },
+        {
+          id: "Q_gap",
+          title: "Q_gap",
+          description: "Gaps or missing fragments in the signal."
+        },
+        {
+          id: "Q_contact",
+          title: "Q_contact",
+          description: "Quality of electrode-to-skin contact."
+        }
+      ],
+      legendTitle: "Quality legend",
+      legendClean: "Green — clean / usable",
+      legendLimited: "Yellow — limited",
+      legendCritical: "Red — unusable"
+    },
+    beforeAfter: {
+      title: "Before & After Processing",
+      text:
+        "Raw ECG segments go through filtering, R-peak detection and baseline normalisation before entering analytics.",
+      cards: [
+        {
+          type: "raw",
+          label: "Before",
+          title: "Raw ECG segment",
+          description: "Unfiltered signal with baseline drift, mains noise and motion spikes."
+        },
+        {
+          type: "processed",
+          label: "After",
+          title: "Processed ECG segment",
+          description: "Filtered waveform with detected R-peaks and a stabilised baseline."
+        }
+      ]
+    },
+    safety: {
+      title: "Data Safety & Performance",
+      text:
+        "This demo uses synthetic and temporary data structures so no personal information is persisted.",
+      bullets: [
+        "The demo never stores personal identifiers or uploads ECG to a server.",
+        "The Data Container lives only in memory while you view a record.",
+        "Switching a session wipes the container and clears all windows.",
+        "Production deployments can add encryption, access control and audit logs."
+      ]
+    }
+  },
+  ru: {
+    flow: {
+      title: "Архитектура потока данных",
+      text:
+        "SPA2099 собирает сырые сигналы ЭКГ и движения с прибора Healthbox, выполняет предобработку и сохраняет их в едином Контейнере данных. Все визуализации и метрики используют этот контейнер как единственный источник данных.",
+      steps: ["Healthbox", "Предобработка", "Контейнер данных", "Аналитика", "Интерфейсы"]
+    },
+    inside: {
+      title: "Что находится внутри Контейнера данных?",
+      description:
+        "Контейнер хранит синхронизированный набор всего, что нужно для Цифрового профиля сердца: временной диапазон, ЭКГ, детекции, контекст движения и показатели качества.",
+      bullets: [
+        "Диапазон времени записи (начало/конец).",
+        "Сырые ЭКГ по всем 12 отведениям и частота дискретизации.",
+        "Обнаруженные R-пики и интервалы RR для метрик ритма.",
+        "Синхронизированные каналы IMU (акселерометр / гироскоп).",
+        "Метаданные по качеству каждого окна и Q-маркеры.",
+        "Агрегированные блоки HRV и сводные показатели."
+      ],
+      codeSample: `{
+  "timestamp_start": "2025-11-16 14:22:01",
+  "timestamp_end": "2025-11-16 14:24:01",
+  "ecg": {
+    "leads": 12,
+    "sampling_rate": 500,
+    "data": [ ... ]
+  },
+  "rpeaks": [ ... ],
+  "rr_intervals": [ ... ],
+  "imu": {
+    "acc": [ ... ],
+    "gyro": [ ... ]
+  },
+  "quality": {
+    "Q_noise": 0.12,
+    "Q_IMU": 0.03,
+    "Q_baseline": 0.04
+  },
+  "hrv_block": {
+    "sdnn": 42,
+    "rmssd": 38,
+    "poincare_points": 512
+  }
+}`
+    },
+    segmentation: {
+      title: "Логика сегментации",
+      text:
+        "Для разных метрик SPA2099 использует окна разной длины: 10 секунд, 30 секунд, 2 минуты, 5 минут и т.д. Каждое окно становится сегментом в Контейнере данных.",
+      timelineLabel: "Шкала ЭКГ (окна по 10 секунд)",
+      windows: ["10 с", "10 с", "10 с", "10 с", "10 с", "10 с"],
+      metrics: ["RR и аритмии (10 с)", "Карта качества (10 с)", "Блок HRV (2 мин)", "Тренд/стресс (5 мин)"]
+    },
+    quality: {
+      title: "Показатели качества (Q-маркеры)",
+      text:
+        "Каждый сегмент получает Q-маркеры, описывающие основные артефакты. Они определяют зелёное/жёлтое/красное выделение во всех разделах.",
+      markers: [
+        {
+          id: "Q_noise",
+          title: "Q_noise",
+          description: "Уровень шумов и сетевых помех (50/60 Гц)."
+        },
+        {
+          id: "Q_drift",
+          title: "Q_drift",
+          description: "Дрейф изолинии из-за дыхания, медленных движений или изменения контакта."
+        },
+        {
+          id: "Q_IMU",
+          title: "Q_IMU",
+          description: "Движенческие артефакты, выявленные по акселерометру и гироскопу."
+        },
+        {
+          id: "Q_gap",
+          title: "Q_gap",
+          description: "Пропуски или отсутствующие фрагменты сигнала."
+        },
+        {
+          id: "Q_contact",
+          title: "Q_contact",
+          description: "Качество контакта электродов с кожей."
+        }
+      ],
+      legendTitle: "Легенда качества",
+      legendClean: "Зелёный — чисто / допустимо",
+      legendLimited: "Жёлтый — ограничено",
+      legendCritical: "Красный — непригодно"
+    },
+    beforeAfter: {
+      title: "До и после обработки",
+      text:
+        "Сырые фрагменты ЭКГ проходят фильтрацию, детекцию R-пиков и нормализацию базовой линии перед тем, как попасть в аналитику.",
+      cards: [
+        {
+          type: "raw",
+          label: "До",
+          title: "Исходный фрагмент ЭКГ",
+          description: "Неотфильтрованный сигнал с дрейфом, сетевым шумом и движенческими всплесками."
+        },
+        {
+          type: "processed",
+          label: "После",
+          title: "Обработанный фрагмент ЭКГ",
+          description: "Очищенная волна с отмеченными R-пиками и стабилизированной изолинией."
+        }
+      ]
+    },
+    safety: {
+      title: "Безопасность и производительность",
+      text:
+        "В демо используются синтетические и временные структуры, поэтому персональные данные не сохраняются.",
+      bullets: [
+        "Демо не хранит персональные идентификаторы и не выгружает ЭКГ на сервер.",
+        "Контейнер данных существует только в памяти во время просмотра записи.",
+        "Смена сессии очищает контейнер и удаляет все окна.",
+        "В продуктивной версии добавляются шифрование, контроль доступа и аудит."
+      ]
+    }
+  }
+};
+
+dataContainerContent.nl = JSON.parse(JSON.stringify(dataContainerContent.en));
+
 const translations = {
   en: {
     tabs: {
@@ -47,6 +292,12 @@ const translations = {
         howComputedToggleOff: "Show how it’s computed",
         howComputedHint:
           "Hover V2–V6 to see which recorded leads contribute to each reconstructed lead."
+      },
+      "data-container": {
+        label: "Data Container",
+        title: "Data Container – from device to analytics",
+        description:
+          "Explore how SPA2099 curates ECG, motion and quality data before visualising it across the demo."
       },
       profile: {
         label: "Digital Heart Profile",
@@ -322,7 +573,8 @@ const translations = {
     footer: {
       disclaimer:
         "This demo is not a medical device and does not provide diagnostic conclusions."
-    }
+    },
+    dataContainer: dataContainerContent.en
   },
   ru: {
     tabs: {
@@ -370,6 +622,12 @@ const translations = {
         howComputedToggleOff: "Показать, как вычислено",
         howComputedHint:
           "Наведите на V2–V6, чтобы увидеть вклад записанных отведений."
+      },
+      "data-container": {
+        label: "Контейнер данных",
+        title: "Контейнер данных – путь сигнала от прибора до аналитики",
+        description:
+          "Здесь показано, как SPA2099 собирает, структурирует и защищает ЭКГ, движения и показатели качества перед визуализацией."
       },
       profile: {
         label: "Цифровой профиль сердца",
@@ -645,7 +903,8 @@ const translations = {
     footer: {
       disclaimer:
         "Данная демонстрация не является медицинским изделием и не даёт диагностических заключений."
-    }
+    },
+    dataContainer: dataContainerContent.ru
   },
   nl: {
     tabs: {
@@ -692,6 +951,12 @@ const translations = {
         howComputedToggleOn: "Weergave verbergen",
         howComputedToggleOff: "Weergave tonen",
         howComputedHint: "Beweeg over V2–V6 om te zien welke gemeten leads bijdragen."
+      },
+      "data-container": {
+        label: "Data Container",
+        title: "Data Container – van device tot analytics",
+        description:
+          "Laat zien hoe SPA2099 ECG-, bewegings- en kwaliteitsdata bundelt voordat deze in de demo verschijnen."
       },
       profile: {
         label: "Digitaal profiel",
@@ -926,7 +1191,8 @@ const translations = {
     footer: {
       disclaimer:
         "Deze demo is geen medisch hulpmiddel en levert geen diagnostische conclusies."
-    }
+    },
+    dataContainer: dataContainerContent.nl
   }
 };
 
@@ -939,6 +1205,38 @@ function getSignalQualityStrings(lang) {
   const base = translations.en.signalQuality;
   const current = translations[lang]?.signalQuality;
   return { ...base, ...(current || {}) };
+}
+
+function deepMerge(base = {}, override = {}) {
+  const result = { ...base };
+  Object.entries(override || {}).forEach(([key, value]) => {
+    if (
+      value &&
+      typeof value === "object" &&
+      !Array.isArray(value) &&
+      typeof base[key] === "object" &&
+      base[key] !== null &&
+      !Array.isArray(base[key])
+    ) {
+      result[key] = deepMerge(base[key], value);
+    } else {
+      result[key] = value;
+    }
+  });
+  return result;
+}
+
+function getDataContainerStrings(lang) {
+  const base = translations.en?.dataContainer || {};
+  const current = translations[lang]?.dataContainer || {};
+  return deepMerge(base, current);
+}
+
+function escapeHtml(str = "") {
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
 }
 
 function capitalize(str = "") {
@@ -1205,6 +1503,11 @@ function closeHelpPanel() {
       return;
     }
 
+    if (currentTab === "data-container") {
+      renderDataContainerView(tabContent, currentLang);
+      return;
+    }
+
     if (currentTab === "profile") {
       renderProfileView(tabContent, currentLang);
       return;
@@ -1301,6 +1604,11 @@ function closeHelpPanel() {
     `;
   }
 
+  const beforeAfterShapes = {
+    raw: [0, 5, -4, 8, -2, 1, -5, 7, -1, 0.8, -3.5, 6.5, -2.2, 1.4, -1.5, 4.2, -0.4, 1.1, -2.8, 5.8, -1.2, 0.5, -1, 3.5],
+    processed: [0, 3.5, -2.8, 7.2, -1.3, 0.6, -0.9, 2.6, -0.4, 0.3, -0.5, 2, -0.3, 0.4, -0.6, 2.4, -0.2, 0.5, -0.3, 1.8, -0.1]
+  };
+
   function createTemplateBeatSvg(values) {
     const width = 500;
     const height = 120;
@@ -1326,6 +1634,38 @@ function closeHelpPanel() {
           stroke-width="2"
           stroke-linejoin="round"
           stroke-linecap="round"
+        />
+      </svg>
+    `;
+  }
+
+  function createBeforeAfterSvg(type = "raw") {
+    const values = beforeAfterShapes[type] || beforeAfterShapes.raw;
+    const width = 260;
+    const height = 80;
+    const min = Math.min(...values);
+    const max = Math.max(...values);
+    const range = max - min || 1;
+
+    const points = values
+      .map((v, i) => {
+        const x = (i / (values.length - 1 || 1)) * width;
+        const y = height - ((v - min) / range) * (height - 8) - 4;
+        return `${x.toFixed(1)},${y.toFixed(1)}`;
+      })
+      .join(" ");
+
+    const stroke = type === "processed" ? "#10b981" : "#ef4444";
+
+    return `
+      <svg viewBox="0 0 ${width} ${height}" preserveAspectRatio="none" class="before-after-wave" aria-hidden="true">
+        <polyline
+          points="${points}"
+          fill="none"
+          stroke="${stroke}"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
         />
       </svg>
     `;
@@ -1927,6 +2267,112 @@ function closeHelpPanel() {
     const wrapper = document.getElementById("leads-grid-wrapper");
     if (svg) svg.innerHTML = "";
     if (wrapper) wrapper.querySelectorAll(".hc-chip").forEach((n) => n.remove());
+  }
+
+  function renderDataContainerView(container, lang) {
+    const tabStrings =
+      translations[lang]?.tabs?.["data-container"] ||
+      translations.en?.tabs?.["data-container"] ||
+      {};
+    const t = getDataContainerStrings(lang);
+
+    const flowSteps = (t.flow?.steps || [])
+      .map((step, idx, arr) => {
+        const block = `<div class="data-flow-step">${step}</div>`;
+        if (idx === arr.length - 1) return block;
+        return `${block}<div class="data-flow-arrow" aria-hidden="true">→</div>`;
+      })
+      .join("");
+
+    const insideBullets = (t.inside?.bullets || [])
+      .map((item) => `<li>${item}</li>`)
+      .join("");
+    const codeSample = escapeHtml(t.inside?.codeSample || "");
+
+    const segmentationWindows = (t.segmentation?.windows || [])
+      .map((label) => `<div class="segmentation-block">${label}</div>`)
+      .join("");
+    const segmentationMetrics = (t.segmentation?.metrics || [])
+      .map((label) => `<span class="segmentation-metric">${label}</span>`)
+      .join("");
+
+    const qualityMarkers = (t.quality?.markers || [])
+      .map(
+        (marker) => `
+        <div class="data-quality-marker">
+          <div class="data-quality-marker-id">${marker.id || marker.title}</div>
+          <h4>${marker.title || ""}</h4>
+          <p>${marker.description || ""}</p>
+        </div>
+      `
+      )
+      .join("");
+
+    const beforeAfterCards = (t.beforeAfter?.cards || [])
+      .map((card) => {
+        const wave = createBeforeAfterSvg(card.type);
+        return `
+        <div class="before-after-card">
+          ${card.label ? `<div class="before-after-label">${card.label}</div>` : ""}
+          <h3>${card.title || ""}</h3>
+          <p>${card.description || ""}</p>
+          <div class="before-after-graph">${wave}</div>
+        </div>
+      `;
+      })
+      .join("");
+
+    const safetyBullets = (t.safety?.bullets || [])
+      .map((item) => `<li>${item}</li>`)
+      .join("");
+
+    container.innerHTML = `
+      <h1 class="tab-title">${tabStrings.title || tabStrings.label || ""}</h1>
+      <p class="tab-description">${tabStrings.description || ""}</p>
+      <div class="data-container-layout">
+        <section class="data-container-card data-flow-card">
+          <h2>${t.flow?.title || ""}</h2>
+          <p>${t.flow?.text || ""}</p>
+          ${flowSteps ? `<div class="data-flow-steps">${flowSteps}</div>` : ""}
+        </section>
+        <section class="data-container-card data-inside-card">
+          <h2>${t.inside?.title || ""}</h2>
+          <p>${t.inside?.description || ""}</p>
+          ${insideBullets ? `<ul class="data-container-list">${insideBullets}</ul>` : ""}
+          ${codeSample ? `<pre class="data-container-code"><code>${codeSample}</code></pre>` : ""}
+        </section>
+        <section class="data-container-card data-segmentation-card">
+          <h2>${t.segmentation?.title || ""}</h2>
+          <p>${t.segmentation?.text || ""}</p>
+          <div class="data-segmentation-timeline">
+            <div class="segmentation-label">${t.segmentation?.timelineLabel || ""}</div>
+            ${segmentationWindows ? `<div class="segmentation-track">${segmentationWindows}</div>` : ""}
+            ${segmentationMetrics ? `<div class="segmentation-metrics">${segmentationMetrics}</div>` : ""}
+          </div>
+        </section>
+        <section class="data-container-card data-quality-card">
+          <h2>${t.quality?.title || ""}</h2>
+          <p>${t.quality?.text || ""}</p>
+          ${qualityMarkers ? `<div class="data-quality-markers">${qualityMarkers}</div>` : ""}
+          <div class="data-quality-legend">
+            <strong>${t.quality?.legendTitle || ""}</strong>
+            <div class="legend-entry"><span class="data-quality-dot green"></span>${t.quality?.legendClean || ""}</div>
+            <div class="legend-entry"><span class="data-quality-dot yellow"></span>${t.quality?.legendLimited || ""}</div>
+            <div class="legend-entry"><span class="data-quality-dot red"></span>${t.quality?.legendCritical || ""}</div>
+          </div>
+        </section>
+        <section class="data-container-card data-before-after-card">
+          <h2>${t.beforeAfter?.title || ""}</h2>
+          <p>${t.beforeAfter?.text || ""}</p>
+          ${beforeAfterCards ? `<div class="before-after-grid">${beforeAfterCards}</div>` : ""}
+        </section>
+        <section class="data-container-card data-safety-card">
+          <h2>${t.safety?.title || ""}</h2>
+          <p>${t.safety?.text || ""}</p>
+          ${safetyBullets ? `<ul class="data-container-list">${safetyBullets}</ul>` : ""}
+        </section>
+      </div>
+    `;
   }
 
   function renderProfileView(container, lang) {
