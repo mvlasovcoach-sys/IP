@@ -159,11 +159,28 @@ body {
   border-color: #bfd2ff;
 }
 
+.info-icon-btn.is-active {
+  background-color: #dbeafe;
+  border-color: #93c5fd;
+  color: #1d4ed8;
+}
+
 .tab-title-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
+  flex-wrap: wrap;
+}
+
+.leads-title-row {
+  align-items: center;
+}
+
+.leads-title-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   flex-wrap: wrap;
 }
 
