@@ -173,10 +173,12 @@ body {
   flex-wrap: wrap;
 }
 
+.quality-title-row,
 .leads-title-row {
   align-items: center;
 }
 
+.quality-title-group,
 .leads-title-group {
   display: flex;
   align-items: center;

@@ -2102,9 +2102,15 @@ function closeHelpPanel() {
 
   function updateQualityInfoPulseState() {
     const btn = document.getElementById("quality-info-toggle");
-    if (!btn) return;
-    btn.classList.toggle("demo-button-pulse", !isQualityDrawerOpen);
-    btn.classList.toggle("is-active", isQualityDrawerOpen);
+    if (btn) {
+      btn.classList.toggle("demo-button-pulse", !isQualityDrawerOpen);
+      btn.classList.toggle("is-active", isQualityDrawerOpen);
+    }
+
+    const iconBtn = document.getElementById("quality-info-icon");
+    if (iconBtn) {
+      iconBtn.classList.toggle("is-active", isQualityDrawerOpen);
+    }
   }
 
   function openPrereqPanel(lang) {
@@ -2304,10 +2310,23 @@ function closeHelpPanel() {
       .join(" ");
 
     const infoButtonLabel = tSignal.infoButton || tInfo.panelTitle || "";
+    const infoIconLabel = tInfo.panelTitle || infoButtonLabel || t.title || "";
+    const infoIconActiveClass = isQualityDrawerOpen ? " is-active" : "";
 
     container.innerHTML = `
-      <div class="tab-title-row">
-        <h1 class="tab-title">${t.title}</h1>
+      <div class="tab-title-row quality-title-row">
+        <div class="quality-title-group">
+          <h1 class="tab-title">${t.title}</h1>
+          <button
+            type="button"
+            class="info-icon-btn${infoIconActiveClass}"
+            id="quality-info-icon"
+            aria-label="${escapeHtml(infoIconLabel)}"
+            title="${escapeHtml(infoIconLabel)}"
+          >
+            i
+          </button>
+        </div>
         <div class="tab-title-actions">
           <button class="${qualityInfoBtnClasses}" id="quality-info-toggle">
             <span class="icon">i</span>
@@ -2332,13 +2351,22 @@ function closeHelpPanel() {
 
     const infoBtn = document.getElementById("quality-info-toggle");
     if (infoBtn) {
-      infoBtn.onclick = () => openQualityDrawer();
+      infoBtn.onclick = () => openSignalQualityInfo();
+    }
+
+    const infoIconBtn = document.getElementById("quality-info-icon");
+    if (infoIconBtn) {
+      infoIconBtn.onclick = () => openSignalQualityInfo();
     }
 
     const examplesBtn = document.getElementById("quality-show-examples");
     if (examplesBtn) {
-      examplesBtn.onclick = () => openQualityDrawer({ scrollToExamples: true });
+      examplesBtn.onclick = () => openSignalQualityInfo({ scrollToExamples: true });
     }
+  }
+
+  function openSignalQualityInfo(options = {}) {
+    openQualityDrawer(options);
   }
 
   async function renderLeadsView(container, lang) {
