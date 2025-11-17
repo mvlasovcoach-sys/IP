@@ -481,7 +481,6 @@ const translations = {
       title: "Why the Digital Heart Profile is useful",
       subtitle:
         "This section shows which practical problems the Digital Heart Profile solves and how it improves the use of ECG data.",
-      prereqButton: "Why we built the Digital Heart Profile",
       prereqPanelTitle: "Prerequisites",
       prereqIntro:
         "This section explains why building a Digital Heart Profile required changing the device architecture, increasing the number of electrodes, and moving beyond classical ECG norms.",
@@ -812,7 +811,6 @@ const translations = {
       title: "Почему цифровой профиль сердца важен",
       subtitle:
         "Этот раздел показывает, какие практические задачи решает цифровой профиль и чем он улучшает использование данных ЭКГ.",
-      prereqButton: "Зачем мы создали цифровой профиль сердца",
       prereqPanelTitle: "Предпосылки",
       prereqIntro:
         "Этот раздел показывает, почему для создания цифрового профиля сердца потребовалось изменить архитектуру устройства, увеличить число электродов и выйти за рамки сравнения только с эталоном.",
@@ -1101,7 +1099,6 @@ const translations = {
       title: "Waarom het Digital Heart Profile nuttig is",
       subtitle:
         "In dit gedeelte zie je welke praktische problemen het profiel oplost en hoe het het gebruik van ECG-data verbetert.",
-      prereqButton: "Waarom we het Digital Heart Profile hebben gebouwd",
       prereqPanelTitle: "Randvoorwaarden",
       prereqIntro:
         "Dit onderdeel legt uit waarom het bouwen van een Digital Heart Profile vroeg om een aangepaste apparaatarchitectuur, meer elektroden en het loslaten van klassieke ECG-normen.",
@@ -2886,18 +2883,9 @@ function closeHelpPanel() {
       return;
     }
 
-    const prereqButtonHtml = t.prereqButton
-      ? `
-    <button id="prereq-button" class="demo-button demo-button-primary demo-button-pulse">
-      ${t.prereqButton}
-    </button>
-  `
-      : "";
-
     const headerHtml = `
       <h1 class="tab-title">${t.title}</h1>
       <p class="tab-description">${t.subtitle}</p>
-      ${prereqButtonHtml}
     `;
 
     const rowsHtml = (t.rows || [])
@@ -2931,10 +2919,6 @@ function closeHelpPanel() {
 
     container.innerHTML = headerHtml + tableHtml;
 
-    const prereqButton = document.getElementById("prereq-button");
-    if (prereqButton) {
-      prereqButton.addEventListener("click", () => openPrereqPanel(lang));
-    }
   }
 
   function renderLiveEcgView(container, lang) {
@@ -2986,7 +2970,7 @@ function closeHelpPanel() {
           <button id="segmentation-toggle" class="${segmentationClasses}">
             ${toggleLabel}
           </button>
-          <button id="live-background-button" class="demo-button demo-button-ghost">
+          <button id="live-background-button" class="demo-button demo-button-ghost demo-button-pulse">
             ${liveT.backgroundButton}
           </button>
         </div>
