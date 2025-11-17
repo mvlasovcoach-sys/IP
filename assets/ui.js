@@ -591,6 +591,11 @@ const translations = {
       tooltipRed:
         "Red windows — segments with severe artifacts (noise, drift, impulses or channel mismatch). They are excluded from analysis."
     },
+    liveEcg: {
+      infoTitle: "Live ECG – how to read this view",
+      infoBody:
+        "This screen shows a simulated live multi-channel ECG stream. Each horizontal line is one ECG lead (Lead I, Lead II, Lead III, aVR, aVL, aVF, V1, etc.). You can see the familiar P wave, QRS complex and T wave on every channel.\n\nThe system does not analyse the signal as one continuous line. Instead, the ECG stream is automatically split into short 2-second windows. Vertical lines on the graphs show the borders of these windows. Each window is then checked for noise, baseline drift, motion artefacts and electrode contact quality.\n\nThe coloured blocks at the bottom represent the quality of each 2-second window. Green means a high-quality window that is fully used in further analysis. Yellow marks borderline quality – the signal is mostly readable, but with some artefacts, so it can be used with caution, for example for trends. Red blocks indicate strong artefacts or missing data – such windows are completely excluded from Digital Heart Profile and AI calculations.\n\nThe button “Show 2-second windows” toggles the visualisation of segmentation and quality control. When it is active, vertical lines and coloured blocks are shown, so you can see which parts of the signal the system accepts or rejects. When it is off, you only see the ECG curves without additional overlays.\n\nThe button “Background” opens a short explanation of why we use 2-second windows and quality gates at all: how the system protects further analytics from noisy data and why this is important for building a reliable Digital Heart Profile.\n\nUse this view during demos to explain not only what the ECG looks like, but also how SPA2099 automatically prepares clean, medically suitable data before any higher-level metrics are calculated."
+    },
     liveLegendGreen: "High-quality window used for analysis",
     liveLegendYellow: "Borderline quality, used with caution",
     liveLegendRed: "Artefacts – excluded from analysis",
@@ -921,6 +926,11 @@ const translations = {
       tooltipRed:
         "Красные окна — сегменты с выраженными артефактами (шум, дрейф, импульсы, рассогласование каналов). Исключаются из анализа."
     },
+    liveEcg: {
+      infoTitle: "Live ECG – как читать этот экран",
+      infoBody:
+        "На этом экране показан имитированный многоканальный поток ЭКГ в реальном времени. Каждая горизонтальная линия — это отдельное отведение (Lead I, Lead II, Lead III, aVR, aVL, aVF, V1 и т.д.). На каждом канале можно увидеть привычные элементы ЭКГ: зубец P, комплекс QRS и зубец T.\n\nСистема не анализирует сигнал как одну сплошную линию. Вместо этого поток ЭКГ автоматически разбивается на короткие окна по 2 секунды. Вертикальные линии на графиках показывают границы этих окон. Каждое окно проходит проверку на шумы, дрейф изолинии, артефакты движения и качество контакта электродов.\n\nЦветные квадраты внизу показывают качество каждого 2-секундного окна. Зелёный цвет означает высокое качество сигнала — такие окна полностью используются в дальнейшем анализе. Жёлтый цвет — пограничное качество: сигнал в целом читаемый, но с артефактами, поэтому его можно использовать с осторожностью, например для трендов. Красный цвет обозначает выраженные артефакты или отсутствие данных — такие окна полностью исключаются из расчёта Digital Heart Profile и работы алгоритмов ИИ.\n\nКнопка «Show 2-second windows» включает и выключает визуализацию сегментации и контроля качества. В активном режиме отображаются вертикальные линии и цветные блоки, и видно, какие участки сигнала система принимает, а какие отбрасывает. В неактивном режиме показываются только кривые ЭКГ без дополнительных слоёв.\n\nКнопка «Background» открывает короткое пояснение, зачем мы вообще используем 2-секундные окна и quality gate: как система защищает дальнейшую аналитику от шумных данных и почему это важно для построения надёжного цифрового профиля сердца.\n\nЭтот экран удобно использовать на презентациях, чтобы показать не только форму ЭКГ, но и то, как SPA2099 автоматически готовит чистые, пригодные для медицины данные перед расчётом любых высокоуровневых метрик."
+    },
     liveLegendGreen: "Высокое качество, окно идёт в анализ",
     liveLegendYellow: "Пограничное качество, использовать с осторожностью",
     liveLegendRed: "Артефакты — исключено из анализа",
@@ -1209,6 +1219,11 @@ const translations = {
       tooltipRed:
         "Red windows — segments with severe artifacts (noise, drift, impulses or channel mismatch). They are excluded from analysis."
     },
+    liveEcg: {
+      infoTitle: "Live ECG – how to read this view",
+      infoBody:
+        "This screen shows a simulated live multi-channel ECG stream. Each horizontal line is one ECG lead (Lead I, Lead II, Lead III, aVR, aVL, aVF, V1, etc.). You can see the familiar P wave, QRS complex and T wave on every channel.\n\nThe system does not analyse the signal as one continuous line. Instead, the ECG stream is automatically split into short 2-second windows. Vertical lines on the graphs show the borders of these windows. Each window is then checked for noise, baseline drift, motion artefacts and electrode contact quality.\n\nThe coloured blocks at the bottom represent the quality of each 2-second window. Green means a high-quality window that is fully used in further analysis. Yellow marks borderline quality – the signal is mostly readable, but with some artefacts, so it can be used with caution, for example for trends. Red blocks indicate strong artefacts or missing data – such windows are completely excluded from Digital Heart Profile and AI calculations.\n\nThe button “Show 2-second windows” toggles the visualisation of segmentation and quality control. When it is active, vertical lines and coloured blocks are shown, so you can see which parts of the signal the system accepts or rejects. When it is off, you only see the ECG curves without additional overlays.\n\nThe button “Background” opens a short explanation of why we use 2-second windows and quality gates at all: how the system protects further analytics from noisy data and why this is important for building a reliable Digital Heart Profile.\n\nUse this view during demos to explain not only what the ECG looks like, but also how SPA2099 automatically prepares clean, medically suitable data before any higher-level metrics are calculated."
+    },
     liveLegendGreen: "Venster van hoge kwaliteit gebruikt voor analyse",
     liveLegendYellow: "Grenzeloze kwaliteit, met voorzichtigheid gebruiken",
     liveLegendRed: "Artefacten – uitgesloten van analyse",
@@ -1393,6 +1408,40 @@ function openProfileHelpPanel(lang) {
   `;
 
   contentEl.innerHTML = sectionsHtml;
+  overlay.hidden = false;
+  panel.hidden = false;
+  panel.classList.remove("open");
+  requestAnimationFrame(() => {
+    panel.classList.add("open");
+  });
+}
+
+function formatInfoParagraphs(text = "") {
+  return text
+    .split(/\n\s*\n/g)
+    .map((paragraph) => paragraph.trim())
+    .filter(Boolean)
+    .map((paragraph) => `<p class="help-section-text">${escapeHtml(paragraph)}</p>`)
+    .join("");
+}
+
+function openLiveEcgInfoPanel(lang) {
+  const info = translations[lang]?.liveEcg || translations.en?.liveEcg;
+  if (!info) return;
+
+  const overlay = document.getElementById("help-overlay");
+  const panel = document.getElementById("help-panel");
+  const titleEl = document.getElementById("help-panel-title");
+  const contentEl = document.getElementById("help-panel-content");
+
+  if (!overlay || !panel || !titleEl || !contentEl) return;
+
+  titleEl.textContent = info.infoTitle || "";
+  const bodyHtml = formatInfoParagraphs(info.infoBody || "");
+  contentEl.innerHTML = bodyHtml
+    ? `<section class="help-section">${bodyHtml}</section>`
+    : "";
+
   overlay.hidden = false;
   panel.hidden = false;
   panel.classList.remove("open");
@@ -2555,6 +2604,12 @@ function closeHelpPanel() {
     btn.addEventListener("click", () => openProfileHelpPanel(lang));
   }
 
+  function setupLiveEcgInfo(lang) {
+    const btn = document.getElementById("live-info-btn");
+    if (!btn) return;
+    btn.addEventListener("click", () => openLiveEcgInfoPanel(lang));
+  }
+
   function renderCompareView(container, lang) {
     const t = translations[lang].tabs.compare;
     const rest = ecgDemoData.profiles?.rest;
@@ -2924,6 +2979,7 @@ function closeHelpPanel() {
   function renderLiveEcgView(container, lang) {
     const t = translations[lang];
     const liveT = t.tabs.live;
+    const liveInfo = translations[lang]?.liveEcg || translations.en?.liveEcg;
     const channels = ecgDemoData.channels;
     const windows = ecgDemoData.windows;
 
@@ -2961,9 +3017,24 @@ function closeHelpPanel() {
       })
       .join("");
 
+    const infoButtonHtml = liveInfo?.infoTitle
+      ? `<button class="info-icon-btn" id="live-info-btn" aria-label="${escapeHtml(
+          liveInfo.infoTitle
+        )}">i</button>`
+      : "";
+
+    const headerHtml = `
+      <div class="profile-header-with-info">
+        <h1 class="tab-title">
+          ${liveT.title}
+          ${infoButtonHtml}
+        </h1>
+        <p class="tab-description">${liveT.description}</p>
+      </div>
+    `;
+
     container.innerHTML = `
-      <h1 class="tab-title">${liveT.title}</h1>
-      <p class="tab-description">${liveT.description}</p>
+      ${headerHtml}
 
       <div class="live-ecg-toolbar">
         <div class="live-ecg-toolbar-buttons">
@@ -3002,6 +3073,8 @@ function closeHelpPanel() {
         </div>
       </div>
     `;
+
+    setupLiveEcgInfo(lang);
 
     if (liveWindowTimer) {
       clearInterval(liveWindowTimer);
