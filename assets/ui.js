@@ -1073,6 +1073,10 @@ function openProfileHelpPanel(lang) {
   contentEl.innerHTML = sectionsHtml;
   overlay.hidden = false;
   panel.hidden = false;
+  panel.classList.remove("open");
+  requestAnimationFrame(() => {
+    panel.classList.add("open");
+  });
 }
 
 function renderHelpSection(title, text) {
@@ -1085,11 +1089,25 @@ function renderHelpSection(title, text) {
   `;
 }
 
+function closeHelpPanelIfOpen() {
+  const overlay = document.getElementById("help-overlay");
+  const panel = document.getElementById("help-panel");
+  if (!overlay || !panel) return;
+
+  panel.classList.remove("open");
+  overlay.hidden = true;
+  panel.hidden = true;
+}
+
 function closeHelpPanel() {
   const overlay = document.getElementById("help-overlay");
   const panel = document.getElementById("help-panel");
-  if (overlay) overlay.hidden = true;
-  if (panel) panel.hidden = true;
+  if (!overlay || !panel || panel.hidden) return;
+
+  panel.classList.remove("open");
+  setTimeout(() => {
+    closeHelpPanelIfOpen();
+  }, 250);
 }
 
   document.addEventListener("DOMContentLoaded", () => {
@@ -1108,6 +1126,7 @@ function closeHelpPanel() {
     const helpPanelCloseButton = document.getElementById("help-panel-close");
 
     function setActiveTab(tab) {
+      closeHelpPanelIfOpen();
       currentTab = tab;
       tabButtons.forEach((btn) => {
         btn.classList.toggle("active", btn.dataset.tab === tab);

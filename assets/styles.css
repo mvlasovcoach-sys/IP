@@ -745,6 +745,10 @@ body {
   z-index: 40;
 }
 
+.help-overlay[hidden] {
+  display: none;
+}
+
 .help-panel {
   position: fixed;
   top: 0;
@@ -757,6 +761,16 @@ body {
   z-index: 41;
   display: flex;
   flex-direction: column;
+  transform: translateX(100%);
+  transition: transform 0.25s ease;
+}
+
+.help-panel.open {
+  transform: translateX(0);
+}
+
+.help-panel[hidden] {
+  display: none;
 }
 
 .help-panel-header {
