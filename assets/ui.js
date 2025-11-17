@@ -613,6 +613,23 @@ const translations = {
       contactBody:
         "Episodes where the contact between the textile electrodes and the skin is unstable. Parts of the signal may drop out, become low-amplitude or turn into wide irregular noise."
     },
+    twelveLead: {
+      infoTitle: "How to read the 12-lead ECG view",
+      infoBodyIntro:
+        "This screen shows the standard clinical 12-lead ECG layout. Each lead provides a different electrical viewpoint of the heart. Together, they allow interpretation of rhythm, conduction pathways, morphology of the QRS complex, ST-segment and T-wave behaviour.",
+      leadsTitle: "What each lead represents",
+      leadsBody:
+        "Leads I, II and III measure electrical potential between limbs and show the frontal plane. aVR, aVL and aVF are augmented limb leads providing additional frontal perspectives. Leads V1–V6 are precordial (chest) leads positioned around the thorax and represent the horizontal plane. This combination of frontal and horizontal perspectives allows full 3-dimensional assessment of cardiac electrical activity.",
+      morphologyTitle: "What to look at in the 12-lead view",
+      morphologyBody:
+        "In this view you can examine the P-wave, QRS morphology, ST-segment and T-wave in all leads simultaneously. This helps to identify axis deviation, conduction blocks, signs of ischemia, hypertrophy patterns or arrhythmic behaviour. The combined view is used for comparing how the same heartbeat appears from different angles.",
+      differencesTitle: "Why the ECG here looks clean and stylised",
+      differencesBody:
+        "The 12-lead ECG shown in the demo is a stylised, noise-free example for presentation. In real data, SPA2099 applies the same quality-gating used in Live ECG and Signal Quality to remove noisy segments before the 12-lead reconstruction step.",
+      purposeTitle: "Purpose of the 12-lead view in SPA2099",
+      purposeBody:
+        "This view is designed to demonstrate how SPA2099 reconstructs multi-channel ECG and how individual leads reflect different aspects of cardiac activity. It helps explain the diagnostic value of each lead, and how cleaner multi-channel input improves profile accuracy and AI interpretation."
+    },
     liveEcg: {
       infoTitle: "Live ECG – how to read this view",
       infoBody:
@@ -970,6 +987,23 @@ const translations = {
       contactBody:
         "Эпизоды, когда контакт между текстильными электродами и кожей нестабилен. Части сигнала могут пропадать, становиться низкоамплитудными или превращаться в широкополосный шум."
     },
+    twelveLead: {
+      infoTitle: "Как читать окно 12-канального ЭКГ",
+      infoBodyIntro:
+        "Этот экран показывает стандартную клиническую раскладку 12-канального ЭКГ. Каждое отведение даёт свой угол обзора электрической активности сердца. В совокупности они позволяют анализировать ритм, проводимость, морфологию комплекса QRS, сегмент ST и поведение зубца T.",
+      leadsTitle: "Что показывает каждое отведение",
+      leadsBody:
+        "Отведения I, II и III измеряют разницу потенциалов между конечностями и отражают фронтальную плоскость. aVR, aVL и aVF — усиленные конечностные отведения, которые дают дополнительные фронтальные проекции. Отведения V1–V6 — грудные, расположенные на поверхности грудной клетки, и отражают горизонтальную плоскость. Совместно эти группы дают трёхмерное представление электрической активности сердца.",
+      morphologyTitle: "Что смотреть в 12-канальном ЭКГ",
+      morphologyBody:
+        "В этом режиме можно оценить зубец P, морфологию комплекса QRS, сегмент ST и зубец T одновременно во всех отведениях. Это позволяет определить отклонение электрической оси, блокады проводимости, признаки ишемии, гипертрофии и особенности аритмий. Также удобно сравнивать, как один и тот же сердечный цикл выглядит под разными углами.",
+      differencesTitle: "Почему ЭКГ выглядит чистым и стилизованным",
+      differencesBody:
+        "12-канальное ЭКГ в демо — это стилизованный, полностью очищенный пример, созданный для наглядности. В реальных данных система SPA2099 применяет те же методы оценки качества, что и на вкладках Live ECG и Качество сигнала, перед реконструкцией 12 отведений.",
+      purposeTitle: "Зачем нужен 12-канальный вид в SPA2099",
+      purposeBody:
+        "Этот режим создан для демонстрации того, как SPA2099 реконструирует многоканальное ЭКГ и как каждое отведение отображает разные аспекты сердечной активности. Он помогает объяснить диагностическую ценность каждого канала и показать, как качественные многоканальные данные улучшают точность профиля и работу алгоритмов."
+    },
     liveEcg: {
       infoTitle: "Live ECG – как читать этот экран",
       infoBody:
@@ -1285,6 +1319,23 @@ const translations = {
       contactBody:
         "Episodes where the contact between the textile electrodes and the skin is unstable. Parts of the signal may drop out, become low-amplitude or turn into wide irregular noise."
     },
+    twelveLead: {
+      infoTitle: "How to read the 12-lead ECG view",
+      infoBodyIntro:
+        "This screen shows the standard clinical 12-lead ECG layout. Each lead provides a different electrical viewpoint of the heart. Together, they allow interpretation of rhythm, conduction pathways, morphology of the QRS complex, ST-segment and T-wave behaviour.",
+      leadsTitle: "What each lead represents",
+      leadsBody:
+        "Leads I, II and III measure electrical potential between limbs and show the frontal plane. aVR, aVL and aVF are augmented limb leads providing additional frontal perspectives. Leads V1–V6 are precordial (chest) leads positioned around the thorax and represent the horizontal plane. This combination of frontal and horizontal perspectives allows full 3-dimensional assessment of cardiac electrical activity.",
+      morphologyTitle: "What to look at in the 12-lead view",
+      morphologyBody:
+        "In this view you can examine the P-wave, QRS morphology, ST-segment and T-wave in all leads simultaneously. This helps to identify axis deviation, conduction blocks, signs of ischemia, hypertrophy patterns or arrhythmic behaviour. The combined view is used for comparing how the same heartbeat appears from different angles.",
+      differencesTitle: "Why the ECG here looks clean and stylised",
+      differencesBody:
+        "The 12-lead ECG shown in the demo is a stylised, noise-free example for presentation. In real data, SPA2099 applies the same quality-gating used in Live ECG and Signal Quality to remove noisy segments before the 12-lead reconstruction step.",
+      purposeTitle: "Purpose of the 12-lead view in SPA2099",
+      purposeBody:
+        "This view is designed to demonstrate how SPA2099 reconstructs multi-channel ECG and how individual leads reflect different aspects of cardiac activity. It helps explain the diagnostic value of each lead, and how cleaner multi-channel input improves profile accuracy and AI interpretation."
+    },
     liveEcg: {
       infoTitle: "Live ECG – how to read this view",
       infoBody:
@@ -1523,6 +1574,41 @@ function openLiveEcgInfoPanel(lang) {
     ? `<section class="help-section">${bodyHtml}</section>`
     : "";
 
+  overlay.hidden = false;
+  panel.hidden = false;
+  panel.classList.remove("open");
+  requestAnimationFrame(() => {
+    panel.classList.add("open");
+  });
+}
+
+function openTwelveLeadInfoPanel(lang) {
+  const info = translations[lang]?.twelveLead || translations.en?.twelveLead;
+  if (!info) return;
+
+  const overlay = document.getElementById("help-overlay");
+  const panel = document.getElementById("help-panel");
+  const titleEl = document.getElementById("help-panel-title");
+  const contentEl = document.getElementById("help-panel-content");
+
+  if (!overlay || !panel || !titleEl || !contentEl) return;
+
+  titleEl.textContent = info.infoTitle || "";
+  const sections = [
+    info.infoBodyIntro ? renderHelpSection(null, escapeHtml(info.infoBodyIntro)) : "",
+    info.leadsBody ? renderHelpSection(info.leadsTitle, escapeHtml(info.leadsBody)) : "",
+    info.morphologyBody
+      ? renderHelpSection(info.morphologyTitle, escapeHtml(info.morphologyBody))
+      : "",
+    info.differencesBody
+      ? renderHelpSection(info.differencesTitle, escapeHtml(info.differencesBody))
+      : "",
+    info.purposeBody ? renderHelpSection(info.purposeTitle, escapeHtml(info.purposeBody)) : ""
+  ]
+    .filter(Boolean)
+    .join("");
+
+  contentEl.innerHTML = sections;
   overlay.hidden = false;
   panel.hidden = false;
   panel.classList.remove("open");
@@ -2193,6 +2279,7 @@ function closeHelpPanel() {
 
   async function renderLeadsView(container, lang) {
     const t = translations[lang].tabs.leads;
+    const info = translations[lang]?.twelveLead || translations.en?.twelveLead;
     const leads = ecgDemoData.leads12 || [];
 
     const recordedLeads = leads.filter((lead) => lead.isRecorded);
@@ -2247,9 +2334,24 @@ function closeHelpPanel() {
       .filter(Boolean)
       .join(" ");
 
+    const infoButtonHtml = info?.infoTitle
+      ? `<button class="info-icon-btn" id="leads-info-btn" aria-label="${escapeHtml(
+          info.infoTitle
+        )}">i</button>`
+      : "";
+
+    const headerHtml = `
+      <div class="profile-header-with-info">
+        <h1 class="tab-title">
+          ${t.title}
+          ${infoButtonHtml}
+        </h1>
+        <p class="tab-description">${t.description}</p>
+      </div>
+    `;
+
     container.innerHTML = `
-      <h1 class="tab-title">${t.title}</h1>
-      <p class="tab-description">${t.description}</p>
+      ${headerHtml}
       <div class="leads-layout">
         <h3>${t.gridTitle}</h3>
         <div class="leads-toolbar">
@@ -2269,6 +2371,8 @@ function closeHelpPanel() {
         </div>
       </div>
     `;
+
+    setupTwelveLeadInfo(lang);
 
     const toggleBtn = document.getElementById("how-computed-toggle");
 
@@ -2749,6 +2853,12 @@ function closeHelpPanel() {
     const btn = document.getElementById("live-info-btn");
     if (!btn) return;
     btn.addEventListener("click", () => openLiveEcgInfoPanel(lang));
+  }
+
+  function setupTwelveLeadInfo(lang) {
+    const btn = document.getElementById("leads-info-btn");
+    if (!btn) return;
+    btn.addEventListener("click", () => openTwelveLeadInfoPanel(lang));
   }
 
   function renderCompareView(container, lang) {
