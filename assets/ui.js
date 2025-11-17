@@ -49,10 +49,17 @@ const dataContainerContent = {
     segmentation: {
       title: "Segmentation Logic",
       text:
-        "For different metrics SPA2099 uses different window lengths: 10 s, 30 s, 2 min, 5 min, etc. Each window becomes a segment in the Data Container.",
-      timelineLabel: "ECG timeline (10-second windows)",
-      windows: ["10 s", "10 s", "10 s", "10 s", "10 s", "10 s"],
-      metrics: ["RR & arrhythmia (10 s)", "Quality gating (10 s)", "HRV block (2 min)", "Stress trend (5 min)"]
+        "For all metrics SPA2099 uses 2-second base segments in the Data Container. These base segments are then combined into longer windows (30 s, 2 min, 5 min) depending on the metric.",
+      timelineLabel: "ECG timeline (2-second base segments)",
+      timelineNote:
+        "Each Data Container segment covers 2 seconds of ECG and IMU data. Longer analysis windows (30 s, 2 min, 5 min) are built by combining multiple 2-second segments.",
+      windows: ["2 s", "2 s", "2 s", "2 s", "2 s", "2 s"],
+      metrics: [
+        "RR & arrhythmia metrics (30 s = 15 × 2 s segments)",
+        "Quality gating (2 s base segments)",
+        "HRV block (2 min = 60 × 2 s segments)",
+        "Stress trend (5 min = 150 × 2 s segments)"
+      ]
     },
     quality: {
       title: "Quality Scores (Q-Markers)",
@@ -93,21 +100,22 @@ const dataContainerContent = {
     beforeAfter: {
       title: "Before & After Processing",
       text:
-        "Raw ECG segments go through filtering, R-peak detection and baseline normalisation before entering analytics.",
+        "Each example shows the same 2-second slice from the Data Container before and after filtering, R-peak detection and baseline normalisation.",
       cards: [
         {
           type: "raw",
           label: "Before",
-          title: "Raw ECG segment",
+          title: "Raw ECG segment (2-second slice from the Data Container)",
           description: "Unfiltered signal with baseline drift, mains noise and motion spikes."
         },
         {
           type: "processed",
           label: "After",
-          title: "Processed ECG segment",
+          title: "Processed ECG segment (same 2-second slice after filtering and R-peak detection)",
           description: "Filtered waveform with detected R-peaks and a stabilised baseline."
         }
-      ]
+      ],
+      note: "Schematic ECG sketches for illustration only (not real patient data)."
     },
     safety: {
       title: "Data Safety & Performance",
@@ -169,10 +177,17 @@ const dataContainerContent = {
     segmentation: {
       title: "Логика сегментации",
       text:
-        "Для разных метрик SPA2099 использует окна разной длины: 10 секунд, 30 секунд, 2 минуты, 5 минут и т.д. Каждое окно становится сегментом в Контейнере данных.",
-      timelineLabel: "Шкала ЭКГ (окна по 10 секунд)",
-      windows: ["10 с", "10 с", "10 с", "10 с", "10 с", "10 с"],
-      metrics: ["RR и аритмии (10 с)", "Карта качества (10 с)", "Блок HRV (2 мин)", "Тренд/стресс (5 мин)"]
+        "Для всех метрик SPA2099 использует 2-секундные базовые сегменты в Контейнере данных. Из этих сегментов формируются более длинные окна (30 секунд, 2 минуты, 5 минут) в зависимости от метрики.",
+      timelineLabel: "Лента ЭКГ (2-секундные базовые сегменты)",
+      timelineNote:
+        "Каждый сегмент Контейнера данных охватывает 2 секунды ЭКГ и данных движения. Более длинные окна анализа (30 секунд, 2 минуты, 5 минут) строятся из нескольких 2-секундных сегментов.",
+      windows: ["2 с", "2 с", "2 с", "2 с", "2 с", "2 с"],
+      metrics: [
+        "RR и аритмии (30 с = 15 × 2-секундных сегментов)",
+        "Карта качества (базовые сегменты по 2 с)",
+        "Блок HRV (2 мин = 60 × 2-секундных сегментов)",
+        "Тренд/стресс (5 мин = 150 × 2-секундных сегментов)"
+      ]
     },
     quality: {
       title: "Показатели качества (Q-маркеры)",
@@ -213,21 +228,22 @@ const dataContainerContent = {
     beforeAfter: {
       title: "До и после обработки",
       text:
-        "Сырые фрагменты ЭКГ проходят фильтрацию, детекцию R-пиков и нормализацию базовой линии перед тем, как попасть в аналитику.",
+        "Каждый пример показывает один и тот же 2-секундный срез из Контейнера данных до и после фильтрации, детекции R-пиков и нормализации изолинии.",
       cards: [
         {
           type: "raw",
           label: "До",
-          title: "Исходный фрагмент ЭКГ",
+          title: "Фрагмент ЭКГ (2-секундный срез из Контейнера данных)",
           description: "Неотфильтрованный сигнал с дрейфом, сетевым шумом и движенческими всплесками."
         },
         {
           type: "processed",
           label: "После",
-          title: "Обработанный фрагмент ЭКГ",
+          title: "Обработанный фрагмент (тот же 2-секундный срез после фильтрации и детекции R-пиков)",
           description: "Очищенная волна с отмеченными R-пиками и стабилизированной изолинией."
         }
-      ]
+      ],
+      note: "Схематичные эскизы ЭКГ для иллюстрации (не реальные данные пациента)."
     },
     safety: {
       title: "Безопасность и производительность",
@@ -1605,8 +1621,76 @@ function closeHelpPanel() {
   }
 
   const beforeAfterShapes = {
-    raw: [0, 5, -4, 8, -2, 1, -5, 7, -1, 0.8, -3.5, 6.5, -2.2, 1.4, -1.5, 4.2, -0.4, 1.1, -2.8, 5.8, -1.2, 0.5, -1, 3.5],
-    processed: [0, 3.5, -2.8, 7.2, -1.3, 0.6, -0.9, 2.6, -0.4, 0.3, -0.5, 2, -0.3, 0.4, -0.6, 2.4, -0.2, 0.5, -0.3, 1.8, -0.1]
+    raw: [
+      -0.4,
+      0.2,
+      -0.1,
+      0.5,
+      -0.3,
+      -0.6,
+      3.2,
+      -1.6,
+      0.4,
+      -0.8,
+      0.1,
+      0.6,
+      -0.5,
+      0.9,
+      -0.2,
+      -0.7,
+      3.5,
+      -1.8,
+      0.2,
+      -0.9,
+      0.3,
+      0.4,
+      -0.4,
+      0.8,
+      -0.3,
+      -0.6,
+      3.1,
+      -1.5,
+      0,
+      -0.7,
+      0.4,
+      0.3,
+      -0.2
+    ],
+    processed: [
+      -0.1,
+      0.15,
+      -0.05,
+      0.35,
+      0,
+      0.05,
+      2.7,
+      -0.9,
+      0.08,
+      -0.2,
+      0.12,
+      0.28,
+      -0.08,
+      0.32,
+      -0.05,
+      0.02,
+      2.6,
+      -0.85,
+      0.05,
+      -0.18,
+      0.1,
+      0.25,
+      -0.07,
+      0.3,
+      -0.02,
+      0.03,
+      2.55,
+      -0.8,
+      0.04,
+      -0.15,
+      0.1,
+      0.2,
+      -0.05
+    ]
   };
 
   function createTemplateBeatSvg(values) {
@@ -2348,6 +2432,7 @@ function closeHelpPanel() {
             <div class="segmentation-label">${t.segmentation?.timelineLabel || ""}</div>
             ${segmentationWindows ? `<div class="segmentation-track">${segmentationWindows}</div>` : ""}
             ${segmentationMetrics ? `<div class="segmentation-metrics">${segmentationMetrics}</div>` : ""}
+            ${t.segmentation?.timelineNote ? `<p class="segmentation-note">${t.segmentation.timelineNote}</p>` : ""}
           </div>
         </section>
         <section class="data-container-card data-quality-card">
@@ -2365,6 +2450,7 @@ function closeHelpPanel() {
           <h2>${t.beforeAfter?.title || ""}</h2>
           <p>${t.beforeAfter?.text || ""}</p>
           ${beforeAfterCards ? `<div class="before-after-grid">${beforeAfterCards}</div>` : ""}
+          ${t.beforeAfter?.note ? `<p class="before-after-note">${t.beforeAfter.note}</p>` : ""}
         </section>
         <section class="data-container-card data-safety-card">
           <h2>${t.safety?.title || ""}</h2>
