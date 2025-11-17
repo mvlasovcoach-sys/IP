@@ -1,4 +1,6 @@
 import { computeDeviationScore, classifyDeviation } from "./compare-utils.js";
+import { renderEcgStrip } from "./ecg-strip.js";
+import { RAW_ECG_SEGMENT, PROCESSED_ECG_SEGMENT } from "./ecg-segments.js";
 
 const dataContainerContent = {
   en: {
@@ -101,6 +103,8 @@ const dataContainerContent = {
       title: "Before & After Processing",
       text:
         "Each example shows the same 2-second slice from the Data Container before and after filtering, R-peak detection and baseline normalisation.",
+      linkSentence:
+        "This 2-second slice is the same type of window that appears in the Live ECG view and in the quality-gated timeline.",
       cards: [
         {
           type: "raw",
@@ -115,7 +119,8 @@ const dataContainerContent = {
           description: "Filtered waveform with detected R-peaks and a stabilised baseline."
         }
       ],
-      note: "Schematic ECG sketches for illustration only (not real patient data)."
+      note: "Schematic ECG sketches for illustration only (not real patient data).",
+      emptyLabel: "ECG data unavailable"
     },
     safety: {
       title: "Data Safety & Performance",
@@ -229,6 +234,8 @@ const dataContainerContent = {
       title: "До и после обработки",
       text:
         "Каждый пример показывает один и тот же 2-секундный срез из Контейнера данных до и после фильтрации, детекции R-пиков и нормализации изолинии.",
+      linkSentence:
+        "Этот 2-секундный срез — тот же тип окна, который показывается во вкладке Live ECG и в ленте качества.",
       cards: [
         {
           type: "raw",
@@ -243,7 +250,8 @@ const dataContainerContent = {
           description: "Очищенная волна с отмеченными R-пиками и стабилизированной изолинией."
         }
       ],
-      note: "Схематичные эскизы ЭКГ для иллюстрации (не реальные данные пациента)."
+      note: "Схематичные эскизы ЭКГ для иллюстрации (не реальные данные пациента).",
+      emptyLabel: "Фрагмент ЭКГ недоступен"
     },
     safety: {
       title: "Безопасность и производительность",
@@ -1548,150 +1556,11 @@ function closeHelpPanel() {
     `;
   }
 
-  function createChannelSvg(values, { sampleRate, durationSeconds }) {
-    const totalSamples = values.length;
-    const sliceLength = sampleRate * durationSeconds;
-    const startIndex = Math.max(0, totalSamples - sliceLength);
-    const slice = values.slice(startIndex);
+  
 
-    const width = 800;
-    const height = 60;
+  
 
-    const min = Math.min(...slice);
-    const max = Math.max(...slice);
-    const range = max - min || 1;
-
-    const points = slice
-      .map((v, i) => {
-        const x = (i / (slice.length - 1 || 1)) * width;
-        const y = height - ((v - min) / range) * (height - 4) - 2;
-        return `${x.toFixed(1)},${y.toFixed(1)}`;
-      })
-      .join(" ");
-
-    return `
-      <svg viewBox="0 0 ${width} ${height}" preserveAspectRatio="none">
-        <polyline
-          points="${points}"
-          fill="none"
-          stroke="#22c55e"
-          stroke-width="1.4"
-          stroke-linejoin="round"
-          stroke-linecap="round"
-        />
-      </svg>
-    `;
-  }
-
-  function createLeadSvg(values) {
-    const sampleRate = ecgDemoData.sampleRateHz || 250;
-    const durationSeconds = 3;
-    const totalSamples = values.length;
-    const sliceLength = sampleRate * durationSeconds;
-    const startIndex = Math.max(0, totalSamples - sliceLength);
-    const slice = values.slice(startIndex);
-
-    const width = 200;
-    const height = 50;
-
-    const min = Math.min(...slice);
-    const max = Math.max(...slice);
-    const range = max - min || 1;
-
-    const points = slice
-      .map((v, i) => {
-        const x = (i / (slice.length - 1 || 1)) * width;
-        const y = height - ((v - min) / range) * (height - 4) - 2;
-        return `${x.toFixed(1)},${y.toFixed(1)}`;
-      })
-      .join(" ");
-
-    return `
-      <svg viewBox="0 0 ${width} ${height}" preserveAspectRatio="none">
-        <polyline
-          points="${points}"
-          fill="none"
-          stroke="#22c55e"
-          stroke-width="1.2"
-          stroke-linejoin="round"
-          stroke-linecap="round"
-        />
-      </svg>
-    `;
-  }
-
-  const beforeAfterShapes = {
-    raw: [
-      -0.4,
-      0.2,
-      -0.1,
-      0.5,
-      -0.3,
-      -0.6,
-      3.2,
-      -1.6,
-      0.4,
-      -0.8,
-      0.1,
-      0.6,
-      -0.5,
-      0.9,
-      -0.2,
-      -0.7,
-      3.5,
-      -1.8,
-      0.2,
-      -0.9,
-      0.3,
-      0.4,
-      -0.4,
-      0.8,
-      -0.3,
-      -0.6,
-      3.1,
-      -1.5,
-      0,
-      -0.7,
-      0.4,
-      0.3,
-      -0.2
-    ],
-    processed: [
-      -0.1,
-      0.15,
-      -0.05,
-      0.35,
-      0,
-      0.05,
-      2.7,
-      -0.9,
-      0.08,
-      -0.2,
-      0.12,
-      0.28,
-      -0.08,
-      0.32,
-      -0.05,
-      0.02,
-      2.6,
-      -0.85,
-      0.05,
-      -0.18,
-      0.1,
-      0.25,
-      -0.07,
-      0.3,
-      -0.02,
-      0.03,
-      2.55,
-      -0.8,
-      0.04,
-      -0.15,
-      0.1,
-      0.2,
-      -0.05
-    ]
-  };
+  
 
   function createTemplateBeatSvg(values) {
     const width = 500;
@@ -1723,37 +1592,7 @@ function closeHelpPanel() {
     `;
   }
 
-  function createBeforeAfterSvg(type = "raw") {
-    const values = beforeAfterShapes[type] || beforeAfterShapes.raw;
-    const width = 260;
-    const height = 80;
-    const min = Math.min(...values);
-    const max = Math.max(...values);
-    const range = max - min || 1;
-
-    const points = values
-      .map((v, i) => {
-        const x = (i / (values.length - 1 || 1)) * width;
-        const y = height - ((v - min) / range) * (height - 8) - 4;
-        return `${x.toFixed(1)},${y.toFixed(1)}`;
-      })
-      .join(" ");
-
-    const stroke = type === "processed" ? "#10b981" : "#ef4444";
-
-    return `
-      <svg viewBox="0 0 ${width} ${height}" preserveAspectRatio="none" class="before-after-wave" aria-hidden="true">
-        <polyline
-          points="${points}"
-          fill="none"
-          stroke="${stroke}"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        />
-      </svg>
-    `;
-  }
+  
 
   function createEcgExample(type) {
     const width = 280;
@@ -2175,7 +2014,14 @@ function closeHelpPanel() {
       leadArray
         .map((lead) => {
           const isLow = lead.confidence < 0.8;
-          const svg = createLeadSvg(lead.values);
+          const svg = renderEcgStrip(lead.values, {
+            sampleRate: ecgDemoData.sampleRateHz,
+            durationSeconds: 3,
+            width: 200,
+            height: 50,
+            strokeWidth: 1.2,
+            className: "lead-mini-strip"
+          });
           const typeText = lead.isRecorded ? t.badgeRecorded : t.badgeReconstructed;
           const typeClass = lead.isRecorded ? "recorded" : "reconstructed";
           const focusAttr = lead.isRecorded ? "" : " tabindex=\"0\"";
@@ -2394,7 +2240,16 @@ function closeHelpPanel() {
 
     const beforeAfterCards = (t.beforeAfter?.cards || [])
       .map((card) => {
-        const wave = createBeforeAfterSvg(card.type);
+        const series = card.type === "processed" ? PROCESSED_ECG_SEGMENT : RAW_ECG_SEGMENT;
+        const color = card.type === "processed" ? "#10b981" : "#ef4444";
+        const wave = renderEcgStrip(series, {
+          width: 320,
+          height: 70,
+          color,
+          strokeWidth: 1.8,
+          className: "before-after-wave",
+          emptyLabel: t.beforeAfter?.emptyLabel || "ECG data unavailable"
+        });
         return `
         <div class="before-after-card">
           ${card.label ? `<div class="before-after-label">${card.label}</div>` : ""}
@@ -2449,6 +2304,11 @@ function closeHelpPanel() {
         <section class="data-container-card data-before-after-card">
           <h2>${t.beforeAfter?.title || ""}</h2>
           <p>${t.beforeAfter?.text || ""}</p>
+          ${
+            t.beforeAfter?.linkSentence
+              ? `<p class="before-after-link">${t.beforeAfter.linkSentence}</p>`
+              : ""
+          }
           ${beforeAfterCards ? `<div class="before-after-grid">${beforeAfterCards}</div>` : ""}
           ${t.beforeAfter?.note ? `<p class="before-after-note">${t.beforeAfter.note}</p>` : ""}
         </section>
@@ -3094,9 +2954,11 @@ function closeHelpPanel() {
     const windowStripHtml = buildWindowsStrip(windows);
     const channelsHtml = channels
       .map((ch) => {
-        const svg = createChannelSvg(ch.values, {
+        const svg = renderEcgStrip(ch.values, {
           sampleRate: ecgDemoData.sampleRateHz,
-          durationSeconds: 4
+          durationSeconds: 4,
+          height: 60,
+          className: "live-ecg-strip"
         });
         return `
           <div class="live-ecg-channel">
