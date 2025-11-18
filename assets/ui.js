@@ -1475,7 +1475,7 @@ const benefitCardsEn = [
   },
   {
     id: "analytics",
-    title: ""You vs you" analytics",
+    title: '"You vs you" analytics',
     description: "Comparisons always reference the person’s own baseline, not textbook norms."
   },
   {
