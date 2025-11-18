@@ -2,6 +2,70 @@ import { computeDeviationScore, classifyDeviation } from "./compare-utils.js";
 import { renderEcgStrip } from "./ecg-strip.js";
 import { RAW_ECG_SEGMENT, PROCESSED_ECG_SEGMENT } from "./ecg-segments.js";
 
+const infoContent = {
+  en: {
+    liveEcq: {
+      title: "Live ECG windows",
+      body: `
+        <p>The Live ECG tab streams a simulated multi-lead signal and slices it into consecutive 2-second windows. Each block acts as a quality checkpoint before we include it in the Digital Heart Profile.</p>
+        <p>Green windows are immediately eligible for the profile, yellow ones remain visible for context, and red windows highlight artefacts that should be discarded. The toolbar illustrates how segmentation overlays the waveform.</p>
+      `
+    },
+    signalQuality: {
+      title: "Signal Quality logic",
+      body: `
+        <p>SPA2099 evaluates every 2-second window with four indices: Q_noise (broadband noise and mains hum), Q_drift (baseline wandering), Q_imp (impulsive artefacts) and Q_recon (consistency between recorded and reconstructed channels).</p>
+        <p>The combined score powers the green/yellow/red gates you see across the demo. Green windows feed the profile, yellow windows stay visible for trends, and red windows are excluded from quantitative analysis.</p>
+      `
+    },
+    twelveLead: {
+      title: "12-lead reconstruction",
+      body: `
+        <p>The textile garment records seven physical channels (I, II, III, aVR, aVL, aVF and V1). Using the fixed electrode geometry we reconstruct the missing V2–V6 chest leads.</p>
+        <p>The accuracy badge shows how well each derived lead matches the expected morphology. Leads with accuracy below 0.80 are highlighted in red and excluded from the Digital Heart Profile.</p>
+      `
+    },
+    hrvStress: {
+      title: "HRV & stress monitors",
+      body: `
+        <p>The Poincaré / HRV blocks aggregate dozens of high-quality windows to build a stable view of SDNN, RMSSD and LF/HF balance. We use the same baseline to highlight deviations during stress or recovery sessions.</p>
+        <p>Because the comparison is always “you vs you”, even small drifts become interpretable without relying on textbook norms.</p>
+      `
+    },
+    dataContainer: {
+      title: "Data Container",
+      body: `
+        <p>The Data Container keeps layered ECG data: raw channels, quality metadata, reconstructed leads and the resulting profile artefacts. Every 2-second window is saved with timestamps, SQI and motion context so you can re-run analytics without a new acquisition.</p>
+        <p>Raw → quality-gated → reconstructed → profile summaries live side-by-side, making audit and replay straightforward.</p>
+      `
+    },
+    digitalHeartProfile: {
+      title: "Digital Heart Profile",
+      body: `
+        <p>The profile is a compact package: baseline ECG templates, key intervals (PR, QRS, QT/QTc), electrical axis, HRV baseline and data quality evidence. Only windows that pass SQI and leads with sufficient accuracy enter the profile.</p>
+        <p>This artefact becomes a personal reference that can be compared against future sessions without guessing what is normal for the individual.</p>
+      `
+    },
+    compareProfile: {
+      title: "Compare profile sessions",
+      body: `
+        <p>We always compare a recording to the person’s own baseline. The comparison board shows resting metrics on the left, the current session on the right, and highlights where heart rate, intervals, axes or HRV drift.</p>
+        <p>Change indicators describe the direction (stress load, recovery, HRV balance) so that every review tells a simple “you vs you” story.</p>
+      `
+    },
+    benefits: {
+      title: "Why SPA2099 is unique",
+      body: `
+        <p>Fixed textile geometry plus SQI gating delivers medical-grade ECG without gels or wires. Layered storage keeps raw data, reconstructions and profiles linked, while the AI-ready baseline enables longitudinal analytics.</p>
+        <p>The result is a comfortable garment that outputs a repeatable Digital Heart Profile instead of isolated ECG strips.</p>
+      `
+    }
+  }
+};
+
+infoContent.ru = JSON.parse(JSON.stringify(infoContent.en));
+infoContent.nl = JSON.parse(JSON.stringify(infoContent.en));
+
 const dataContainerContent = {
   en: {
     flow: {
@@ -1358,12 +1422,155 @@ const translations = {
   }
 };
 
+
+translations.en.tabs.live.segmentBarTitle = "Segment Quality Bar";
+translations.en.tabs.live.segmentBarSubtitle = "Each rectangle is a 2-second window coming from the stream.";
+translations.en.tabs.live.segmentLegendGreen = "Green — used in Digital Heart Profile";
+translations.en.tabs.live.segmentLegendYellow = "Yellow — viewable, not added to baseline";
+translations.en.tabs.live.segmentLegendRed = "Red — discarded due to artefacts";
+
+translations.en.signalQuality.noiseDemoTitle = "Window example";
+translations.en.signalQuality.noiseDemoCleanLabel = "Clean window";
+translations.en.signalQuality.noiseDemoNoisyLabel = "Noisy window";
+translations.en.signalQuality.noiseToggleToNoisy = "Show noisy example";
+translations.en.signalQuality.noiseToggleToClean = "Show clean example";
+
+translations.en.tabs.leads.leadIncludedNote = "Included in profile build";
+translations.en.tabs.leads.leadExcludedNote = "Accuracy <0.80 — excluded from profile";
+
+translations.en.tabs.profile.baselineTemplatesTitle = "Baseline ECG templates";
+translations.en.tabs.profile.baselineTemplatesSubtitle = "Median P–QRS–T complexes built from green windows.";
+translations.en.tabs.profile.keyIntervalsTitle = "Key intervals";
+translations.en.tabs.profile.keyIntervalsSubtitle = "Reference timings measured on the Digital Heart Profile.";
+translations.en.tabs.profile.hrvBaselineTitle = "HRV baseline";
+translations.en.tabs.profile.hrvBaselineSubtitle = "Median SDNN / RMSSD / pNN50 from clean windows.";
+translations.en.tabs.profile.metadataSubtitle = "Capture metadata and garment IDs";
+translations.en.tabs.profile.metadataGarmentLabel = "Garment / size ID";
+
+translations.en.tabs.compare.changeIndicatorsTitle = "Change indicators";
+translations.en.tabs.compare.indicatorStress = "Stress load";
+translations.en.tabs.compare.indicatorRecovery = "Recovery";
+translations.en.tabs.compare.indicatorBalance = "HRV balance";
+
+const benefitCardsEn = [
+  {
+    id: "geometry",
+    title: "Fixed textile geometry",
+    description: "Electrode placement is locked by design so every session is recorded in the same spatial coordinate system."
+  },
+  {
+    id: "sqi",
+    title: "SQI quality-gate",
+    description: "Green/yellow/red logic filters every 2-second window before it affects the baseline profile."
+  },
+  {
+    id: "leads",
+    title: "12-lead reconstruction",
+    description: "Seven recorded channels + reconstruction deliver a full 12-lead view with per-lead accuracy."
+  },
+  {
+    id: "profile",
+    title: "Digital Heart Profile",
+    description: "Personal baseline of intervals, morphology and axis built from hundreds of clean beats."
+  },
+  {
+    id: "analytics",
+    title: '"You vs you" analytics',
+    description: "Comparisons always reference the person’s own baseline, not textbook norms."
+  },
+  {
+    id: "storage",
+    title: "Layered data storage",
+    description: "Raw → quality → reconstruction → profile artefacts stay linked for audit and replay."
+  },
+  {
+    id: "ai",
+    title: "AI-ready data",
+    description: "Structured container keeps metadata, SQI and geometry info for future ML pipelines."
+  },
+  {
+    id: "comfort",
+    title: "Comfort (no gel/wires)",
+    description: "Textile garment replaces disposable electrodes while keeping medical-grade fidelity."
+  }
+];
+
+translations.en.benefits.cards = benefitCardsEn;
+
+const infoCopyLanguages = ["ru", "nl"];
+infoCopyLanguages.forEach((lang) => {
+  const langTabs = translations[lang].tabs;
+  langTabs.live.segmentBarTitle = translations.en.tabs.live.segmentBarTitle;
+  langTabs.live.segmentBarSubtitle = translations.en.tabs.live.segmentBarSubtitle;
+  langTabs.live.segmentLegendGreen = translations.en.tabs.live.segmentLegendGreen;
+  langTabs.live.segmentLegendYellow = translations.en.tabs.live.segmentLegendYellow;
+  langTabs.live.segmentLegendRed = translations.en.tabs.live.segmentLegendRed;
+
+  translations[lang].signalQuality.noiseDemoTitle = translations.en.signalQuality.noiseDemoTitle;
+  translations[lang].signalQuality.noiseDemoCleanLabel = translations.en.signalQuality.noiseDemoCleanLabel;
+  translations[lang].signalQuality.noiseDemoNoisyLabel = translations.en.signalQuality.noiseDemoNoisyLabel;
+  translations[lang].signalQuality.noiseToggleToNoisy = translations.en.signalQuality.noiseToggleToNoisy;
+  translations[lang].signalQuality.noiseToggleToClean = translations.en.signalQuality.noiseToggleToClean;
+
+  langTabs.leads.leadIncludedNote = translations.en.tabs.leads.leadIncludedNote;
+  langTabs.leads.leadExcludedNote = translations.en.tabs.leads.leadExcludedNote;
+
+  langTabs.profile.baselineTemplatesTitle = translations.en.tabs.profile.baselineTemplatesTitle;
+  langTabs.profile.baselineTemplatesSubtitle = translations.en.tabs.profile.baselineTemplatesSubtitle;
+  langTabs.profile.keyIntervalsTitle = translations.en.tabs.profile.keyIntervalsTitle;
+  langTabs.profile.keyIntervalsSubtitle = translations.en.tabs.profile.keyIntervalsSubtitle;
+  langTabs.profile.hrvBaselineTitle = translations.en.tabs.profile.hrvBaselineTitle;
+  langTabs.profile.hrvBaselineSubtitle = translations.en.tabs.profile.hrvBaselineSubtitle;
+  langTabs.profile.metadataSubtitle = translations.en.tabs.profile.metadataSubtitle;
+  langTabs.profile.metadataGarmentLabel = translations.en.tabs.profile.metadataGarmentLabel;
+
+  langTabs.compare.changeIndicatorsTitle = translations.en.tabs.compare.changeIndicatorsTitle;
+  langTabs.compare.indicatorStress = translations.en.tabs.compare.indicatorStress;
+  langTabs.compare.indicatorRecovery = translations.en.tabs.compare.indicatorRecovery;
+  langTabs.compare.indicatorBalance = translations.en.tabs.compare.indicatorBalance;
+
+  translations[lang].benefits.cards = JSON.parse(JSON.stringify(benefitCardsEn));
+});
+
+const liveSegmentDemo = [
+  "green",
+  "green",
+  "green",
+  "yellow",
+  "green",
+  "green",
+  "red",
+  "green",
+  "green",
+  "yellow",
+  "green",
+  "green",
+  "green",
+  "red",
+  "yellow",
+  "green",
+  "green",
+  "green",
+  "green",
+  "yellow",
+  "green",
+  "red",
+  "green",
+  "green"
+];
+
 let liveSegmentationEnabled = false;
 let isQualityDrawerOpen = false;
 let scrollToExamplesAfterOpen = false;
 let howComputedEnabled = false;
 let isTwelveLeadInfoOpen = false;
 let currentLang = "en";
+let noiseExampleMode = "clean";
+
+const helpPanelState = {
+  mode: null,
+  key: null
+};
 
 function getSignalQualityStrings(lang) {
   const base = translations.en.signalQuality;
@@ -1510,18 +1717,10 @@ function computeParamConfidence(evidenceRest, evidenceLoad, morphSim) {
   return "medium";
 }
 
-function openProfileHelpPanel(lang) {
+function openProfileHelpPanel(lang, options = {}) {
   const help = translations[lang]?.profileHelp || translations.en.profileHelp;
   if (!help) return;
 
-  const overlay = document.getElementById("help-overlay");
-  const panel = document.getElementById("help-panel");
-  const titleEl = document.getElementById("help-panel-title");
-  const contentEl = document.getElementById("help-panel-content");
-
-  if (!overlay || !panel || !titleEl || !contentEl) return;
-
-  titleEl.textContent = help.title;
   const s = help.sections || {};
   const sectionsHtml = `
     ${renderHelpSection(s.leadProvenanceTitle, s.leadProvenanceText)}
@@ -1538,12 +1737,12 @@ function openProfileHelpPanel(lang) {
     ${renderHelpSection(s.qualityMapTitle, s.qualityMapText)}
   `;
 
-  contentEl.innerHTML = sectionsHtml;
-  overlay.hidden = false;
-  panel.hidden = false;
-  panel.classList.remove("open");
-  requestAnimationFrame(() => {
-    panel.classList.add("open");
+  showHelpPanelContent({
+    title: help.title || "",
+    html: sectionsHtml,
+    mode: "profile-help",
+    key: null,
+    animate: !options.skipAnimation
   });
 }
 
@@ -1565,29 +1764,78 @@ function formatDrawerParagraphs(text = "") {
     .join("");
 }
 
-function openLiveEcgInfoPanel(lang) {
-  const info = translations[lang]?.liveEcg || translations.en?.liveEcg;
-  if (!info) return;
+function getInfoEntry(lang, key) {
+  if (!key) return null;
+  return infoContent[lang]?.[key] || infoContent.en?.[key] || null;
+}
 
+function showHelpPanelContent({ title = "", html = "", mode = null, key = null, animate = true }) {
   const overlay = document.getElementById("help-overlay");
   const panel = document.getElementById("help-panel");
   const titleEl = document.getElementById("help-panel-title");
   const contentEl = document.getElementById("help-panel-content");
-
   if (!overlay || !panel || !titleEl || !contentEl) return;
 
-  titleEl.textContent = info.infoTitle || "";
-  const bodyHtml = formatInfoParagraphs(info.infoBody || "");
-  contentEl.innerHTML = bodyHtml
-    ? `<section class="help-section">${bodyHtml}</section>`
-    : "";
+  helpPanelState.mode = mode;
+  helpPanelState.key = key;
 
+  titleEl.textContent = title;
+  contentEl.innerHTML = html;
   overlay.hidden = false;
   panel.hidden = false;
-  panel.classList.remove("open");
-  requestAnimationFrame(() => {
+
+  if (animate) {
+    panel.classList.remove("open");
+    requestAnimationFrame(() => {
+      panel.classList.add("open");
+    });
+  } else {
     panel.classList.add("open");
+  }
+}
+
+function openInfoModalForKey(key, lang = currentLang, options = {}) {
+  const info = getInfoEntry(lang, key);
+  if (!info) return;
+  showHelpPanelContent({
+    title: info.title || "",
+    html: info.body || "",
+    mode: "tab-info",
+    key,
+    animate: !options.skipAnimation
   });
+}
+
+function refreshHelpPanelContent() {
+  const panel = document.getElementById("help-panel");
+  if (!panel || panel.hidden) return;
+
+  if (helpPanelState.mode === "tab-info" && helpPanelState.key) {
+    openInfoModalForKey(helpPanelState.key, currentLang, { skipAnimation: true });
+  } else if (helpPanelState.mode === "profile-help") {
+    openProfileHelpPanel(currentLang, { skipAnimation: true });
+  }
+}
+
+function createInfoButton(lang, key) {
+  const entry = getInfoEntry(lang, key);
+  if (!entry) return "";
+  const label = entry.title || "Info";
+  return `
+    <button
+      type="button"
+      class="info-icon-btn"
+      data-info-key="${key}"
+      aria-label="${escapeHtml(label)}"
+      title="${escapeHtml(label)}"
+    >
+      i
+    </button>
+  `;
+}
+
+function formatTemplate(template = "", values = {}) {
+  return (template || "").replace(/\{(\w+?)\}/g, (_, key) => values[key] ?? "");
 }
 
 function ensureTwelveLeadDrawerContainer() {
@@ -1672,7 +1920,7 @@ function closeTwelveLeadInfoPanel() {
 }
 
 function updateTwelveLeadInfoButtonState() {
-  const btn = document.getElementById("leads-info-btn");
+  const btn = document.getElementById("leads-info-toggle");
   if (!btn) return;
   btn.classList.toggle("is-active", isTwelveLeadInfoOpen);
   btn.setAttribute("aria-pressed", isTwelveLeadInfoOpen ? "true" : "false");
@@ -1696,6 +1944,8 @@ function closeHelpPanelIfOpen() {
   panel.classList.remove("open");
   overlay.hidden = true;
   panel.hidden = true;
+  helpPanelState.mode = null;
+  helpPanelState.key = null;
 }
 
 function closeHelpPanel() {
@@ -1708,6 +1958,12 @@ function closeHelpPanel() {
     closeHelpPanelIfOpen();
   }, 250);
 }
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+      closeHelpPanel();
+    }
+  });
 
   document.addEventListener("DOMContentLoaded", () => {
     currentLang = "en";
@@ -1749,6 +2005,7 @@ function closeHelpPanel() {
       updateTabLabels();
       renderTabContent();
       renderFooter();
+      refreshHelpPanelContent();
     }
 
   function getTabLabel(tabId) {
@@ -1962,6 +2219,109 @@ function closeHelpPanel() {
     `;
   }
 
+  function renderSqiMiniChart(type = "noise") {
+    const width = 120;
+    const height = 46;
+    const base = Array.from({ length: 16 }, (_, idx) => {
+      const x = (idx / 15) * width;
+      const y = height / 2 + Math.sin(idx * 0.8) * 8;
+      return { x, y };
+    });
+
+    const mutated = base.map((point, idx) => {
+      if (type === "drift") {
+        return { x: point.x, y: point.y + idx * 0.6 - 5 };
+      }
+      if (type === "impulse") {
+        const spike = idx % 5 === 0 ? -15 : 0;
+        return { x: point.x, y: point.y + spike };
+      }
+      if (type === "recon") {
+        const wobble = Math.sin(idx * 1.3) * 4;
+        return { x: point.x, y: point.y + wobble / 2 };
+      }
+      return { x: point.x, y: point.y + (Math.random() - 0.5) * 6 };
+    });
+
+    const points = mutated.map((p) => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(" ");
+    const colors = {
+      noise: "#22c55e",
+      drift: "#f59e0b",
+      impulse: "#ef4444",
+      recon: "#3b82f6"
+    };
+    const stroke = colors[type] || "#22c55e";
+
+    return `
+      <svg viewBox="0 0 ${width} ${height}" class="sqi-mini-chart" aria-hidden="true">
+        <polyline
+          points="${points}"
+          fill="none"
+          stroke="${stroke}"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+      </svg>
+    `;
+  }
+
+  function renderNoiseExampleSvg(mode = "clean") {
+    const width = 320;
+    const height = 90;
+    const base = Array.from({ length: 48 }, (_, idx) => {
+      const x = (idx / 47) * width;
+      const y = height / 2 + Math.sin(idx * 0.7) * 18;
+      return { x, y };
+    });
+    const mutated = base.map((point, idx) => {
+      if (mode === "clean") {
+        return { x: point.x, y: point.y };
+      }
+      const noise = Math.sin(idx * 2.6) * 6 + (Math.random() - 0.5) * 10;
+      const spikes = idx % 12 === 0 ? -22 : 0;
+      return { x: point.x, y: point.y + noise + spikes };
+    });
+    const points = mutated.map((p) => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(" ");
+    return `
+      <svg viewBox="0 0 ${width} ${height}" class="noise-example-svg" aria-hidden="true">
+        <rect x="0" y="0" width="${width}" height="${height}" rx="12" fill="#050d1a" />
+        <polyline
+          points="${points}"
+          fill="none"
+          stroke="#10b981"
+          stroke-width="2.4"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+      </svg>
+    `;
+  }
+
+  function setupNoiseExampleToggle(lang) {
+    const toggle = document.getElementById("noise-example-toggle");
+    const label = document.getElementById("noise-example-label");
+    const waveform = document.getElementById("noise-example-waveform");
+    if (!toggle || !label || !waveform) return;
+
+    const tSignal = getSignalQualityStrings(lang);
+
+    const updateUi = () => {
+      const isClean = noiseExampleMode === "clean";
+      label.textContent = isClean ? tSignal.noiseDemoCleanLabel : tSignal.noiseDemoNoisyLabel;
+      toggle.textContent = isClean
+        ? tSignal.noiseToggleToNoisy
+        : tSignal.noiseToggleToClean;
+      waveform.innerHTML = renderNoiseExampleSvg(noiseExampleMode);
+    };
+
+    updateUi();
+    toggle.onclick = () => {
+      noiseExampleMode = noiseExampleMode === "clean" ? "noisy" : "clean";
+      updateUi();
+    };
+  }
+
   function ensureQualityDrawerContainer() {
     if (!document.getElementById("quality-drawer-root")) {
       const el = document.createElement("div");
@@ -2105,11 +2465,6 @@ function closeHelpPanel() {
     if (btn) {
       btn.classList.toggle("demo-button-pulse", !isQualityDrawerOpen);
       btn.classList.toggle("is-active", isQualityDrawerOpen);
-    }
-
-    const iconBtn = document.getElementById("quality-info-icon");
-    if (iconBtn) {
-      iconBtn.classList.toggle("is-active", isQualityDrawerOpen);
     }
   }
 
@@ -2310,22 +2665,49 @@ function closeHelpPanel() {
       .join(" ");
 
     const infoButtonLabel = tSignal.infoButton || tInfo.panelTitle || "";
-    const infoIconLabel = tInfo.panelTitle || infoButtonLabel || t.title || "";
-    const infoIconActiveClass = isQualityDrawerOpen ? " is-active" : "";
+    const infoIconButton = createInfoButton(lang, "signalQuality");
+
+    const sqiCards = [
+      { title: tSignal.indexNoiseTitle, body: tSignal.indexNoiseText, type: "noise" },
+      { title: tSignal.indexDriftTitle, body: tSignal.indexDriftText, type: "drift" },
+      { title: tSignal.indexImpTitle, body: tSignal.indexImpText, type: "impulse" },
+      { title: tSignal.indexReconTitle, body: tSignal.indexReconText, type: "recon" }
+    ];
+
+    const sqiCardsHtml = `
+      <div class="sqi-card-grid">
+        ${sqiCards
+          .map(
+            (card) => `
+              <article class="sqi-card">
+                <div class="sqi-card-title">${card.title}</div>
+                <div class="sqi-card-chart">${renderSqiMiniChart(card.type)}</div>
+                <p>${card.body}</p>
+              </article>
+            `
+          )
+          .join("")}
+      </div>
+    `;
+
+    const noiseExampleHtml = `
+      <div class="noise-example-card">
+        <div class="noise-example-header">
+          <div>
+            <h3>${tSignal.noiseDemoTitle}</h3>
+            <p id="noise-example-label"></p>
+          </div>
+          <button class="ghost-button" id="noise-example-toggle"></button>
+        </div>
+        <div class="noise-example-waveform" id="noise-example-waveform"></div>
+      </div>
+    `;
 
     container.innerHTML = `
       <div class="tab-title-row quality-title-row">
         <div class="quality-title-group">
           <h1 class="tab-title">${t.title}</h1>
-          <button
-            type="button"
-            class="info-icon-btn${infoIconActiveClass}"
-            id="quality-info-icon"
-            aria-label="${escapeHtml(infoIconLabel)}"
-            title="${escapeHtml(infoIconLabel)}"
-          >
-            i
-          </button>
+          ${infoIconButton}
         </div>
         <div class="tab-title-actions">
           <button class="${qualityInfoBtnClasses}" id="quality-info-toggle">
@@ -2344,6 +2726,11 @@ function closeHelpPanel() {
         ${distHtml}
         ${actionsHtml}
       </div>
+      <section class="sqi-section">
+        <h3>${tSignal.examplesTitle}</h3>
+        ${sqiCardsHtml}
+      </section>
+      ${noiseExampleHtml}
     `;
 
     renderQualityDrawer(lang);
@@ -2354,15 +2741,12 @@ function closeHelpPanel() {
       infoBtn.onclick = () => openSignalQualityInfo();
     }
 
-    const infoIconBtn = document.getElementById("quality-info-icon");
-    if (infoIconBtn) {
-      infoIconBtn.onclick = () => openSignalQualityInfo();
-    }
-
     const examplesBtn = document.getElementById("quality-show-examples");
     if (examplesBtn) {
       examplesBtn.onclick = () => openSignalQualityInfo({ scrollToExamples: true });
     }
+
+    setupNoiseExampleToggle(lang);
   }
 
   function openSignalQualityInfo(options = {}) {
@@ -2383,7 +2767,8 @@ function closeHelpPanel() {
     const renderCards = (leadArray) =>
       leadArray
         .map((lead) => {
-          const isLow = lead.confidence < 0.8;
+          const accuracy = lead.confidence ?? 0;
+          const isLow = accuracy < 0.8;
           const svg = renderEcgStrip(lead.values, {
             sampleRate: ecgDemoData.sampleRateHz,
             durationSeconds: 3,
@@ -2395,6 +2780,7 @@ function closeHelpPanel() {
           const typeText = lead.isRecorded ? t.badgeRecorded : t.badgeReconstructed;
           const typeClass = lead.isRecorded ? "recorded" : "reconstructed";
           const focusAttr = lead.isRecorded ? "" : " tabindex=\"0\"";
+          const badgeClass = isLow ? "low" : "ok";
           return `
         <div class="lead-card" data-id="${lead.id}" data-is-recorded="${lead.isRecorded}"${focusAttr}>
           <div class="lead-header">
@@ -2402,12 +2788,18 @@ function closeHelpPanel() {
               ${lead.label}
               <span class="lead-type-badge ${typeClass}">${typeText}</span>
             </span>
+            <span class="lead-accuracy-wrap">
+              <span class="lead-accuracy-badge ${badgeClass}">${accuracy.toFixed(2)}</span>
             <span class="lead-confidence ${isLow ? "low" : ""}">
               ${t.confidenceLabel}: ${(lead.confidence * 100).toFixed(0)}%
+            </span>
             </span>
           </div>
           <div class="lead-plot ${isLow ? "low-confidence" : ""}">
             ${svg}
+          </div>
+          <div class="lead-accuracy-note ${isLow ? "warn" : ""}">
+            ${isLow ? t.leadExcludedNote : t.leadIncludedNote}
           </div>
         </div>
       `;
@@ -2428,19 +2820,19 @@ function closeHelpPanel() {
       .join(" ");
 
     const pageTitle = info.title || t.title || "";
-    const infoButtonLabel = info.infoButton || info.infoTitle || pageTitle || "";
-    const infoButtonHtml = info?.infoTitle
-      ? `<button type="button" class="info-icon-btn" id="leads-info-btn" aria-label="${escapeHtml(
-          infoButtonLabel
-        )}" title="${escapeHtml(infoButtonLabel)}">i</button>`
+    const tabInfoButton = createInfoButton(lang, "twelveLead");
+    const drawerButtonLabel = info.infoButton || info.infoTitle || pageTitle || "";
+    const drawerButtonHtml = info?.infoTitle
+      ? `<button type="button" class="demo-button demo-button-primary" id="leads-info-toggle">${escapeHtml(drawerButtonLabel)}</button>`
       : "";
 
     const headerHtml = `
       <div class="tab-title-row leads-title-row">
         <div class="leads-title-group">
           <h1 class="tab-title">${escapeHtml(pageTitle)}</h1>
-          ${infoButtonHtml}
+          ${tabInfoButton}
         </div>
+        ${drawerButtonHtml ? `<div class="tab-title-actions">${drawerButtonHtml}</div>` : ""}
       </div>
       <p class="tab-description">${t.description}</p>
     `;
@@ -2654,9 +3046,19 @@ function closeHelpPanel() {
       .map((item) => `<li>${item}</li>`)
       .join("");
 
+    const infoButtonHtml = createInfoButton(lang, "dataContainer");
+    const headerHtml = `
+      <div class="profile-header-with-info">
+        <h1 class="tab-title">
+          ${tabStrings.title || tabStrings.label || ""}
+          ${infoButtonHtml}
+        </h1>
+        <p class="tab-description">${tabStrings.description || ""}</p>
+      </div>
+    `;
+
     container.innerHTML = `
-      <h1 class="tab-title">${tabStrings.title || tabStrings.label || ""}</h1>
-      <p class="tab-description">${tabStrings.description || ""}</p>
+      ${headerHtml}
       <div class="data-container-layout">
         <section class="data-container-card data-flow-card">
           <h2>${t.flow?.title || ""}</h2>
@@ -2720,74 +3122,86 @@ function closeHelpPanel() {
       return;
     }
 
-    const beatSvg = createTemplateBeatSvg(profile.templateBeat.values || []);
     const m = profile.intervals || {};
     const hrv = profile.hrv || {};
     const axis = profile.axis || {};
     const q = profile.qualityMap || {};
     const meta = profile.meta || {};
-    const boundaries = profile.intervalBoundaries;
     const rr = meta.rr || [];
     const pnn50 = hrv.pnn50Pct ?? computePnn50(rr);
     const durationMinutes = Math.round((meta.durationSeconds || 0) / 60);
     const leads = ecgDemoData.leads12 || [];
-    const sources = meta.sources || {};
 
-    const formatTemplate = (template, values) =>
-      (template || "").replace(/\{(\w+?)\}/g, (_, key) => values[key] ?? "");
-
-    const leadOrder = ["I", "II", "III", "aVR", "aVL", "aVF", "V1", "V2", "V3", "V4", "V5", "V6"];
-    const leadCells = leadOrder
-      .map((id) => {
-        const lead = leads.find((l) => l.id === id) || { id, label: id };
-        const used = lead.usedInProfile ?? lead.confidence >= 0.8;
-        const typeClass = lead.isRecorded ? "recorded" : lead.isRecorded === false ? "reconstructed" : "";
-        const statusClass = used ? "used" : "excluded";
-        return `<div class="prov-cell ${typeClass} ${statusClass}">${lead.label}</div>`;
-      })
-      .join("");
-
-    const recordedUsed = leads.filter((l) => l.isRecorded && (l.usedInProfile ?? l.confidence >= 0.8)).length;
-    const reconUsed = leads.filter((l) => !l.isRecorded && (l.usedInProfile ?? l.confidence >= 0.8)).length;
-    const excludedLeads = leads.filter((l) => !(l.usedInProfile ?? l.confidence >= 0.8)).map((l) => l.id);
-    const leadNote = t.leadProvConfidenceNote || "";
-
-    const metrics = [
-      { key: "hr", label: t.metricHr, value: `${m.hrBpm} bpm` },
-      { key: "pr", label: t.metricPr, value: `${m.prMs} ms`, source: sources.PR },
-      { key: "qrs", label: t.metricQrs, value: `${m.qrsMs} ms`, source: sources.QRS },
-      { key: "qt", label: t.metricQt, value: `${m.qtMs} ms`, source: sources.QT },
-      { key: "qtc", label: t.metricQtc, value: `${m.qtcMs} ms`, source: sources.QTc },
-      {
-        key: "axis",
-        label: t.metricAxis,
-        value: `${axis.frontalPlaneDeg}°`,
-        widget: `<div class="axis-widget" data-axis="${axis.frontalPlaneDeg}">${createAxisSvg(axis.frontalPlaneDeg)}</div>`
-      },
-      { key: "sdnn", label: t.metricSdnn, value: `${hrv.sdnnMs} ms` },
-      { key: "rmssd", label: t.metricRmssd, value: `${hrv.rmssdMs} ms` }
+    const templateVariants = [
+      profile.templateBeat.values || [],
+      (profile.templateBeat.values || []).map((v, idx) => v * 0.95 + Math.sin(idx / 20) * 0.02),
+      (profile.templateBeat.values || []).map((v, idx) => v * 1.05 - Math.sin(idx / 25) * 0.015)
     ];
 
-    const metricsHtml = `
-      <div class="profile-metric-grid">
-        ${metrics
-          .map((metric) => {
-            const chip = metric.source
-              ? `<span class="metric-source-chip">${t.metricSourceLabel}: ${metric.source}</span>`
-              : "";
-            const valueBlock = metric.widget
-              ? `<div class="profile-metric-value">${metric.value}</div><div class="axis-widget-holder">${metric.widget}</div>`
-              : `<div class="profile-metric-value">${metric.value}</div>`;
-            return `
-              <div class="profile-metric-card">
-                ${chip}
-                <div class="profile-metric-label">${metric.label}</div>
-                ${valueBlock}
-              </div>
-            `;
-          })
-          .join("")}
-      </div>
+    const baselineHtml = `
+      <section class="dhp-card baseline-card">
+        <div class="dhp-card-header">
+          <h3>${t.baselineTemplatesTitle}</h3>
+          <p>${t.baselineTemplatesSubtitle}</p>
+        </div>
+        <div class="baseline-templates">
+          ${templateVariants
+            .map((values) => `<div class="baseline-template">${createTemplateBeatSvg(values)}</div>`)
+            .join("")}
+        </div>
+      </section>
+    `;
+
+    const intervalsRows = [
+      { label: t.metricHr, value: `${m.hrBpm} bpm` },
+      { label: t.metricPr, value: `${m.prMs} ms` },
+      { label: t.metricQrs, value: `${m.qrsMs} ms` },
+      { label: t.metricQt, value: `${m.qtMs} ms` },
+      { label: t.metricQtc, value: `${m.qtcMs} ms` },
+      { label: t.metricAxis, value: `${axis.frontalPlaneDeg}°` }
+    ];
+
+    const intervalsHtml = `
+      <section class="dhp-card intervals-card">
+        <div class="dhp-card-header">
+          <h3>${t.keyIntervalsTitle}</h3>
+          <p>${t.keyIntervalsSubtitle}</p>
+        </div>
+        <table class="dhp-interval-table">
+          ${intervalsRows
+            .map((row) => `
+              <tr>
+                <td>${row.label}</td>
+                <td>${row.value}</td>
+              </tr>
+            `)
+            .join("")}
+        </table>
+      </section>
+    `;
+
+    const hrvHtml = `
+      <section class="dhp-card hrv-card">
+        <div class="dhp-card-header">
+          <h3>${t.hrvBaselineTitle}</h3>
+          <p>${t.hrvBaselineSubtitle}</p>
+        </div>
+        <div class="hrv-grid">
+          <div class="hrv-stat">
+            <span>${t.metricSdnn}</span>
+            <strong>${hrv.sdnnMs} ms</strong>
+          </div>
+          <div class="hrv-stat">
+            <span>${t.metricRmssd}</span>
+            <strong>${hrv.rmssdMs} ms</strong>
+          </div>
+          <div class="hrv-stat">
+            <span>${t.hrvPnn50Label}</span>
+            <strong>${pnn50}%</strong>
+          </div>
+        </div>
+        <div class="poincare-preview">${rr.length > 1 ? renderPoincareSvg(rr) : ""}</div>
+      </section>
     `;
 
     const qualityStripHtml = `
@@ -2798,28 +3212,11 @@ function closeHelpPanel() {
       </div>
     `;
 
-    const metaHtml = `
-      <div class="profile-meta">
-        <div class="profile-meta-row">
-          <span class="profile-meta-label">${t.metaDuration}:</span>
-          <span>${durationMinutes} min</span>
-        </div>
-        <div class="profile-meta-row">
-          <span class="profile-meta-label">${t.metaWindowsUsed}:</span>
-          <span>${meta.windowsUsed}</span>
-        </div>
-        <div class="profile-meta-row">
-          <span class="profile-meta-label">${t.metaGeometry}:</span>
-          <span>${meta.geometryId}</span>
-        </div>
-        <div class="profile-meta-row">
-          <span class="profile-meta-label">${t.metaVersion}:</span>
-          <span>${meta.version}</span>
-        </div>
-      </div>
-    `;
+    const recordedUsed = leads.filter((l) => l.isRecorded && (l.usedInProfile ?? l.confidence >= 0.8)).length;
+    const reconUsed = leads.filter((l) => !l.isRecorded && (l.usedInProfile ?? l.confidence >= 0.8)).length;
+    const excludedLeads = leads.filter((l) => !(l.usedInProfile ?? l.confidence >= 0.8)).map((l) => l.id);
 
-    const qualitySummaryText = formatTemplate(t.qualitySummaryWindows, {
+    const qualitySummary = formatTemplate(t.qualitySummaryWindows, {
       greenPct: q.greenPct,
       yellowPct: q.yellowPct,
       redPct: q.redPct,
@@ -2835,107 +3232,70 @@ function closeHelpPanel() {
       excluded: excludedLeads.length ? excludedLeads.join(", ") : "—"
     });
 
-    const hrvExtras = `
-      <div class="hrv-extra">
-        <div class="hrv-extra-row">
-          <span>${t.hrvPnn50Label}:</span>
-          <strong>${pnn50}%</strong>
+    const qualityHtml = `
+      <section class="dhp-card quality-card">
+        <div class="dhp-card-header">
+          <h3>${t.qualityTitle}</h3>
+          <p>${t.qualityHint}</p>
         </div>
-        ${rr.length > 1 ? renderPoincareSvg(rr) : ""}
-      </div>
+        ${qualityStripHtml}
+        <p class="quality-summary">${qualitySummary}</p>
+        <p class="quality-summary">${leadSummaryText}</p>
+      </section>
     `;
 
+    const metadataRows = [
+      { label: t.metaDuration, value: `${durationMinutes} min` },
+      { label: t.metaWindowsUsed, value: meta.windowsUsed },
+      { label: t.metaGeometry, value: meta.geometryId },
+      { label: t.metaVersion, value: meta.version },
+      { label: t.metadataGarmentLabel, value: meta.garmentId || "HBX2 Textile" }
+    ];
+
+    const metadataHtml = `
+      <section class="dhp-card metadata-card">
+        <div class="dhp-card-header">
+          <h3>${t.metaTitle}</h3>
+          <p>${t.metadataSubtitle}</p>
+        </div>
+        <ul class="metadata-list">
+          ${metadataRows
+            .map((row) => `
+              <li>
+                <span>${row.label}</span>
+                <strong>${row.value}</strong>
+              </li>
+            `)
+            .join("")}
+        </ul>
+      </section>
+    `;
+
+    const infoButton = createInfoButton(lang, "digitalHeartProfile");
+    const helpButtonLabel = help?.title || "Legend";
     const headerHtml = `
-      <div class="profile-header-with-info">
-        <h1 class="tab-title">
-          ${t.title}
-          <button class="info-icon-btn" id="profile-help-btn" aria-label="${help?.title || ""}">
-            i
-          </button>
-        </h1>
-        <p class="tab-description">${t.description}</p>
+      <div class="tab-title-row profile-summary-header">
+        <div class="leads-title-group">
+          <h1 class="tab-title">${t.title}</h1>
+          ${infoButton}
+        </div>
+        <button class="ghost-button" id="profile-help-btn">${helpButtonLabel}</button>
       </div>
+      <p class="tab-description">${t.description}</p>
     `;
 
     container.innerHTML = `
       ${headerHtml}
-
-      <div class="profile-layout">
-        <div class="profile-main">
-          <div class="profile-left">
-            <div class="lead-provenance">
-              <div class="tab-title-row">
-                <h3 class="profile-template-title" style="margin-bottom: 4px;">${t.leadProvTitle}</h3>
-              </div>
-              <div class="prov-grid">${leadCells}</div>
-              <div class="prov-legend">${t.leadProvLegendRecorded} • ${t.leadProvLegendRecon} • ${t.leadProvLegendExcluded}</div>
-              <div class="prov-legend" style="margin-top:4px;">${t.leadProvLegendRecorded} (${recordedUsed}) · ${t.leadProvLegendRecon} (${reconUsed})</div>
-              ${leadNote ? `<div class="prov-legend" style="margin-top:4px;">${leadNote}</div>` : ""}
-            </div>
-
-            <div class="profile-template-card">
-              <div class="tab-title-row" style="margin-bottom:6px;">
-                <h3 class="profile-template-title" style="margin:0;">${profile.label}</h3>
-                <button id="interval-toggle" class="btn-toggle"></button>
-              </div>
-              <div class="profile-template-plot">
-                ${beatSvg}
-              </div>
-              <div class="interval-hint">${t.intervalsHint}</div>
-            </div>
-          </div>
-          <div class="profile-right">
-            <h3>${t.metricsTitle}</h3>
-            ${metricsHtml}
-            ${hrvExtras}
-            <h4 style="margin-top:16px;">${t.metaTitle}</h4>
-            ${metaHtml}
-          </div>
-        </div>
-
-        <div class="profile-quality">
-          <div style="font-size:13px; margin-bottom:4px;">${t.qualityTitle}</div>
-          ${qualityStripHtml}
-          <div style="font-size:12px; margin-top:6px; color: var(--text-muted);">
-            ${t.qualityHint}
-          </div>
-          <div class="quality-summary">${qualitySummaryText}</div>
-          <div class="quality-summary">${leadSummaryText}</div>
-        </div>
+      <div class="dhp-layout">
+        ${baselineHtml}
+        ${intervalsHtml}
+        ${hrvHtml}
+        ${qualityHtml}
+        ${metadataHtml}
       </div>
     `;
 
     setupProfileHelp(lang);
-
-    const intervalToggle = container.querySelector("#interval-toggle");
-    const templateSvgEl = container.querySelector(".profile-template-plot svg");
-    let overlayEnabled = false;
-
-    const updateToggleUi = () => {
-      if (!intervalToggle) return;
-      intervalToggle.textContent = overlayEnabled ? t.hideIntervals : t.showIntervals;
-      intervalToggle.classList.toggle("active", overlayEnabled);
-    };
-
-    const refreshOverlay = () => {
-      if (!templateSvgEl) return;
-      if (overlayEnabled && boundaries) {
-        drawIntervalOverlay(templateSvgEl, boundaries, profile.templateBeat.values.length);
-      } else {
-        clearIntervalOverlay(templateSvgEl);
-      }
-    };
-
-    updateToggleUi();
-    refreshOverlay();
-
-    if (intervalToggle) {
-      intervalToggle.onclick = () => {
-        overlayEnabled = !overlayEnabled;
-        updateToggleUi();
-        refreshOverlay();
-      };
-    }
   }
 
   function setupProfileHelp(lang) {
@@ -2944,14 +3304,8 @@ function closeHelpPanel() {
     btn.addEventListener("click", () => openProfileHelpPanel(lang));
   }
 
-  function setupLiveEcgInfo(lang) {
-    const btn = document.getElementById("live-info-btn");
-    if (!btn) return;
-    btn.addEventListener("click", () => openLiveEcgInfoPanel(lang));
-  }
-
   function setupTwelveLeadInfo(lang) {
-    const btn = document.getElementById("leads-info-btn");
+    const btn = document.getElementById("leads-info-toggle");
     if (!btn) return;
     btn.addEventListener("click", () => {
       if (isTwelveLeadInfoOpen) {
@@ -2980,308 +3334,100 @@ function closeHelpPanel() {
     const rAxis = rest.axis || {};
     const lAxis = load.axis || {};
 
-    const dHr = (l.hrBpm || 0) - (r.hrBpm || 0);
-    const dAxis = (lAxis.frontalPlaneDeg || 0) - (rAxis.frontalPlaneDeg || 0);
-    const dQtc = (l.qtcMs || 0) - (r.qtcMs || 0);
-    const dSdnn = (lHrv.sdnnMs || 0) - (rHrv.sdnnMs || 0);
-    const dRmssd = (lHrv.rmssdMs || 0) - (rHrv.rmssdMs || 0);
+    const metrics = [
+      { label: t.deltaHr, base: r.hrBpm, current: l.hrBpm, unit: "bpm" },
+      { label: t.deltaAxis, base: rAxis.frontalPlaneDeg, current: lAxis.frontalPlaneDeg, unit: "°" },
+      { label: t.deltaQtc, base: r.qtcMs, current: l.qtcMs, unit: "ms" },
+      { label: t.deltaSdnn, base: rHrv.sdnnMs, current: lHrv.sdnnMs, unit: "ms" },
+      { label: t.deltaRmssd, base: rHrv.rmssdMs, current: lHrv.rmssdMs, unit: "ms" }
+    ];
 
-    const evidenceRest = computeEvidenceWeight(rest);
-    const evidenceLoad = computeEvidenceWeight(load);
-    const morph = computeMorphologySimilarity(rest, load);
-    const abrupt = computeChangeAbruptness(rest, load);
-    const overallConf = computeParamConfidence(evidenceRest, evidenceLoad, morph);
+    const renderColumn = (title, key) => `
+      <section class="compare-card">
+        <h3>${title}</h3>
+        ${metrics
+          .map((metric) => {
+            const value = key === "base" ? metric.base : metric.current;
+            return `
+              <div class="compare-card-row">
+                <span>${metric.label}</span>
+                <strong>${value} ${metric.unit}</strong>
+              </div>
+            `;
+          })
+          .join("")}
+      </section>
+    `;
 
-    function formatDelta(value, unit, invertDirectionForLowerIsBetter = false) {
-      const sign = value > 0 ? "+" : value < 0 ? "−" : "±";
-      const absVal = Math.abs(value);
-      const directionUp = invertDirectionForLowerIsBetter ? value < 0 : value > 0;
-      const directionDown = invertDirectionForLowerIsBetter ? value > 0 : value < 0;
-      let cls = "";
-      if (directionUp) cls = "up";
-      else if (directionDown) cls = "down";
-      return { text: `${sign}${absVal}${unit}`.trim(), cls };
-    }
-
-    const deltaHr = formatDelta(dHr, " bpm", false);
-    const deltaAxis = formatDelta(dAxis, "°", false);
-    const deltaQtc = formatDelta(dQtc, " ms", false);
-    const deltaSdnn = formatDelta(dSdnn, " ms", true);
-    const deltaRmssd = formatDelta(dRmssd, " ms", true);
-
-    const dAxisText = deltaAxis.text;
-    const dHrvText = `${deltaSdnn.text} / ${deltaRmssd.text}`;
-
-    const isLoadContext = true;
-
-    const devHRScore = computeDeviationScore("HR", dHr, evidenceRest.score, abrupt.level, morph.r);
-    const devQTcScore = computeDeviationScore("QTc", dQtc, evidenceRest.score, abrupt.level, morph.r);
-    const devAxisScore = computeDeviationScore("Axis", dAxis, evidenceRest.score, abrupt.level, morph.r);
-    const devHRVScore = computeDeviationScore("HRV", dSdnn, evidenceRest.score, abrupt.level, morph.r);
-
-    const devHR = classifyDeviation(devHRScore, {
-      param: "HR",
-      delta: dHr,
-      evidence: evidenceRest.score,
-      abruptness: abrupt.level,
-      morphR: morph.r,
-      isLoadContext
-    });
-    const devQTc = classifyDeviation(devQTcScore, {
-      param: "QTc",
-      delta: dQtc,
-      evidence: evidenceRest.score,
-      abruptness: abrupt.level,
-      morphR: morph.r,
-      isLoadContext
-    });
-    const devAxis = classifyDeviation(devAxisScore, {
-      param: "Axis",
-      delta: dAxis,
-      evidence: evidenceRest.score,
-      abruptness: abrupt.level,
-      morphR: morph.r,
-      isLoadContext
-    });
-    const devHRV = classifyDeviation(devHRVScore, {
-      param: "HRV",
-      delta: dSdnn,
-      evidence: evidenceRest.score,
-      abruptness: abrupt.level,
-      morphR: morph.r,
-      isLoadContext
-    });
-
-    function renderZoneCard(label, deltaText, devInfo, t) {
-      const zoneClass = devInfo.zone;
-      const zoneLabelKey =
-        devInfo.zone === "green"
-          ? "zoneGreenShort"
-          : devInfo.zone === "yellow"
-          ? "zoneYellowShort"
-          : "zoneRedShort";
-
-      const reasonText = t[devInfo.baseReasonKey] || "";
-      const morphSuffix = devInfo.morphChanged
-        ? " " + (t.zoneReasonMorphChange || t.morphMarked)
-        : "";
-
-      return `
-        <div class="zone-card zone-${zoneClass}">
-          <div class="zone-card-header">
-            <span class="zone-card-label">${label}</span>
-            <span class="zone-card-delta">${deltaText}</span>
-          </div>
-          <div class="zone-card-zone">${t[zoneLabelKey]}</div>
-          <div class="zone-card-reason">${reasonText}${morphSuffix}</div>
-        </div>
-      `;
-    }
-
-    const confidenceLabel =
-      overallConf === "low"
-        ? t.zoneReasonLimitedData
-        : t[`confidence${capitalize(overallConf)}`];
+    const restQuality = rest.qualityMap || {};
+    const loadQuality = load.qualityMap || {};
+    const restMeta = rest.meta || {};
+    const loadMeta = load.meta || {};
 
     const evidenceHtml = `
-      <div class="compare-evidence">
-        <h3>${t.evidenceTitle}</h3>
-        <div class="compare-evidence-row">
-          <div class="compare-evidence-card">
-            <div class="label">${t.evidenceRestLabel}</div>
-            <div>${t.evidenceWindows}: ${evidenceRest.windows}</div>
-            <div>${t.evidenceGreen}: ${evidenceRest.greenPct.toFixed(1)}%</div>
-            <div class="score score-${evidenceRest.score}">
-              ${t[`evidenceScore${capitalize(evidenceRest.score)}`]}
-            </div>
+      <section class="compare-evidence-simple">
+        <div>
+          <h4>${t.leftTitle}</h4>
+          <p>${t.evidenceWindows}: ${restMeta.windowsUsed || "—"}</p>
+          <p>${t.evidenceGreen}: ${(restQuality.greenPct ?? 0).toFixed(1)}%</p>
+        </div>
+        <div>
+          <h4>${t.rightTitle}</h4>
+          <p>${t.evidenceWindows}: ${loadMeta.windowsUsed || "—"}</p>
+          <p>${t.evidenceGreen}: ${(loadQuality.greenPct ?? 0).toFixed(1)}%</p>
+        </div>
+      </section>
+    `;
+
+    const changeIndicators = [
+      {
+        label: t.indicatorStress,
+        delta: (l.hrBpm || 0) - (r.hrBpm || 0)
+      },
+      {
+        label: t.indicatorRecovery,
+        delta: (lHrv.sdnnMs || 0) - (rHrv.sdnnMs || 0)
+      },
+      {
+        label: t.indicatorBalance,
+        delta: (lHrv.rmssdMs || 0) - (rHrv.rmssdMs || 0)
+      }
+    ];
+
+    const chipsHtml = changeIndicators
+      .map((chip) => {
+        const cls = chip.delta > 5 ? "up" : chip.delta < -5 ? "down" : "flat";
+        const symbol = chip.delta > 5 ? "↑" : chip.delta < -5 ? "↓" : "→";
+        return `
+          <div class="change-chip ${cls}">
+            <span>${chip.label}</span>
+            <strong>${symbol}</strong>
           </div>
-          <div class="compare-evidence-card">
-            <div class="label">${t.evidenceLoadLabel}</div>
-            <div>${t.evidenceWindows}: ${evidenceLoad.windows}</div>
-            <div>${t.evidenceGreen}: ${evidenceLoad.greenPct.toFixed(1)}%</div>
-            <div class="score score-${evidenceLoad.score}">
-              ${t[`evidenceScore${capitalize(evidenceLoad.score)}`]}
-            </div>
-          </div>
-        </div>
-      </div>
-    `;
+        `;
+      })
+      .join("");
 
-    const leftMetricsHtml = `
-      <div class="compare-metric-list">
-        <div class="compare-metric-row">
-          <span class="compare-metric-label">${t.deltaHr}:</span>
-          <span class="compare-metric-value">${r.hrBpm} bpm</span>
-        </div>
-        <div class="compare-metric-row">
-          <span class="compare-metric-label">${t.deltaAxis}:</span>
-          <span class="compare-metric-value">${rAxis.frontalPlaneDeg}°</span>
-        </div>
-        <div class="compare-metric-row">
-          <span class="compare-metric-label">${t.deltaQtc}:</span>
-          <span class="compare-metric-value">${r.qtcMs} ms</span>
-        </div>
-        <div class="compare-metric-row">
-          <span class="compare-metric-label">${t.deltaSdnn}:</span>
-          <span class="compare-metric-value">${rHrv.sdnnMs} ms</span>
-        </div>
-        <div class="compare-metric-row">
-          <span class="compare-metric-label">${t.deltaRmssd}:</span>
-          <span class="compare-metric-value">${rHrv.rmssdMs} ms</span>
-        </div>
-      </div>
-    `;
-
-    const rightMetricsHtml = `
-      <div class="compare-metric-list">
-        <div class="compare-metric-row">
-          <span class="compare-metric-label">${t.deltaHr}:</span>
-          <span class="compare-metric-value">${l.hrBpm} bpm</span>
-        </div>
-        <div class="compare-metric-row">
-          <span class="compare-metric-label">${t.deltaAxis}:</span>
-          <span class="compare-metric-value">${lAxis.frontalPlaneDeg}°</span>
-        </div>
-        <div class="compare-metric-row">
-          <span class="compare-metric-label">${t.deltaQtc}:</span>
-          <span class="compare-metric-value">${l.qtcMs} ms</span>
-        </div>
-        <div class="compare-metric-row">
-          <span class="compare-metric-label">${t.deltaSdnn}:</span>
-          <span class="compare-metric-value">${lHrv.sdnnMs} ms</span>
-        </div>
-        <div class="compare-metric-row">
-          <span class="compare-metric-label">${t.deltaRmssd}:</span>
-          <span class="compare-metric-value">${lHrv.rmssdMs} ms</span>
-        </div>
-      </div>
-    `;
-
-    const deltaHtml = `
-      <div class="compare-delta">
-        <div class="compare-delta-title">${t.deltaTitle}</div>
-        <div class="compare-delta-row">
-          <span class="compare-delta-label">${t.deltaHr}</span>
-          <span>
-            <span class="compare-delta-value ${deltaHr.cls}">${deltaHr.text}</span>
-            <span class="compare-conf-chip conf-${overallConf}">
-              ${confidenceLabel}
-            </span>
-          </span>
-        </div>
-        <div class="compare-delta-row">
-          <span class="compare-delta-label">${t.deltaAxis}</span>
-          <span>
-            <span class="compare-delta-value ${deltaAxis.cls}">${deltaAxis.text}</span>
-            <span class="compare-conf-chip conf-${overallConf}">
-              ${confidenceLabel}
-            </span>
-          </span>
-        </div>
-        <div class="compare-delta-row">
-          <span class="compare-delta-label">${t.deltaQtc}</span>
-          <span>
-            <span class="compare-delta-value ${deltaQtc.cls}">${deltaQtc.text}</span>
-            <span class="compare-conf-chip conf-${overallConf}">
-              ${confidenceLabel}
-            </span>
-          </span>
-        </div>
-        <div class="compare-delta-row">
-          <span class="compare-delta-label">${t.deltaSdnn}</span>
-          <span>
-            <span class="compare-delta-value ${deltaSdnn.cls}">${deltaSdnn.text}</span>
-            <span class="compare-conf-chip conf-${overallConf}">
-              ${confidenceLabel}
-            </span>
-          </span>
-        </div>
-        <div class="compare-delta-row">
-          <span class="compare-delta-label">${t.deltaRmssd}</span>
-          <span>
-            <span class="compare-delta-value ${deltaRmssd.cls}">${deltaRmssd.text}</span>
-            <span class="compare-conf-chip conf-${overallConf}">
-              ${confidenceLabel}
-            </span>
-          </span>
-        </div>
-      </div>
-    `;
-
-    const deviationHtml = `
-      <div class="zone-card-section">
-        <h3 class="zone-card-title">${t.zoneCardTitle}</h3>
-
-        <div class="zone-card-row">
-          ${renderZoneCard(t.zoneParamHR, deltaHr.text, devHR, t)}
-          ${renderZoneCard(t.zoneParamQTc, deltaQtc.text, devQTc, t)}
-        </div>
-        <div class="zone-card-row">
-          ${renderZoneCard(t.zoneParamAxis, dAxisText, devAxis, t)}
-          ${renderZoneCard(t.zoneParamHRV, dHrvText, devHRV, t)}
-        </div>
-
-        <div class="zone-legend">
-          <div class="zone-legend-title">${t.zoneLegendTitle}</div>
-          <div class="zone-legend-line">🟢 ${t.zoneGreenLabel}</div>
-          <div class="zone-legend-line">🟡 ${t.zoneYellowLabel}</div>
-          <div class="zone-legend-line">🔴 ${t.zoneRedLabel}</div>
-        </div>
-      </div>
-    `;
-
-    const morphText =
-      morph.label === "high"
-        ? t.morphHigh
-        : morph.label === "moderate"
-        ? t.morphModerate
-        : t.morphMarked;
-
-    const abruptText =
-      abrupt.level === "minimal"
-        ? t.abruptnessMinimal
-        : abrupt.level === "expected"
-        ? t.abruptnessExpected
-        : t.abruptnessSudden;
-
-    const secondaryHtml = `
-      <div class="compare-secondary">
-        <div class="compare-secondary-item">
-          <div class="title">${t.morphTitle}</div>
-          <div class="value">${morphText} (${morph.r.toFixed(2)})</div>
-        </div>
-        <div class="compare-secondary-item">
-          <div class="title">${t.abruptnessTitle}</div>
-          <div class="value">${abruptText}</div>
-        </div>
-      </div>
-    `;
+    const infoButton = createInfoButton(lang, "compareProfile");
 
     container.innerHTML = `
-      <h1 class="tab-title">${t.title}</h1>
-      <p class="tab-description">${t.description}</p>
-
-      <div class="compare-layout">
-        <div class="compare-main">
-          <div class="compare-column">
-            <div class="compare-profile-title">${t.leftTitle}</div>
-            ${leftMetricsHtml}
-          </div>
-          <div class="compare-column">
-            <div class="compare-profile-title">${t.rightTitle}</div>
-            ${rightMetricsHtml}
-          </div>
+      <div class="tab-title-row compare-header">
+        <div class="leads-title-group">
+          <h1 class="tab-title">${t.title}</h1>
+          ${infoButton}
         </div>
-        ${evidenceHtml}
-        ${deltaHtml}
-        ${deviationHtml}
-        ${secondaryHtml}
-        <p style="font-size:12px; color: var(--text-muted); margin-top:4px;">
-          ${t.hint}
-        </p>
       </div>
+      <p class="tab-description">${t.description}</p>
+      <div class="compare-grid-simple">
+        ${renderColumn(t.leftTitle, "base")}
+        ${renderColumn(t.rightTitle, "current")}
+      </div>
+      ${evidenceHtml}
+      <section class="change-section">
+        <h3>${t.changeIndicatorsTitle}</h3>
+        <div class="change-chip-grid">${chipsHtml}</div>
+        <p class="compare-hint">${t.hint}</p>
+      </section>
     `;
-
   }
 
   function renderBenefitsView(container, lang) {
@@ -3291,48 +3437,48 @@ function closeHelpPanel() {
       return;
     }
 
+    const infoButton = createInfoButton(lang, "benefits");
     const headerHtml = `
-      <h1 class="tab-title">${t.title}</h1>
+      <div class="tab-title-row benefits-header">
+        <div class="leads-title-group">
+          <h1 class="tab-title">${t.title}</h1>
+          ${infoButton}
+        </div>
+      </div>
       <p class="tab-description">${t.subtitle}</p>
     `;
 
-    const rowsHtml = (t.rows || [])
-      .map(
-        (row) => `
-        <tr>
-          <td class="benefits-cell benefits-problem">${row.problem}</td>
-          <td class="benefits-cell benefits-solution">${row.solution}</td>
-          <td class="benefits-cell benefits-value">${row.value}</td>
-        </tr>
-      `
-      )
+    const iconMap = {
+      geometry: "◇",
+      sqi: "✓",
+      leads: "∑",
+      profile: "❤",
+      analytics: "↔",
+      storage: "⧉",
+      ai: "⚙",
+      comfort: "☁"
+    };
+
+    const cardsHtml = (t.cards || [])
+      .map((card) => {
+        const icon = iconMap[card.id] || "★";
+        return `
+          <article class="benefit-card">
+            <div class="benefit-card-icon" aria-hidden="true">${icon}</div>
+            <h3>${card.title}</h3>
+            <p>${card.description}</p>
+          </article>
+        `;
+      })
       .join("");
 
-    const tableHtml = `
-      <div class="benefits-table-wrapper">
-        <table class="benefits-table">
-          <thead>
-            <tr>
-              <th>${t.tableHeaders.problem}</th>
-              <th>${t.tableHeaders.solution}</th>
-              <th>${t.tableHeaders.value}</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${rowsHtml}
-          </tbody>
-        </table>
-      </div>
-    `;
-
-    container.innerHTML = headerHtml + tableHtml;
+    container.innerHTML = headerHtml + `<div class="benefits-grid">${cardsHtml}</div>`;
 
   }
 
   function renderLiveEcgView(container, lang) {
     const t = translations[lang];
     const liveT = t.tabs.live;
-    const liveInfo = translations[lang]?.liveEcg || translations.en?.liveEcg;
     const channels = ecgDemoData.channels;
     const windows = ecgDemoData.windows;
 
@@ -3370,11 +3516,35 @@ function closeHelpPanel() {
       })
       .join("");
 
-    const infoButtonHtml = liveInfo?.infoTitle
-      ? `<button class="info-icon-btn" id="live-info-btn" aria-label="${escapeHtml(
-          liveInfo.infoTitle
-        )}">i</button>`
-      : "";
+    const infoButtonHtml = createInfoButton(lang, "liveEcq");
+
+    const segmentBarHtml = `
+      <div class="segment-quality-card">
+        <div class="segment-quality-header">
+          <div>
+            <h3>${liveT.segmentBarTitle}</h3>
+            <p>${liveT.segmentBarSubtitle}</p>
+          </div>
+        </div>
+        <div class="segment-quality-bar" aria-label="${liveT.segmentBarTitle}">
+          ${liveSegmentDemo
+            .map(
+              (quality, idx) => `
+                <span
+                  class="segment-quality-segment ${quality}"
+                  aria-label="Window ${idx + 1}: ${quality}"
+                ></span>
+              `
+            )
+            .join("")}
+        </div>
+        <div class="segment-quality-legend">
+          <span>🟩 ${liveT.segmentLegendGreen}</span>
+          <span>🟨 ${liveT.segmentLegendYellow}</span>
+          <span>🟥 ${liveT.segmentLegendRed}</span>
+        </div>
+      </div>
+    `;
 
     const headerHtml = `
       <div class="profile-header-with-info">
@@ -3409,25 +3579,10 @@ function closeHelpPanel() {
           <div class="live-ecg-windows-strip" id="live-ecg-windows-strip">
             ${windowStripHtml}
           </div>
-          <div class="live-ecg-legend">
-            <div class="live-ecg-legend-item">
-              <span class="live-ecg-legend-dot green"></span>
-              <span>${t.liveLegendGreen || "High-quality window used for analysis"}</span>
-            </div>
-            <div class="live-ecg-legend-item">
-              <span class="live-ecg-legend-dot yellow"></span>
-              <span>${t.liveLegendYellow || "Borderline quality, used with caution"}</span>
-            </div>
-            <div class="live-ecg-legend-item">
-              <span class="live-ecg-legend-dot red"></span>
-              <span>${t.liveLegendRed || "Artefacts – excluded from analysis"}</span>
-            </div>
-          </div>
         </div>
       </div>
+      ${segmentBarHtml}
     `;
-
-    setupLiveEcgInfo(lang);
 
     if (liveWindowTimer) {
       clearInterval(liveWindowTimer);
@@ -3453,6 +3608,15 @@ function closeHelpPanel() {
     const t = translations[currentLang];
     footerDisclaimer.textContent = t.footer.disclaimer;
   }
+
+  document.body.addEventListener("click", (event) => {
+    const infoBtn = event.target.closest("[data-info-key]");
+    if (!infoBtn) return;
+    const key = infoBtn.getAttribute("data-info-key");
+    if (!key) return;
+    event.preventDefault();
+    openInfoModalForKey(key, currentLang);
+  });
 
   tabButtons.forEach((btn) => {
     btn.addEventListener("click", () => {
