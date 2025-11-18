@@ -9,56 +9,56 @@ const infoContent = {
       body: `
         <p>The Live ECG tab streams a simulated multi-lead signal and slices it into consecutive 2-second windows. Each block acts as a quality checkpoint before we include it in the Digital Heart Profile.</p>
         <p>Green windows are immediately eligible for the profile, yellow ones remain visible for context, and red windows highlight artefacts that should be discarded. The toolbar illustrates how segmentation overlays the waveform.</p>
-      `
+      `,
     },
     signalQuality: {
       title: "Signal Quality logic",
       body: `
         <p>SPA2099 evaluates every 2-second window with four indices: Q_noise (broadband noise and mains hum), Q_drift (baseline wandering), Q_imp (impulsive artefacts) and Q_recon (consistency between recorded and reconstructed channels).</p>
         <p>The combined score powers the green/yellow/red gates you see across the demo. Green windows feed the profile, yellow windows stay visible for trends, and red windows are excluded from quantitative analysis.</p>
-      `
+      `,
     },
     twelveLead: {
       title: "12-lead reconstruction",
       body: `
         <p>The textile garment records seven physical channels (I, II, III, aVR, aVL, aVF and V1). Using the fixed electrode geometry we reconstruct the missing V2–V6 chest leads.</p>
         <p>The accuracy badge shows how well each derived lead matches the expected morphology. Leads with accuracy below 0.80 are highlighted in red and excluded from the Digital Heart Profile.</p>
-      `
+      `,
     },
     hrvStress: {
       title: "HRV & stress monitors",
       body: `
         <p>The Poincaré / HRV blocks aggregate dozens of high-quality windows to build a stable view of SDNN, RMSSD and LF/HF balance. We use the same baseline to highlight deviations during stress or recovery sessions.</p>
         <p>Because the comparison is always “you vs you”, even small drifts become interpretable without relying on textbook norms.</p>
-      `
+      `,
     },
     dataContainer: {
       title: "Data Container",
       body: `
         <p>The Data Container keeps layered ECG data: raw channels, quality metadata, reconstructed leads and the resulting profile artefacts. Every 2-second window is saved with timestamps, SQI and motion context so you can re-run analytics without a new acquisition.</p>
         <p>Raw → quality-gated → reconstructed → profile summaries live side-by-side, making audit and replay straightforward.</p>
-      `
+      `,
     },
     digitalHeartProfile: {
       title: "Digital Heart Profile",
       body: `
         <p>The profile is a compact package: baseline ECG templates, key intervals (PR, QRS, QT/QTc), electrical axis, HRV baseline and data quality evidence. Only windows that pass SQI and leads with sufficient accuracy enter the profile.</p>
         <p>This artefact becomes a personal reference that can be compared against future sessions without guessing what is normal for the individual.</p>
-      `
+      `,
     },
     compareProfile: {
       title: "Compare profile sessions",
       body: `
         <p>We always compare a recording to the person’s own baseline. The comparison board shows resting metrics on the left, the current session on the right, and highlights where heart rate, intervals, axes or HRV drift.</p>
         <p>Change indicators describe the direction (stress load, recovery, HRV balance) so that every review tells a simple “you vs you” story.</p>
-      `
+      `,
     },
     benefits: {
       title: "Why SPA2099 is unique",
       body: `
         <p>Fixed textile geometry plus SQI gating delivers medical-grade ECG without gels or wires. Layered storage keeps raw data, reconstructions and profiles linked, while the AI-ready baseline enables longitudinal analytics.</p>
         <p>The result is a comfortable garment that outputs a repeatable Digital Heart Profile instead of isolated ECG strips.</p>
-      `
+      `,
     }
   }
 };
