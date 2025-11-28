@@ -63,8 +63,123 @@ const infoContent = {
   }
 };
 
-infoContent.ru = JSON.parse(JSON.stringify(infoContent.en));
-infoContent.nl = JSON.parse(JSON.stringify(infoContent.en));
+infoContent.ru = {
+  liveEcq: {
+    title: "Live ECG windows",
+    body: `
+        <p>The Live ECG tab streams a simulated multi-lead signal and slices it into consecutive 2-second windows. Each block acts as a quality checkpoint before we include it in the Digital Heart Profile.</p>
+        <p>Green windows are immediately eligible for the profile, yellow ones remain visible for context, and red windows highlight artefacts that should be discarded. The toolbar illustrates how segmentation overlays the waveform.</p>
+      `,
+  },
+  signalQuality: {
+    title: "Signal Quality logic",
+    body: `
+        <p>SPA2099 evaluates every 2-second window with four indices: Q_noise (broadband noise and mains hum), Q_drift (baseline wandering), Q_imp (impulsive artefacts) and Q_recon (consistency between recorded and reconstructed channels).</p>
+        <p>The combined score powers the green/yellow/red gates you see across the demo. Green windows feed the profile, yellow windows stay visible for trends, and red windows are excluded from quantitative analysis.</p>
+      `,
+  },
+  twelveLead: {
+    title: "12-lead reconstruction",
+    body: `
+        <p>The textile garment records seven physical channels (I, II, III, aVR, aVL, aVF and V1). Using the fixed electrode geometry we reconstruct the missing V2–V6 chest leads.</p>
+        <p>The accuracy badge shows how well each derived lead matches the expected morphology. Leads with accuracy below 0.80 are highlighted in red and excluded from the Digital Heart Profile.</p>
+      `,
+  },
+  hrvStress: {
+    title: "HRV & stress monitors",
+    body: `
+        <p>The Poincaré / HRV blocks aggregate dozens of high-quality windows to build a stable view of SDNN, RMSSD and LF/HF balance. We use the same baseline to highlight deviations during stress or recovery sessions.</p>
+        <p>Because the comparison is always “you vs you”, even small drifts become interpretable without relying on textbook norms.</p>
+      `,
+  },
+  dataContainer: {
+    title: "Data Container",
+    body: `
+        <p>The Data Container keeps layered ECG data: raw channels, quality metadata, reconstructed leads and the resulting profile artefacts. Every 2-second window is saved with timestamps, SQI and motion context so you can re-run analytics without a new acquisition.</p>
+        <p>Raw → quality-gated → reconstructed → profile summaries live side-by-side, making audit and replay straightforward.</p>
+      `,
+  },
+  digitalHeartProfile: {
+    title: "Digital Heart Profile",
+    body: `
+        <p>The profile is a compact package: baseline ECG templates, key intervals (PR, QRS, QT/QTc), electrical axis, HRV baseline and data quality evidence. Only windows that pass SQI and leads with sufficient accuracy enter the profile.</p>
+        <p>This artefact becomes a personal reference that can be compared against future sessions without guessing what is normal for the individual.</p>
+      `,
+  },
+  compareProfile: {
+    title: "Compare profile sessions",
+    body: `
+        <p>We always compare a recording to the person’s own baseline. The comparison board shows resting metrics on the left, the current session on the right, and highlights where heart rate, intervals, axes or HRV drift.</p>
+        <p>Change indicators describe the direction (stress load, recovery, HRV balance) so that every review tells a simple “you vs you” story.</p>
+      `,
+  },
+  benefits: {
+    title: "Why SPA2099 is unique",
+    body: `
+        <p>Fixed textile geometry plus SQI gating delivers medical-grade ECG without gels or wires. Layered storage keeps raw data, reconstructions and profiles linked, while the AI-ready baseline enables longitudinal analytics.</p>
+        <p>The result is a comfortable garment that outputs a repeatable Digital Heart Profile instead of isolated ECG strips.</p>
+      `,
+  }
+};
+
+infoContent.nl = {
+  liveEcq: {
+    title: "Live ECG windows",
+    body: `
+        <p>The Live ECG tab streams a simulated multi-lead signal and slices it into consecutive 2-second windows. Each block acts as a quality checkpoint before we include it in the Digital Heart Profile.</p>
+        <p>Green windows are immediately eligible for the profile, yellow ones remain visible for context, and red windows highlight artefacts that should be discarded. The toolbar illustrates how segmentation overlays the waveform.</p>
+      `,
+  },
+  signalQuality: {
+    title: "Signal Quality logic",
+    body: `
+        <p>SPA2099 evaluates every 2-second window with four indices: Q_noise (broadband noise and mains hum), Q_drift (baseline wandering), Q_imp (impulsive artefacts) and Q_recon (consistency between recorded and reconstructed channels).</p>
+        <p>The combined score powers the green/yellow/red gates you see across the demo. Green windows feed the profile, yellow windows stay visible for trends, and red windows are excluded from quantitative analysis.</p>
+      `,
+  },
+  twelveLead: {
+    title: "12-lead reconstruction",
+    body: `
+        <p>The textile garment records seven physical channels (I, II, III, aVR, aVL, aVF and V1). Using the fixed electrode geometry we reconstruct the missing V2–V6 chest leads.</p>
+        <p>The accuracy badge shows how well each derived lead matches the expected morphology. Leads with accuracy below 0.80 are highlighted in red and excluded from the Digital Heart Profile.</p>
+      `,
+  },
+  hrvStress: {
+    title: "HRV & stress monitors",
+    body: `
+        <p>The Poincaré / HRV blocks aggregate dozens of high-quality windows to build a stable view of SDNN, RMSSD and LF/HF balance. We use the same baseline to highlight deviations during stress or recovery sessions.</p>
+        <p>Because the comparison is always “you vs you”, even small drifts become interpretable without relying on textbook norms.</p>
+      `,
+  },
+  dataContainer: {
+    title: "Data Container",
+    body: `
+        <p>The Data Container keeps layered ECG data: raw channels, quality metadata, reconstructed leads and the resulting profile artefacts. Every 2-second window is saved with timestamps, SQI and motion context so you can re-run analytics without a new acquisition.</p>
+        <p>Raw → quality-gated → reconstructed → profile summaries live side-by-side, making audit and replay straightforward.</p>
+      `,
+  },
+  digitalHeartProfile: {
+    title: "Digital Heart Profile",
+    body: `
+        <p>The profile is a compact package: baseline ECG templates, key intervals (PR, QRS, QT/QTc), electrical axis, HRV baseline and data quality evidence. Only windows that pass SQI and leads with sufficient accuracy enter the profile.</p>
+        <p>This artefact becomes a personal reference that can be compared against future sessions without guessing what is normal for the individual.</p>
+      `,
+  },
+  compareProfile: {
+    title: "Compare profile sessions",
+    body: `
+        <p>We always compare a recording to the person’s own baseline. The comparison board shows resting metrics on the left, the current session on the right, and highlights where heart rate, intervals, axes or HRV drift.</p>
+        <p>Change indicators describe the direction (stress load, recovery, HRV balance) so that every review tells a simple “you vs you” story.</p>
+      `,
+  },
+  benefits: {
+    title: "Why SPA2099 is unique",
+    body: `
+        <p>Fixed textile geometry plus SQI gating delivers medical-grade ECG without gels or wires. Layered storage keeps raw data, reconstructions and profiles linked, while the AI-ready baseline enables longitudinal analytics.</p>
+        <p>The result is a comfortable garment that outputs a repeatable Digital Heart Profile instead of isolated ECG strips.</p>
+      `,
+  }
+};
 
 const dataContainerContent = {
   en: {
@@ -789,8 +904,8 @@ const translations = {
         metricQt: "Интервал QT",
         metricQtc: "QTc (корректированный QT)",
         metricAxis: "Электрическая ось (фронтальная плоскость)",
-        metricSdnn: "HRV SDNN",
-        metricRmssd: "HRV RMSSD",
+        metricSdnn: "SDNN (общая вариабельность ритма)",
+        metricRmssd: "RMSSD (быстрые колебания ритма)",
         metricSourceLabel: "Источник",
         axisTitle: "Фронтальная электрическая ось",
         hrvPnn50Label: "pNN50",
@@ -829,8 +944,8 @@ const translations = {
         deltaHr: "Частота сердечных сокращений",
         deltaAxis: "Электрическая ось",
         deltaQtc: "Интервал QTc",
-        deltaSdnn: "HRV SDNN",
-        deltaRmssd: "HRV RMSSD",
+        deltaSdnn: "Изменение SDNN",
+        deltaRmssd: "Изменение RMSSD",
         zoneLegendTitle: "Значение зон",
         zoneGreenLabel: "Зелёная зона — в пределах нормальной вариабельности",
         zoneYellowLabel: "Жёлтая зона — заметное отклонение от базового профиля",
@@ -881,7 +996,7 @@ const translations = {
         leadProvenanceTitle: "Происхождение отведений",
         leadProvenanceText:
           "Теги над графиком показывают, какие отведения сняты напрямую устройством Healthbox 2 (Recorded), какие грудные отведения восстановлены по модели (Reconstructed), а какие исключены из профиля из-за низкой уверенности. В расчётах используются только отведения с достаточной уверенностью.",
-        medianBeatTitle: "Resting profile (медианный комплекс P–QRS–T)",
+        medianBeatTitle: "Профиль покоя (медианный комплекс P–QRS–T)",
         medianBeatText:
           "Этот график показывает медианный комплекс P–QRS–T, построенный по всем окнам высокого качества (зелёные). Он очищен от шума и артефактов и отражает типичную электрическую активность сердца: форму P-зубца (предсердия), QRS-комплекса (деполяризация желудочков) и T-волны (реполяризация).",
         medianBeatToggleTitle: "Кнопка «Show intervals»",
@@ -1250,6 +1365,47 @@ const translations = {
         label: "Profielvoordelen"
       }
     },
+    profileHelp: {
+      title: "What each graph and metric means",
+      sections: {
+        leadProvenanceTitle: "Lead provenance",
+        leadProvenanceText:
+          "The tags above show which leads are recorded directly by Healthbox 2 (Recorded), which chest leads are reconstructed from the 7-lead input (Reconstructed), and which leads are excluded due to low confidence. Only high-confidence leads are used when building the Digital Heart Profile.",
+        medianBeatTitle: "Resting profile (median P–QRS–T complex)",
+        medianBeatText:
+          "This graph shows the median P–QRS–T beat built from all high-quality windows (green). It is cleaned from noise and artefacts and represents the typical electrical activity of the heart. The shape of the P wave, QRS complex and T wave reflects atrial activation, ventricular depolarization and repolarization.",
+        medianBeatToggleTitle: "Show intervals button",
+        medianBeatToggleText:
+          "The \"Show intervals\" button adds vertical markers for automatically detected P, PR, QRS, ST and QT boundaries on the median beat. This helps to see where each interval is measured.",
+        hrTitle: "Heart rate",
+        hrText:
+          "Average heart rate calculated from the R–R intervals of the windows that entered the profile. This is not a momentary pulse value but a stable, noise-filtered estimate.",
+        prTitle: "PR interval",
+        prText:
+          "Time from the onset of atrial activation to the onset of ventricular activation. Changes in PR reflect how quickly impulses travel from atria to ventricles.",
+        qrsTitle: "QRS duration",
+        qrsText:
+          "Duration of ventricular depolarization. A narrow QRS indicates fast conduction; a broader QRS may indicate intraventricular conduction delays. Typically measured in a lead with a clear QRS, such as V2 or V3.",
+        qtQtcTitle: "QT and QTc intervals",
+        qtQtcText:
+          "The QT interval covers both ventricular depolarization and repolarization. QTc is the QT corrected for heart rate. In the profile we look not only at the absolute QTc, but also at how it deviates from the person’s own baseline.",
+        axisTitle: "Electrical axis (frontal plane)",
+        axisText:
+          "The arrow shows the direction of the mean QRS vector in the frontal plane, and the numeric value is the angle in degrees. It reflects the spatial orientation of ventricular depolarization relative to the standard limb leads.",
+        hrvTitle: "HRV metrics (SDNN, RMSSD, pNN50)",
+        hrvText:
+          "SDNN reflects overall heart rate variability over the recording. RMSSD is more related to parasympathetic activity. pNN50 shows the percentage of adjacent RR intervals that differ by more than 50 ms. Together they characterize the state of autonomic regulation.",
+        poincareTitle: "Poincaré plot",
+        poincareText:
+          "Each dot is a pair of consecutive RR intervals (RR(n), RR(n+1)). The ellipse shows the average shape of the cloud. A wide ellipse indicates higher variability; a narrow one indicates reduced variability. The plot helps to see patterns and outliers in autonomic regulation.",
+        summaryTitle: "Recording summary",
+        summaryText:
+          "Duration shows how many minutes were used to build the profile. Windows used indicates how many 2-second high-quality windows entered the calculations. Geometry ID identifies the garment/electrode configuration. Profile version shows the algorithm version used to build this profile.",
+        qualityMapTitle: "Profile quality map",
+        qualityMapText:
+          "The colored bar at the bottom represents the sequence of windows used for the profile. Green segments entered the profile fully, yellow segments may be down-weighted or used only for trends, and red segments are excluded. This indicates how strongly the profile is supported by good-quality data."
+      }
+    },
     benefits: {
       label: "Profielvoordelen",
       title: "Waarom het Digital Heart Profile nuttig is",
@@ -1428,6 +1584,10 @@ translations.en.tabs.live.segmentBarSubtitle = "Each rectangle is a 2-second win
 translations.en.tabs.live.segmentLegendGreen = "Green — used in Digital Heart Profile";
 translations.en.tabs.live.segmentLegendYellow = "Yellow — viewable, not added to baseline";
 translations.en.tabs.live.segmentLegendRed = "Red — discarded due to artefacts";
+translations.en.tabs.live.segmentAriaLabel = "Window {index}: {quality}";
+
+translations.ru.tabs.live.segmentAriaLabel = "Окно {index}: {quality}";
+translations.nl.tabs.live.segmentAriaLabel = "Venster {index}: {quality}";
 
 translations.en.signalQuality.noiseDemoTitle = "Window example";
 translations.en.signalQuality.noiseDemoCleanLabel = "Clean window";
@@ -3518,6 +3678,9 @@ function closeHelpPanel() {
 
     const infoButtonHtml = createInfoButton(lang, "liveEcq");
 
+    const segmentAriaTemplate =
+      liveT.segmentAriaLabel || translations.en.tabs.live.segmentAriaLabel;
+
     const segmentBarHtml = `
       <div class="segment-quality-card">
         <div class="segment-quality-header">
@@ -3529,12 +3692,24 @@ function closeHelpPanel() {
         <div class="segment-quality-bar" aria-label="${liveT.segmentBarTitle}">
           ${liveSegmentDemo
             .map(
-              (quality, idx) => `
+              (quality, idx) => {
+                const qualityLabel =
+                  quality === "green"
+                    ? liveT.segmentLegendGreen
+                    : quality === "yellow"
+                    ? liveT.segmentLegendYellow
+                    : liveT.segmentLegendRed;
+                const ariaLabel = (segmentAriaTemplate || "Window {index}: {quality}")
+                  .replace("{index}", idx + 1)
+                  .replace("{quality}", qualityLabel || quality);
+
+                return `
                 <span
                   class="segment-quality-segment ${quality}"
-                  aria-label="Window ${idx + 1}: ${quality}"
+                  aria-label="${ariaLabel}"
                 ></span>
-              `
+              `;
+              }
             )
             .join("")}
         </div>
